@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import redirect, render
 
-from .forms import JoinTripForm, TripForm
-from .models import Trip, TripMember
+from .forms import JoinTripForm, PreferenceForm, TripForm
+from .models import Preference, Trip, TripMember
 from .permissions import get_member_trip_or_404
 from .services.trip_actions import TripActionError, create_trip, join_trip
 
@@ -71,7 +71,10 @@ def trip_join(request):
 @login_required
 def trip_detail(request, pk):
     trip = get_member_trip_or_404(request.user, pk)
-    members = trip.members.select_related("user")
+    # select_related("preference") loads each member's preference (if any) in the same query.
+    members = list(trip.members.select_related("user", "preference"))
+    my_membership = next(member for member in members if member.user_id == request.user.id)
+    readiness = trip.get_readiness()
 
     return render(
         request,
@@ -80,5 +83,38 @@ def trip_detail(request, pk):
             "trip": trip,
             "members": members,
             "is_organizer": trip.is_organizer(request.user),
+            "my_membership": my_membership,
+            "readiness": readiness,
+            "can_generate": trip.can_generate_recommendations(readiness),
         },
+    )
+
+
+@login_required
+def preferences(request, pk):
+    trip = get_member_trip_or_404(request.user, pk)
+    if not trip.is_planning:
+        messages.error(request, "Preferences can only be changed while the trip is being planned.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    # Always the current user's own membership: there is no way to address someone else's.
+    membership = trip.members.get(user=request.user)
+    existing = Preference.objects.filter(trip_member=membership).first()
+
+    if request.method == "POST":
+        form = PreferenceForm(request.POST, instance=existing)
+        if form.is_valid():
+            preference = form.save(commit=False)
+            preference.trip_member = membership
+            preference.save()
+            form.save_m2m()
+            messages.success(request, "Your preferences were saved.")
+            return redirect("trips:detail", pk=trip.pk)
+    else:
+        form = PreferenceForm(instance=existing)
+
+    return render(
+        request,
+        "trips/preferences.html",
+        {"trip": trip, "form": form, "is_update": existing is not None},
     )

@@ -3,9 +3,9 @@ import re
 from django import forms
 from django.utils import timezone
 
-from destinations.models import OriginCity
+from destinations.models import Interest, OriginCity
 
-from .models import INVITE_CODE_ALPHABET, INVITE_CODE_LENGTH, INVITE_CODE_PREFIX, Trip
+from .models import INVITE_CODE_ALPHABET, INVITE_CODE_LENGTH, INVITE_CODE_PREFIX, Preference, Trip
 
 INVITE_CODE_PATTERN = re.compile(
     rf"^{INVITE_CODE_PREFIX}[{INVITE_CODE_ALPHABET}]{{{INVITE_CODE_LENGTH}}}$"
@@ -79,3 +79,55 @@ class JoinTripForm(forms.Form):
         if not INVITE_CODE_PATTERN.match(code):
             raise forms.ValidationError("That doesn't look like a Wajha code. Codes look like WJ-8K32L.")
         return code
+
+
+class PreferenceForm(forms.ModelForm):
+    interests = forms.ModelMultipleChoiceField(
+        queryset=Interest.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label="What do you want to do there?",
+        help_text="Choose at least one.",
+        error_messages={"required": "Choose at least one interest."},
+    )
+
+    class Meta:
+        model = Preference
+        fields = ["max_budget", "max_flight_hours", "weather_preference", "direct_only", "interests"]
+        labels = {
+            "max_budget": "Maximum budget per person (SAR)",
+            "max_flight_hours": "Longest flight you'll accept (hours)",
+            "weather_preference": "Preferred weather",
+            "direct_only": "Direct flights only",
+        }
+        help_texts = {
+            "max_budget": "Your total for the whole trip: return flight plus accommodation, food and local transport.",
+            "max_flight_hours": "One way. Use whole or half hours, e.g. 4 or 5.5.",
+            "direct_only": "Only show destinations with a direct flight from your departure city.",
+        }
+        widgets = {
+            "max_budget": forms.NumberInput(attrs={
+                "min": Preference.MIN_BUDGET, "max": Preference.MAX_BUDGET, "step": 50,
+                "placeholder": "4000", "inputmode": "numeric",
+            }),
+            "max_flight_hours": forms.NumberInput(attrs={
+                "min": Preference.MIN_FLIGHT_HOURS, "max": Preference.MAX_FLIGHT_HOURS, "step": "0.5",
+                "placeholder": "5", "inputmode": "decimal",
+            }),
+            "weather_preference": forms.RadioSelect,
+        }
+        error_messages = {
+            "max_budget": {
+                "min_value": f"Budget must be at least {Preference.MIN_BUDGET:,} SAR.",
+                "max_value": f"Budget can't be more than {Preference.MAX_BUDGET:,} SAR.",
+            },
+            "max_flight_hours": {
+                "min_value": f"Flight time must be at least {Preference.MIN_FLIGHT_HOURS} hour.",
+                "max_value": f"Flight time can't be more than {Preference.MAX_FLIGHT_HOURS} hours.",
+            },
+        }
+
+    def clean_max_flight_hours(self):
+        hours = self.cleaned_data["max_flight_hours"]
+        if (hours * 2) % 1 != 0:
+            raise forms.ValidationError("Use whole or half hours, e.g. 4 or 5.5.")
+        return hours

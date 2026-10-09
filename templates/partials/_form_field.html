@@ -1,7 +1,22 @@
-{# Renders one field with its label, help text and errors. Django adds aria-describedby and aria-invalid to the input. #}
+{# Renders one field with its label, help text and errors. Django adds aria-describedby and aria-invalid to inputs. #}
+{% if field.use_fieldset %}
+<fieldset class="field field--group{% if field.errors %} field--error{% endif %}"{% if field.aria_describedby %} aria-describedby="{{ field.aria_describedby }}"{% endif %}>
+    <legend>{{ field.label }}</legend>
+    {% if field.help_text %}<p class="field__help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+    {{ field }}
+    {{ field.errors }}
+</fieldset>
+{% elif field.widget_type == "checkbox" %}
+<div class="field field--checkbox{% if field.errors %} field--error{% endif %}">
+    <label for="{{ field.id_for_label }}">{{ field }} <span>{{ field.label }}</span></label>
+    {% if field.help_text %}<p class="field__help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+    {{ field.errors }}
+</div>
+{% else %}
 <div class="field{% if field.errors %} field--error{% endif %}">
     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
     {% if field.help_text %}<div class="field__help" id="{{ field.auto_id }}_helptext">{{ field.help_text|safe }}</div>{% endif %}
     {{ field }}
     {{ field.errors }}
 </div>
+{% endif %}

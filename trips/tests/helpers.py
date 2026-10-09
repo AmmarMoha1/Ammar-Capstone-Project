@@ -30,3 +30,20 @@ def future_dates(start_in_days=30, nights=4):
 def make_trip(owner, origin, name="Winter Getaway"):
     start, end = future_dates()
     return create_trip(owner, name=name, departure_city=origin, start_date=start, end_date=end)
+
+
+def make_interest(name="Nature"):
+    from destinations.models import Interest
+
+    return Interest.objects.get_or_create(name=name)[0]
+
+
+def make_preference(member, budget=4000, hours=5, weather="ANY", direct_only=False, interests=("Nature",)):
+    from trips.models import Preference
+
+    preference = Preference.objects.create(
+        trip_member=member, max_budget=budget, max_flight_hours=hours,
+        weather_preference=weather, direct_only=direct_only,
+    )
+    preference.interests.set(make_interest(name) for name in interests)
+    return preference

@@ -345,6 +345,7 @@ img { max-width: 100%; height: auto; }
     font-size: var(--text-sm);
     font-weight: 500;
 }
+.tag--small { padding: 0 var(--space-2); font-size: 0.75rem; vertical-align: middle; }
 
 /* Messages: each variant sets --tone, used for the text and the icon circle. */
 .messages { margin-bottom: var(--space-6); }
@@ -422,6 +423,69 @@ img { max-width: 100%; height: auto; }
     font-weight: 500;
 }
 .form-alert p { margin: 0; }
+
+/* Grouped choices (radio buttons / checkbox lists) rendered as chips. */
+fieldset.field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+fieldset.field legend {
+    padding: 0;
+    margin-bottom: var(--space-1);
+    font-weight: 500;
+}
+.field--group > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+}
+.field--group > div > div > label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+.field--group > div > div > label:hover { border-color: var(--teal-700); }
+.field--group > div > div > label:has(input:checked) {
+    background: var(--teal-50);
+    border-color: var(--teal-700);
+    color: var(--teal-800);
+}
+.field--group input,
+.field--checkbox input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--teal-700);
+}
+
+/* Single checkbox shown as a selectable row. */
+.field--checkbox > label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 48px;
+    padding: var(--space-2) var(--space-4);
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+}
+.field--checkbox > label:has(input:checked) {
+    background: var(--teal-50);
+    border-color: var(--teal-700);
+}
 
 .form-row { display: grid; gap: var(--space-4); }
 @media (min-width: 640px) {
@@ -572,6 +636,7 @@ img { max-width: 100%; height: auto; }
     margin: 0 auto;
 }
 .form-page { max-width: 560px; }
+.form-page--wide { max-width: 720px; }
 .auth h1,
 .form-page h1 { font-size: var(--text-h2); }
 .auth__switch { margin: var(--space-6) 0 0; text-align: center; }
@@ -632,3 +697,34 @@ img { max-width: 100%; height: auto; }
 }
 .member:last-child { border-bottom: 0; }
 .member__name { flex: 1; font-weight: 500; }
+
+.trip-main {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.next-step h2 { margin-bottom: var(--space-2); }
+.next-step p { color: var(--ink-600); }
+.next-step--action {
+    border-color: var(--teal-700);
+    border-width: 2px;
+}
+
+/* Readiness: one segment per member, filled when that member is ready. */
+.readiness { margin-bottom: var(--space-4); }
+.readiness__bar {
+    display: flex;
+    gap: var(--space-1);
+    margin-bottom: var(--space-2);
+}
+.readiness__segment {
+    flex: 1;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--sand-200);
+}
+.readiness__segment.is-ready { background: var(--teal-700); }
+.readiness__label { margin: 0; color: var(--ink-600); }
+.readiness__label strong { color: var(--ink-900); }
+
+.member__name .tag { margin-left: var(--space-2); }

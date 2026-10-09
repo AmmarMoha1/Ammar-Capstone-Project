@@ -10,4 +10,5 @@ urlpatterns = [
     path("trips/new/", views.trip_create, name="create"),
     path("trips/join/", views.trip_join, name="join"),
     path("trips/<int:pk>/", views.trip_detail, name="detail"),
+    path("trips/<int:pk>/preferences/", views.preferences, name="preferences"),
 ]

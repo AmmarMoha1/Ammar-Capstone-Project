@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Your preferences · {{ trip.name }}{% endblock %}
+
+{% block content %}
+<section class="form-page form-page--wide card">
+    <p class="eyebrow">{{ trip.name }}</p>
+    <h1>{% if is_update %}Edit your preferences{% else %}Add your preferences{% endif %}</h1>
+    <p class="muted">
+        Wajha uses everyone's answers to find destinations that fit the whole group.
+        Other members never see your individual budget.
+    </p>
+
+    <form method="post" class="form" novalidate>
+        {% csrf_token %}
+        {% include "partials/_form_errors.html" %}
+        <div class="form-row">
+            {% include "partials/_form_field.html" with field=form.max_budget %}
+            {% include "partials/_form_field.html" with field=form.max_flight_hours %}
+        </div>
+        {% include "partials/_form_field.html" with field=form.direct_only %}
+        {% include "partials/_form_field.html" with field=form.weather_preference %}
+        {% include "partials/_form_field.html" with field=form.interests %}
+        <div class="actions">
+            <button type="submit" class="btn btn--primary">Save preferences</button>
+            <a class="btn btn--ghost" href="{% url 'trips:detail' trip.pk %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
