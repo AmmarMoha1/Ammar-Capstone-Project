@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Join a trip{% endblock %}
+
+{% block content %}
+<section class="form-page card">
+    <h1>Join a trip</h1>
+    <p class="muted">Enter the invite code your organizer shared with you.</p>
+
+    <form method="post" class="form" novalidate>
+        {% csrf_token %}
+        {% include "partials/_form_errors.html" %}
+        {% include "partials/_form_field.html" with field=form.code %}
+        <div class="actions">
+            <button type="submit" class="btn btn--primary">Join trip</button>
+            <a class="btn btn--ghost" href="{% url 'trips:my_trips' %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

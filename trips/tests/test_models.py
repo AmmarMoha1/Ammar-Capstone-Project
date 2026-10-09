@@ -28,7 +28,7 @@ class CreateTripTests(TestCase):
     def test_invite_code_format(self):
         trip = make_trip(self.owner, self.origin)
 
-        self.assertRegex(trip.invite_code, r"^WJ-[A-HJKMNP-Z2-9]{5}$")
+        self.assertRegex(trip.invite_code, r"^WJ-[A-HJ-NP-Z2-9]{5}$")
 
     def test_invite_codes_are_unique(self):
         codes = {make_trip(self.owner, self.origin, name=f"Trip {i}").invite_code for i in range(20)}

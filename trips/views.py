@@ -3,10 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import redirect, render
 
-from .forms import TripForm
+from .forms import JoinTripForm, TripForm
 from .models import Trip, TripMember
 from .permissions import get_member_trip_or_404
-from .services.trip_actions import create_trip
+from .services.trip_actions import TripActionError, create_trip, join_trip
 
 
 def home(request):
@@ -45,6 +45,27 @@ def trip_create(request):
         form = TripForm()
 
     return render(request, "trips/trip_form.html", {"form": form})
+
+
+@login_required
+def trip_join(request):
+    if request.method == "POST":
+        form = JoinTripForm(request.POST)
+        if form.is_valid():
+            try:
+                trip, joined = join_trip(request.user, form.cleaned_data["code"])
+            except TripActionError as error:
+                form.add_error("code", str(error))
+            else:
+                if joined:
+                    messages.success(request, f"You joined {trip.name}. Next, add your preferences.")
+                else:
+                    messages.info(request, f"You're already a member of {trip.name}.")
+                return redirect("trips:detail", pk=trip.pk)
+    else:
+        form = JoinTripForm()
+
+    return render(request, "trips/trip_join.html", {"form": form})
 
 
 @login_required

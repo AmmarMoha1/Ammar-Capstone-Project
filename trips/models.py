@@ -7,8 +7,8 @@ from django.db.models import F, Q
 from destinations.models import Destination, OriginCity
 
 INVITE_CODE_PREFIX = "WJ-"
-# No 0/O or 1/I/L so codes are easy to read aloud and type.
-INVITE_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
+# No 0/O or 1/I so codes are easy to read aloud and type.
+INVITE_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 INVITE_CODE_LENGTH = 5
 
 

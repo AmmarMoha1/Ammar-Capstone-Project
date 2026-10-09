@@ -1,6 +1,8 @@
 {% if user.is_authenticated %}
     {% url 'trips:my_trips' as my_trips_url %}
     <a href="{{ my_trips_url }}" class="nav__link"{% if request.path == my_trips_url %} aria-current="page"{% endif %}>My trips</a>
+    {% url 'trips:join' as join_url %}
+    <a href="{{ join_url }}" class="nav__link"{% if request.path == join_url %} aria-current="page"{% endif %}>Join trip</a>
     <a href="{% url 'trips:create' %}" class="btn btn--primary btn--small">New trip</a>
     <form method="post" action="{% url 'accounts:logout' %}" class="nav__logout">
         {% csrf_token %}

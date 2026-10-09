@@ -8,7 +8,10 @@
         <h1>My trips</h1>
         <p class="muted">Trips you organize or have joined.</p>
     </div>
-    <a class="btn btn--primary" href="{% url 'trips:create' %}">New trip</a>
+    <div class="actions">
+        <a class="btn btn--secondary" href="{% url 'trips:join' %}">Join with code</a>
+        <a class="btn btn--primary" href="{% url 'trips:create' %}">New trip</a>
+    </div>
 </div>
 
 {% if trips %}
@@ -33,6 +36,6 @@
 </ul>
 {% else %}
     {% url 'trips:create' as create_url %}
-    {% include "partials/_empty_state.html" with title="No trips yet" text="Create a trip and invite your friends with a code." action_url=create_url action_label="Create your first trip" %}
+    {% include "partials/_empty_state.html" with title="No trips yet" text="Create a trip and invite your friends, or join a friend's trip with their invite code." action_url=create_url action_label="Create your first trip" %}
 {% endif %}
 {% endblock %}
