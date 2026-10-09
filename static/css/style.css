@@ -1753,3 +1753,18 @@ input[type="number"], input[type="date"] { direction: ltr; }
     .window { grid-template-columns: auto 1fr; }
     .window > .btn, .window > .tag { grid-column: 1 / -1; justify-self: start; }
 }
+
+/* --- Search and pagination (My Trips) --- */
+.search { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-block-end: var(--space-4); }
+.search input[type="search"] {
+    flex: 1 1 280px;
+    min-height: 46px;
+    padding: 8px 16px 6px;
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--card);
+    font-weight: 600;
+}
+.search input[type="search"]:focus-visible { outline: var(--focus); outline-offset: 3px; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-4); margin-top: var(--space-8); }
+.pagination__status { font-weight: 700; }

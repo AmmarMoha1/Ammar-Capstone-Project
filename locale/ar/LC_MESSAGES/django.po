@@ -1443,3 +1443,35 @@ msgstr "تمت إضافة أوقات فراغك."
 #, python-format
 msgid "You can add up to %(max)d date ranges. Remove one to add another."
 msgstr "يمكنك إضافة %(max)d فترات كحد أقصى. احذف واحدة لتضيف غيرها."
+
+msgid "Search trips"
+msgstr "ابحث في الرحلات"
+
+msgid "Search by trip name or destination"
+msgstr "ابحث باسم الرحلة أو الوجهة"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Clear search"
+msgstr "مسح البحث"
+
+#, python-format
+msgid "No trips match “%(query)s”"
+msgstr "لا توجد رحلات تطابق «%(query)s»"
+
+msgid "Try another trip name or destination, or clear the search."
+msgstr "جرّب اسم رحلة أو وجهة أخرى، أو امسح البحث."
+
+msgid "Pages"
+msgstr "الصفحات"
+
+msgid "Previous"
+msgstr "السابق"
+
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "صفحة %(number)s من %(total)s"
+
+msgid "Next"
+msgstr "التالي"

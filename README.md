@@ -31,7 +31,7 @@ Wajha is a Django web application that helps a group of friends in Saudi Arabia 
 - **Organizer tools:** edit the trip, remove a member, cancel the trip. Each needs confirmation and is enforced on the server.
 - **Reports:**
   - a group summary (lowest and average budget, shortest maximum flight, top interests)
-  - My Trips with status filters and per-trip member/ready counts
+  - My Trips with search (trip name or destination, in English or Arabic), status filters with counts, pagination (9 per page) and per-trip member/ready counts
 - **Two language versions:** English at `/` and Arabic at `/ar/` (right-to-left). The header switch opens the same page in the other language. Catalog data (cities, countries, interests, descriptions, photo text), plurals, dates and numbers are all localised.
 - **"Boarding Pass" interface:**
   - paper-and-ink design system with hard shadows, written with logical CSS properties so the Arabic version mirrors automatically
@@ -154,7 +154,7 @@ This command needs only Python. Django's own `makemessages` and `compilemessages
 python manage.py test
 ```
 
-There are 256 automated tests covering business rules, permissions, validation, the matching calculations (with hand-calculated expected values), reports and the demo data. Manual acceptance scenarios and results are in [docs/verification.md](docs/verification.md).
+There are 266 automated tests covering business rules, permissions, validation, the matching calculations (with hand-calculated expected values), reports and the demo data. Manual acceptance scenarios and results are in [docs/verification.md](docs/verification.md).
 
 ## Project structure
 
@@ -165,7 +165,8 @@ locale/ar/       Arabic translations (django.po source and compiled django.mo)
 accounts/        registration, login, logout
 destinations/    catalog: OriginCity, Destination, DestinationClimate, Interest, RouteProfile,
                  catalog data and loader, bundled photo credits
-trips/           Trip, TripMember, Preference, Recommendation; views, forms, permissions
+trips/           Trip, TripMember, Preference, Recommendation, Vote, Availability; forms, permissions
+  views/         pages · trips (My Trips, Trip Room, members) · recommendations (incl. vote) · dates
   services/      trip_actions.py (create, join, preferences, finalize, cancel, edit, remove)
                  matching.py (pure scoring engine) · recommendations.py (DB ↔ engine)
                  summary.py (group summary report) · voting.py (group vote)
@@ -185,7 +186,7 @@ docs/            ERD, verification record, demo script, market validation, scree
 | Capability | Where in the app |
 |---|---|
 | CRUD | Trip: create / edit / cancel (retire) · TripMember: join / remove · Preference: create / update (deleted with its member) · Recommendation: generate / clear · Vote: cast / change · Availability: add / delete |
-| Filtering and ordering | My Trips status filter, newest first · recommendations by rank · active destinations only |
+| Filtering and ordering | My Trips search (`Q` on trip name or destination) and status filter, newest first, paginated · recommendations by rank · top 3 for voting (`rank__lte=3`) · active destinations only |
 | Relationship queries | My Trips (trips through memberships) · destinations through routes from the departure city · group summary through Preference → TripMember → Trip |
 | Aggregation | Trip Room group summary (`Avg`, `Min`, `Count`) · readiness counts · My Trips status counts |
 | Annotation | My Trips member and ready counts per trip · top interests with vote counts · `Count("votes")` per top-3 recommendation · `Count("availabilities")` per member on the shared-dates page |

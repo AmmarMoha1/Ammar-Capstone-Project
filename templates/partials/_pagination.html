@@ -1,0 +1,13 @@
+{% load i18n %}
+{# Previous/next links that keep the current search and filter. Pass page_obj. #}
+{% if page_obj.has_other_pages %}
+<nav class="pagination" aria-label="{% translate 'Pages' %}">
+    {% if page_obj.has_previous %}
+    <a class="btn btn--secondary btn--small" href="{% querystring page=page_obj.previous_page_number %}" rel="prev"><span class="btn__arrow" aria-hidden="true">←</span> {% translate "Previous" %}</a>
+    {% endif %}
+    <span class="pagination__status">{% blocktranslate trimmed with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
+    {% if page_obj.has_next %}
+    <a class="btn btn--secondary btn--small" href="{% querystring page=page_obj.next_page_number %}" rel="next">{% translate "Next" %} <span class="btn__arrow" aria-hidden="true">→</span></a>
+    {% endif %}
+</nav>
+{% endif %}

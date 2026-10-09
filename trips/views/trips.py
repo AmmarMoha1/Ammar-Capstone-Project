@@ -2,9 +2,12 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
+
+from destinations.models import Destination
 
 from ..forms import JoinTripForm, PreferenceForm, TripForm
 from ..models import Preference, Trip, TripMember
@@ -28,6 +31,22 @@ STATUS_FILTERS = {
     "decided": Trip.Status.DECIDED,
     "cancelled": Trip.Status.CANCELLED,
 }
+TRIPS_PER_PAGE = 9
+
+
+def _search_filter(query):
+    """Match the trip name or the chosen destination, in English or in its Arabic catalog name.
+
+    Relationship query: selected_destination__city filters trips through the Destination model.
+    Catalog cities are stored in English, so cities whose translated name contains the query
+    are matched too (for searches typed on the Arabic version).
+    """
+    translated = [city for city in Destination.objects.values_list("city", flat=True) if query in _(city)]
+    return (
+        Q(name__icontains=query)
+        | Q(selected_destination__city__icontains=query)
+        | Q(selected_destination__city__in=translated)
+    )
 
 
 @login_required
@@ -37,8 +56,14 @@ def my_trips(request):
     # reuse the members join and make Count("members") count only the user's own row.
     my_trip_ids = TripMember.objects.filter(user=request.user).values("trip_id")
     my_trips_qs = Trip.objects.filter(pk__in=my_trip_ids)
+    has_any_trips = my_trips_qs.exists()
 
-    # Aggregation: how many of my trips are in each status (for the filter tabs).
+    # Search: applied before the counts, so the tabs show how many matching trips each status has.
+    query = request.GET.get("q", "").strip()[:100]
+    if query:
+        my_trips_qs = my_trips_qs.filter(_search_filter(query))
+
+    # Aggregation: how many of my (matching) trips are in each status (for the filter tabs).
     status_counts = my_trips_qs.aggregate(
         all=Count("id"),
         planning=Count("id", filter=Q(status=Trip.Status.PLANNING)),
@@ -69,11 +94,15 @@ def my_trips(request):
         {"key": key, "label": label, "count": status_counts[key]}
         for key, label in [("all", _("All")), ("planning", _("Planning")), ("decided", _("Decided")), ("cancelled", _("Cancelled"))]
     ]
+    # Pagination: a long-time user can collect many trips; ?page= values out of range show the last page.
+    page_obj = Paginator(trips, TRIPS_PER_PAGE).get_page(request.GET.get("page"))
     return render(request, "trips/my_trips.html", {
-        "trips": trips,
+        "trips": page_obj,
+        "page_obj": page_obj,
         "filters": filters,
         "active_filter": active_filter,
-        "has_any_trips": status_counts["all"] > 0,
+        "query": query,
+        "has_any_trips": has_any_trips,
     })
 
 
