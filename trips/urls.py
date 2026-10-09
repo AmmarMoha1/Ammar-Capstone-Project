@@ -6,6 +6,7 @@ app_name = "trips"
 
 urlpatterns = [
     path("", views.home, name="home"),
+    path("credits/", views.credits, name="credits"),
     path("trips/", views.my_trips, name="my_trips"),
     path("trips/new/", views.trip_create, name="create"),
     path("trips/join/", views.trip_join, name="join"),

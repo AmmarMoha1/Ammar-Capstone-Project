@@ -1,0 +1,20 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something went wrong · Wajha</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    {# Standalone on purpose: a server error page must not depend on the database or request context. #}
+    <main class="container main">
+        <section class="error-page">
+            <p class="error-page__code">500</p>
+            <h1>Something went wrong on our side</h1>
+            <p class="muted">Your data is safe. Please try again in a moment.</p>
+            <a class="btn btn--primary" href="/">Back to Wajha</a>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{# Attribution for a bundled photo. Pass photo (from Destination.photo). #}
+<p class="photo-credit">
+    Photo: {{ photo.artist }},
+    {% if photo.licence_url %}<a href="{{ photo.licence_url }}" rel="license noopener" target="_blank">{{ photo.licence }}</a>{% else %}{{ photo.licence }}{% endif %},
+    via <a href="{{ photo.source }}" rel="noopener" target="_blank">Wikimedia Commons</a>
+</p>

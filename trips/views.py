@@ -4,6 +4,8 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from destinations.photos import all_photos
+
 from .forms import JoinTripForm, PreferenceForm, TripForm
 from .models import Preference, Trip, TripMember
 from .permissions import get_member_trip_or_404, get_organizer_trip_or_403
@@ -25,6 +27,10 @@ from .services.trip_actions import (
     save_preferences,
     update_trip,
 )
+
+
+def credits(request):
+    return render(request, "credits.html", {"photos": all_photos()})
 
 
 def home(request):

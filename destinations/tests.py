@@ -92,3 +92,27 @@ class ClimatePeriodTests(TestCase):
         self.assertEqual(ClimatePeriod.for_date(date(2026, 4, 1)), ClimatePeriod.APR_JUN)
         self.assertEqual(ClimatePeriod.for_date(date(2026, 9, 30)), ClimatePeriod.JUL_SEP)
         self.assertEqual(ClimatePeriod.for_date(date(2026, 11, 20)), ClimatePeriod.OCT_DEC)
+
+
+class PhotoTests(TestCase):
+    def test_every_catalog_destination_has_a_complete_photo(self):
+        from django.contrib.staticfiles import finders
+
+        from .catalog_data import DESTINATIONS
+        from .photos import photo_for_city
+
+        for item in DESTINATIONS:
+            with self.subTest(city=item["city"]):
+                photo = photo_for_city(item["city"])
+                self.assertIsNotNone(photo)
+                self.assertTrue(photo["alt"])
+                self.assertTrue(photo["artist"])
+                self.assertIsNotNone(finders.find(photo["wide"]), photo["wide"])
+                self.assertIsNotNone(finders.find(photo["thumb"]), photo["thumb"])
+                if photo["licence"] != "Public domain":
+                    self.assertIsNotNone(photo["licence_url"])
+
+    def test_unknown_city_has_no_photo(self):
+        destination = Destination(city="Nowhere", country="Test")
+
+        self.assertIsNone(destination.photo)

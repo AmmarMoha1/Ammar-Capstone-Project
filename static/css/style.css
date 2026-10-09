@@ -3,6 +3,14 @@
    1. Design tokens   2. Base   3. Layout   4. Components   5. Pages
    ========================================================================== */
 
+/* 0. Font: Readex Pro, bundled locally (SIL Open Font License, see static/fonts/OFL.txt). */
+@font-face {
+    font-family: "Readex Pro";
+    src: url("../fonts/ReadexPro.woff2") format("woff2");
+    font-weight: 160 700;
+    font-display: swap;
+}
+
 /* 1. Design tokens ------------------------------------------------------- */
 :root {
     /* Brand */
@@ -580,8 +588,13 @@ fieldset.field legend {
 
 /* Landing */
 .hero {
-    padding: var(--space-12) 0;
-    max-width: 760px;
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+    padding: var(--space-8) 0 var(--space-12);
+}
+@media (min-width: 1024px) {
+    .hero { grid-template-columns: 3fr 2fr; gap: var(--space-12); padding-top: var(--space-12); }
 }
 .eyebrow {
     margin-bottom: var(--space-3);
@@ -1148,3 +1161,129 @@ fieldset.field legend {
 
 .trip-card__ready { margin: var(--space-2) 0 0; color: var(--ink-600); }
 .trip-card__ready strong { color: var(--ink-900); }
+
+/* Photos ------------------------------------------------------------------ */
+
+.photo-credit {
+    margin: var(--space-2) 0 0;
+    color: var(--ink-600);
+    font-size: 0.75rem;
+}
+.photo-credit a { color: inherit; }
+
+/* Featured card and explanation hero: photo under a Night overlay so text stays readable. */
+.rec-featured__band--photo,
+.rec-hero--photo {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+.rec-featured__band--photo { min-height: 240px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; }
+.rec-featured__img,
+.rec-hero__img {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.rec-featured__band--photo::after,
+.rec-hero--photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    /* Text sits in the lower 60%, kept at >= 78% Night for WCAG contrast even over a white photo. */
+    background: linear-gradient(to top, rgb(22 49 59 / 0.92) 0%, rgb(22 49 59 / 0.8) 60%, rgb(22 49 59 / 0.35) 100%);
+}
+.rec-hero--photo::after {
+    background: linear-gradient(to right, rgb(22 49 59 / 0.94) 0%, rgb(22 49 59 / 0.85) 50%, rgb(22 49 59 / 0.78) 100%);
+}
+.rec-featured__band--photo .rec-featured__country { color: rgb(255 255 255 / 0.85); }
+@media (min-width: 768px) {
+    .rec-featured__band--photo { min-height: 320px; }
+}
+.rec-hero + .photo-credit { margin: calc(-1 * var(--space-4)) 0 var(--space-6); }
+
+/* Ranked cards: thumbnail with the rank badge on top. */
+.rec-card__media {
+    position: relative;
+    width: 96px;
+}
+.rec-card__img {
+    display: block;
+    width: 96px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+.rec-card__media .rec-card__rank {
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--white);
+    background: var(--teal-700);
+    color: var(--white);
+    font-size: var(--text-sm);
+}
+@media (min-width: 640px) {
+    .rec-card__media,
+    .rec-card__img { width: 144px; }
+    .rec-card__img { height: 96px; }
+}
+
+/* Landing preview card */
+.hero__preview {
+    margin: 0;
+    max-width: 420px;
+    width: 100%;
+    justify-self: center;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-hover);
+}
+.hero__preview img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+.preview { padding: var(--space-6); }
+.preview__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+}
+.preview__row p { margin: 0; }
+.preview__city { font-size: var(--text-h2); font-weight: 700; }
+.preview__members { margin: var(--space-4) 0 0; color: var(--success); font-weight: 500; }
+
+/* Credits */
+.credits { margin-bottom: var(--space-6); }
+.credits__list { margin: 0; padding: 0; list-style: none; }
+.credits__item {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--sand-100);
+}
+.credits__item img { flex: none; width: 96px; height: 64px; object-fit: cover; border-radius: var(--radius-sm); }
+.credits__item .photo-credit { font-size: var(--text-sm); }
+
+/* Error pages */
+.error-page {
+    max-width: 560px;
+    margin: var(--space-8) auto;
+    text-align: center;
+}
+.error-page__code {
+    margin: 0;
+    color: var(--sunset-700);
+    font-size: var(--text-hero);
+    font-weight: 700;
+    line-height: 1;
+}
+.error-page .actions { justify-content: center; }

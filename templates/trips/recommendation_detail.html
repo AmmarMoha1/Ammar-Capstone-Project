@@ -1,11 +1,14 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ recommendation.destination.city }} · {{ trip.name }}{% endblock %}
 
 {% block content %}
 <p class="back-link"><a href="{% url 'trips:recommendations' trip.pk %}">← All recommendations</a></p>
 
-<header class="rec-hero">
+{% with photo=recommendation.destination.photo %}
+<header class="rec-hero{% if photo %} rec-hero--photo{% endif %}">
+    {% if photo %}<img class="rec-hero__img" src="{% static photo.wide %}" alt="{{ photo.alt }}" width="1280" height="640">{% endif %}
     <div class="rec-hero__text">
         <p class="rec-hero__rank">#{{ recommendation.rank }} for {{ trip.name }}</p>
         <h1 class="rec-hero__city">{{ recommendation.destination.city }}</h1>
@@ -17,6 +20,8 @@
         <p class="rec-band rec-band--light">{{ band }}</p>
     </div>
 </header>
+{% if photo %}{% include "partials/_photo_credit.html" %}{% endif %}
+{% endwith %}
 
 {% if trip.selected_destination_id == recommendation.destination_id %}
 <p class="message message--success"><span class="message__icon" aria-hidden="true">✓</span> This is the group's final destination.</p>

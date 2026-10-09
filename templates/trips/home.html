@@ -1,19 +1,37 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Decide your group trip{% endblock %}
 
 {% block content %}
 <section class="hero">
-    <p class="eyebrow">Group travel, decided together</p>
-    <h1 class="hero__title">Everyone has a preference. Wajha finds the destination everyone can agree on.</h1>
-    <p class="hero__lead">
-        Create a trip, invite your friends with a code, let everyone add their budget,
-        flight limits and interests — and get destinations ranked for the whole group.
-    </p>
-    <div class="actions">
-        <a class="btn btn--primary btn--large" href="{% url 'accounts:register' %}">Start planning</a>
-        <a class="btn btn--secondary btn--large" href="{% url 'accounts:login' %}">I have an account</a>
+    <div class="hero__text">
+        <p class="eyebrow">Group travel, decided together</p>
+        <h1 class="hero__title">Everyone has a preference. Wajha finds the destination everyone can agree on.</h1>
+        <p class="hero__lead">
+            Create a trip, invite your friends with a code, let everyone add their budget,
+            flight limits and interests, and get destinations ranked for the whole group.
+        </p>
+        <div class="actions">
+            <a class="btn btn--primary btn--large" href="{% url 'accounts:register' %}">Start planning</a>
+            <a class="btn btn--secondary btn--large" href="{% url 'accounts:login' %}">I have an account</a>
+        </div>
     </div>
+
+    <figure class="hero__preview" aria-label="Example of a Wajha recommendation">
+        <img src="{% static 'img/destinations/tbilisi-thumb.webp' %}" alt="Old Tbilisi's houses climbing the hill below Narikala Fortress" width="480" height="320">
+        <figcaption class="preview">
+            <span class="badge badge--accent"><span aria-hidden="true">★</span> Top pick · example</span>
+            <div class="preview__row">
+                <div>
+                    <p class="preview__city">Tbilisi</p>
+                    <p class="muted small">✈ 3.5h · Direct · ≈ 3,200 SAR</p>
+                </div>
+                {% include "partials/_score_ring.html" with score=83 %}
+            </div>
+            <p class="preview__members small">Fits all 4 friends' budgets and flight limits</p>
+        </figcaption>
+    </figure>
 </section>
 
 <section class="steps" aria-labelledby="how-it-works">

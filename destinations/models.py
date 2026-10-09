@@ -2,6 +2,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Q
 
+from .photos import photo_for_city
+
 
 class WeatherType(models.TextChoices):
     COLD = "COLD", "Cold"
@@ -89,6 +91,11 @@ class Destination(models.Model):
 
     def __str__(self):
         return f"{self.city}, {self.country}"
+
+    @property
+    def photo(self):
+        """Bundled static photo details (paths, alt text, credit), or None."""
+        return photo_for_city(self.city)
 
 
 class DestinationClimate(models.Model):

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Recommendations · {{ trip.name }}{% endblock %}
 
@@ -17,7 +18,9 @@
 {% if cards %}
     {% with first=cards.0 %}
     <article class="rec-featured">
-        <div class="rec-featured__band">
+        {% with photo=first.recommendation.destination.photo %}
+        <div class="rec-featured__band{% if photo %} rec-featured__band--photo{% endif %}">
+            {% if photo %}<img class="rec-featured__img" src="{% static photo.wide %}" alt="{{ photo.alt }}" width="1280" height="640">{% endif %}
             <span class="badge badge--accent"><span aria-hidden="true">★</span> Top pick</span>
             <p class="rec-featured__country">{{ first.recommendation.destination.country }}</p>
             <h2 class="rec-featured__city">{{ first.recommendation.destination.city }}</h2>
@@ -41,8 +44,10 @@
                 <p class="warning-line"><span aria-hidden="true">⚠</span> Weak fit for {{ first.match.weak_fit_count }} member{{ first.match.weak_fit_count|pluralize }}</p>
                 {% endif %}
                 <a class="btn btn--primary" href="{% url 'trips:recommendation_detail' trip.pk first.recommendation.destination_id %}">See why it fits</a>
+                {% if photo %}{% include "partials/_photo_credit.html" %}{% endif %}
             </div>
         </div>
+        {% endwith %}
     </article>
     {% endwith %}
 
@@ -51,7 +56,12 @@
         {% for card in cards|slice:"1:" %}
         <li>
             <a class="card card--link rec-card" href="{% url 'trips:recommendation_detail' trip.pk card.recommendation.destination_id %}">
-                <span class="rec-card__rank" aria-hidden="true">#{{ card.recommendation.rank }}</span>
+                <div class="rec-card__media">
+                    {% with photo=card.recommendation.destination.photo %}
+                    {% if photo %}<img class="rec-card__img" src="{% static photo.thumb %}" alt="{{ photo.alt }}" width="480" height="320" loading="lazy">{% endif %}
+                    {% endwith %}
+                    <span class="rec-card__rank" aria-hidden="true">#{{ card.recommendation.rank }}</span>
+                </div>
                 <div class="rec-card__main">
                     <h2 class="rec-card__city">{{ card.recommendation.destination.city }} <span class="muted">{{ card.recommendation.destination.country }}</span></h2>
                     {% include "partials/_trip_facts.html" with match=card.match cost=card.recommendation.estimated_total_cost %}
