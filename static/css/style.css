@@ -158,6 +158,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 ::selection { background: var(--saffron); color: var(--ink); }
 
+/* Keep in-page targets (e.g. #vote) clear of the sticky header. */
+[id] { scroll-margin-top: 96px; }
+
 .muted { color: var(--ink-2); }
 .small { font-size: var(--text-sm); }
 .mono { font-family: var(--mono); letter-spacing: 0.02em; }
@@ -1679,7 +1682,7 @@ input[type="number"], input[type="date"] { direction: ltr; }
 .vote__main h3 { margin: 0 0 var(--space-1); font-size: 1.2rem; }
 .vote__main .score-bar { --bar: var(--pink); margin-bottom: 4px; }
 .vote__main p { margin: 0; }
-.vote__stamp { --stamp-size: 70px; font-size: 0.78rem; }
+.vote__stamp { --stamp-size: 86px; font-size: 0.74rem; padding: 0 6px; }
 .vote form { margin: 0; }
 
 /* --- Shared dates --- */
