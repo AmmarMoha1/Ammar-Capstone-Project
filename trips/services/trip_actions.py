@@ -34,11 +34,31 @@ def create_trip(owner, **fields):
     return trip
 
 
+def clear_recommendations(trip):
+    """Delete saved recommendations because the group changed. Returns how many were removed."""
+    deleted, _ = trip.recommendations.all().delete()
+    return deleted
+
+
+@transaction.atomic
+def save_preferences(form, membership):
+    """Save a member's preference form and clear the trip's now-outdated recommendations.
+
+    Returns the number of recommendations cleared.
+    """
+    preference = form.save(commit=False)
+    preference.trip_member = membership
+    preference.save()
+    form.save_m2m()
+    return clear_recommendations(membership.trip)
+
+
 @transaction.atomic
 def join_trip(user, invite_code):
     """Add `user` to the trip with this invite code.
 
     Returns (trip, joined): joined is False when the user was already a member.
+    A new member clears the trip's recommendations, since they no longer cover everyone.
     Raises TripActionError when the code is unknown, the trip is not planning,
     or the trip is full.
     """
@@ -66,4 +86,5 @@ def join_trip(user, invite_code):
     except IntegrityError:
         # The same user submitted twice at once; the unique constraint kept one row.
         return trip, False
+    clear_recommendations(trip)
     return trip, True

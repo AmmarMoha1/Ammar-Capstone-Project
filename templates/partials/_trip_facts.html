@@ -1,0 +1,10 @@
+{# Key facts for one destination. Pass match (engine GroupMatch), cost and trip. #}
+<ul class="facts">
+    {% if match %}
+    <li><span aria-hidden="true">✈</span> {{ match.option.flight_hours|floatformat:"-1" }}h · {% if match.option.direct %}Direct{% else %}Connecting{% endif %}</li>
+    {% endif %}
+    <li><span aria-hidden="true">◎</span> ≈ {{ cost|floatformat:"0g" }} SAR / person</li>
+    {% if match %}
+    <li><span aria-hidden="true">{% if match.option.weather == "COLD" %}❄{% else %}☀{% endif %}</span> {{ match.option.weather|title }} in {{ trip.start_date|date:"F" }}</li>
+    {% endif %}
+</ul>

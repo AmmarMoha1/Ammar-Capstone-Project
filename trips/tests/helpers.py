@@ -47,3 +47,19 @@ def make_preference(member, budget=4000, hours=5, weather="ANY", direct_only=Fal
     )
     preference.interests.set(make_interest(name) for name in interests)
     return preference
+
+
+def make_catalog_destination(origin, city, daily_cost=450, flight_cost=1500, hours=3.5, direct=True,
+                             weather="COLD", interests=("Food",), country="Testland"):
+    """A destination with a route from `origin`, the same weather in every period, and interests."""
+    from destinations.models import ClimatePeriod, DestinationClimate, RouteProfile
+
+    destination = make_destination(city=city, country=country, country_code="TT", daily_cost=daily_cost)
+    destination.interests.set(make_interest(name) for name in interests)
+    for period in ClimatePeriod.values:
+        DestinationClimate.objects.create(destination=destination, period=period, weather_type=weather)
+    RouteProfile.objects.create(
+        origin_city=origin, destination=destination, flight_duration_hours=hours,
+        direct_available=direct, estimated_flight_cost=flight_cost,
+    )
+    return destination

@@ -232,3 +232,16 @@ def rank_destinations(members, options, nights):
         key=lambda m: (sum(1 for mm in m.member_matches if not mm.fits), m.option.city),
     )
     return ranked, excluded
+
+
+# --- Labels ----------------------------------------------------------------
+
+MATCH_BANDS = [(85, "Excellent match"), (70, "Strong match"), (55, "Fair match"), (0, "Weak match")]
+
+
+def match_band(score):
+    """Text label for a 0-100 score, so meaning never relies on colour alone."""
+    for threshold, label in MATCH_BANDS:
+        if score >= threshold:
+            return label
+    return MATCH_BANDS[-1][1]

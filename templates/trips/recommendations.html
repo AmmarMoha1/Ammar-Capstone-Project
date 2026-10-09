@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendations · {{ trip.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="eyebrow"><a href="{% url 'trips:detail' trip.pk %}">{{ trip.name }}</a></p>
+        <h1>Recommended destinations</h1>
+        <p class="muted">
+            Ranked by Group Match for travelers from {{ trip.departure_city.name }},
+            {{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }} ({{ trip.nights }} night{{ trip.nights|pluralize }}).
+        </p>
+    </div>
+</div>
+
+{% if cards %}
+    {% with first=cards.0 %}
+    <article class="rec-featured">
+        <div class="rec-featured__band">
+            <span class="badge badge--accent"><span aria-hidden="true">★</span> Top pick</span>
+            <p class="rec-featured__country">{{ first.recommendation.destination.country }}</p>
+            <h2 class="rec-featured__city">{{ first.recommendation.destination.city }}</h2>
+        </div>
+        <div class="rec-featured__body">
+            <div class="rec-featured__score">
+                {% include "partials/_score_ring.html" with score=first.recommendation.score size="large" %}
+                <div>
+                    <p class="rec-band">{{ first.band }}</p>
+                    <p class="muted small">Lowest member match: {{ first.recommendation.lowest_member_score|floatformat:0 }}%</p>
+                </div>
+            </div>
+            <div class="rec-featured__details">
+                {% include "partials/_trip_facts.html" with match=first.match cost=first.recommendation.estimated_total_cost %}
+                {% if first.interests %}
+                <ul class="chips" aria-label="Matched interests">
+                    {% for interest in first.interests %}<li class="chip chip--matched"><span aria-hidden="true">✓</span> {{ interest }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+                {% if first.match.weak_fit_count %}
+                <p class="warning-line"><span aria-hidden="true">⚠</span> Weak fit for {{ first.match.weak_fit_count }} member{{ first.match.weak_fit_count|pluralize }}</p>
+                {% endif %}
+                <a class="btn btn--primary" href="{% url 'trips:recommendation_detail' trip.pk first.recommendation.destination_id %}">See why it fits</a>
+            </div>
+        </div>
+    </article>
+    {% endwith %}
+
+    {% if cards|length > 1 %}
+    <ol class="rec-list" start="2">
+        {% for card in cards|slice:"1:" %}
+        <li>
+            <a class="card card--link rec-card" href="{% url 'trips:recommendation_detail' trip.pk card.recommendation.destination_id %}">
+                <span class="rec-card__rank" aria-hidden="true">#{{ card.recommendation.rank }}</span>
+                <div class="rec-card__main">
+                    <h2 class="rec-card__city">{{ card.recommendation.destination.city }} <span class="muted">{{ card.recommendation.destination.country }}</span></h2>
+                    {% include "partials/_trip_facts.html" with match=card.match cost=card.recommendation.estimated_total_cost %}
+                    {% if card.match.weak_fit_count %}
+                    <p class="warning-line"><span aria-hidden="true">⚠</span> Weak fit for {{ card.match.weak_fit_count }} member{{ card.match.weak_fit_count|pluralize }}</p>
+                    {% endif %}
+                </div>
+                <div class="rec-card__score">
+                    <p class="rec-card__percent">{{ card.recommendation.score|floatformat:0 }}%</p>
+                    <div class="score-bar" style="--score: {{ card.recommendation.score }}" aria-hidden="true"><span></span></div>
+                    <p class="muted small">{{ card.band }}</p>
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ol>
+    {% endif %}
+
+{% elif nothing_fits %}
+    <div class="empty-state">
+        <h2 class="empty-state__title">No destination fits everyone</h2>
+        <p>Every destination breaks at least one member's budget, flight limit or direct-flight need. See what is blocking each one below. A member can relax a limit by editing their preferences.</p>
+        <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+    </div>
+
+{% elif can_generate %}
+    <div class="empty-state">
+        <h2 class="empty-state__title">Everyone is ready</h2>
+        {% if is_organizer %}
+        <p>All members have added their preferences. Generate recommendations to see destinations ranked for the whole group.</p>
+        <form method="post" action="{% url 'trips:generate' trip.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn--primary">Generate recommendations</button>
+        </form>
+        {% else %}
+        <p>All members have added their preferences. Waiting for the organizer to generate recommendations.</p>
+        {% endif %}
+    </div>
+
+{% else %}
+    <div class="empty-state">
+        <h2 class="empty-state__title">Not ready yet</h2>
+        <p>Recommendations unlock when the trip has at least {{ trip.MIN_MEMBERS }} members and everyone has added their preferences.</p>
+        <a class="btn btn--secondary" href="{% url 'trips:detail' trip.pk %}">Back to the trip</a>
+    </div>
+{% endif %}
+
+{% if excluded %}
+<details class="excluded">
+    <summary>Didn't fit everyone ({{ excluded|length }})</summary>
+    <p class="muted small">These destinations break at least one member's hard limit. Members are never named.</p>
+    <ul class="excluded__list">
+        {% for match, reasons in excluded %}
+        <li>
+            <strong>{{ match.option.city }}</strong> <span class="muted">≈ {{ match.estimated_cost|floatformat:"0g" }} SAR</span>
+            <span class="excluded__reasons">{{ reasons|join:" · " }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</details>
+{% endif %}
+
+{% if cards or excluded %}
+<p class="muted small price-note">Prices are illustrative estimates per person (return flight plus accommodation, food and local transport), not live prices.</p>
+{% endif %}
+{% endblock %}

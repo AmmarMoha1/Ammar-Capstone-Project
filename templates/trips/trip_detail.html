@@ -30,9 +30,26 @@
                 <p>Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your individual budget.</p>
                 <a class="btn btn--primary" href="{% url 'trips:preferences' trip.pk %}">Add your preferences</a>
             {% else %}
-                {% if can_generate %}
+                {% if top_recommendation %}
+                    <h2 id="next-step-heading">Recommendations are ready</h2>
+                    <p>Top pick: <strong>{{ top_recommendation.destination.city }}</strong> with a {{ top_recommendation.score|floatformat:0 }}% Group Match.</p>
+                    <div class="actions">
+                        <a class="btn btn--primary" href="{% url 'trips:recommendations' trip.pk %}">View recommendations</a>
+                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                    </div>
+                {% elif can_generate %}
                     <h2 id="next-step-heading">Everyone is ready</h2>
-                    <p>{% if is_organizer %}All {{ readiness.total }} members have added their preferences. You can now generate recommendations for the group.{% else %}All {{ readiness.total }} members have added their preferences. Waiting for the organizer to generate recommendations.{% endif %}</p>
+                    {% if is_organizer %}
+                    <p>All {{ readiness.total }} members have added their preferences. Generate recommendations to see destinations ranked for the whole group.</p>
+                    <form method="post" action="{% url 'trips:generate' trip.pk %}" class="actions">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--primary">Generate recommendations</button>
+                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                    </form>
+                    {% else %}
+                    <p>All {{ readiness.total }} members have added their preferences. Waiting for the organizer to generate recommendations.</p>
+                    <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                    {% endif %}
                 {% elif not readiness.has_enough_members %}
                     <h2 id="next-step-heading">Invite your friends</h2>
                     <p>A trip needs at least {{ trip.MIN_MEMBERS }} members before Wajha can recommend destinations. Share the invite code.</p>
@@ -40,7 +57,9 @@
                     <h2 id="next-step-heading">Waiting for {{ readiness.waiting }} member{{ readiness.waiting|pluralize }}</h2>
                     <p>Recommendations unlock once every member has added their preferences.</p>
                 {% endif %}
+                {% if not top_recommendation and not can_generate %}
                 <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                {% endif %}
             {% endif %}
         </section>
         {% endif %}

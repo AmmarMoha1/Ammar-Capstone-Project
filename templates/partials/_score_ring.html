@@ -1,0 +1,4 @@
+{# Group Match ring. Pass score (0-100) and optionally size="large" and tone="dark". #}
+<div class="score-ring{% if size == 'large' %} score-ring--large{% endif %}{% if tone == 'dark' %} score-ring--dark{% endif %}" style="--score: {{ score }}" role="img" aria-label="Group Match {{ score|floatformat:0 }} percent">
+    <span class="score-ring__value">{{ score|floatformat:0 }}<small>%</small></span>
+</div>

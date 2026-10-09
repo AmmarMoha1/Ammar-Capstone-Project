@@ -11,4 +11,11 @@ urlpatterns = [
     path("trips/join/", views.trip_join, name="join"),
     path("trips/<int:pk>/", views.trip_detail, name="detail"),
     path("trips/<int:pk>/preferences/", views.preferences, name="preferences"),
+    path("trips/<int:pk>/recommendations/", views.recommendations, name="recommendations"),
+    path("trips/<int:pk>/recommendations/generate/", views.recommendations_generate, name="generate"),
+    path(
+        "trips/<int:pk>/recommendations/<int:destination_id>/",
+        views.recommendation_detail,
+        name="recommendation_detail",
+    ),
 ]

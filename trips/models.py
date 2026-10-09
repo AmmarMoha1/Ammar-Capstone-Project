@@ -195,3 +195,39 @@ class Preference(models.Model):
 
     def __str__(self):
         return f"Preferences of {self.trip_member}"
+
+
+class Recommendation(models.Model):
+    """A saved, ranked destination for a trip, produced by the matching engine.
+
+    Rows are replaced whenever recommendations are regenerated and deleted whenever
+    the group changes, so they always match the current members and preferences.
+    """
+
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="recommendations")
+    destination = models.ForeignKey(
+        Destination, on_delete=models.PROTECT, related_name="recommendations"
+    )
+    rank = models.PositiveSmallIntegerField()
+    score = models.DecimalField(max_digits=4, decimal_places=1)
+    lowest_member_score = models.DecimalField(max_digits=4, decimal_places=1)
+    estimated_total_cost = models.PositiveIntegerField(help_text="Estimated SAR per person.")
+    generated_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["trip", "rank"]
+        constraints = [
+            models.UniqueConstraint(fields=["trip", "destination"], name="unique_recommendation_destination"),
+            models.UniqueConstraint(fields=["trip", "rank"], name="unique_recommendation_rank"),
+            models.CheckConstraint(condition=Q(rank__gte=1), name="recommendation_rank_positive"),
+            models.CheckConstraint(
+                condition=Q(score__gte=0, score__lte=100), name="recommendation_score_range"
+            ),
+            models.CheckConstraint(
+                condition=Q(lowest_member_score__gte=0, lowest_member_score__lte=100),
+                name="recommendation_lowest_score_range",
+            ),
+        ]
+
+    def __str__(self):
+        return f"#{self.rank} {self.destination.city} for {self.trip} ({self.score}%)"
