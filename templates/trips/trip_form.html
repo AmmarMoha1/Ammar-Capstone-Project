@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}New trip{% endblock %}
+
+{% block content %}
+<section class="form-page card">
+    <h1>Create a trip</h1>
+    <p class="muted">You'll get an invite code to share with your friends.</p>
+
+    <form method="post" class="form" novalidate>
+        {% csrf_token %}
+        {% include "partials/_form_errors.html" %}
+        {% include "partials/_form_field.html" with field=form.name %}
+        {% include "partials/_form_field.html" with field=form.departure_city %}
+        <div class="form-row">
+            {% include "partials/_form_field.html" with field=form.start_date %}
+            {% include "partials/_form_field.html" with field=form.end_date %}
+        </div>
+        <div class="actions">
+            <button type="submit" class="btn btn--primary">Create trip</button>
+            <a class="btn btn--ghost" href="{% url 'trips:my_trips' %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

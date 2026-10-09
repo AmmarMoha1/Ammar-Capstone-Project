@@ -1,16 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}
-Home | Wajha
-{% endblock %}
+{% block title %}Decide your group trip{% endblock %}
 
 {% block content %}
+<section class="hero">
+    <p class="eyebrow">Group travel, decided together</p>
+    <h1 class="hero__title">Everyone has a preference. Wajha finds the destination everyone can agree on.</h1>
+    <p class="hero__lead">
+        Create a trip, invite your friends with a code, let everyone add their budget,
+        flight limits and interests — and get destinations ranked for the whole group.
+    </p>
+    <div class="actions">
+        <a class="btn btn--primary btn--large" href="{% url 'accounts:register' %}">Start planning</a>
+        <a class="btn btn--secondary btn--large" href="{% url 'accounts:login' %}">I have an account</a>
+    </div>
+</section>
 
-<h1>Find a destination everyone can agree on.</h1>
-
-<p>
-    Create a trip, invite your friends, add your preferences,
-    and let Wajha find the best destination for your group.
-</p>
-
+<section class="steps" aria-labelledby="how-it-works">
+    <h2 id="how-it-works">How it works</h2>
+    <ol class="steps__list">
+        <li class="card step">
+            <span class="step__number" aria-hidden="true">1</span>
+            <h3>Create a trip</h3>
+            <p>Pick your departure city and dates. You get an invite code to share.</p>
+        </li>
+        <li class="card step">
+            <span class="step__number" aria-hidden="true">2</span>
+            <h3>Everyone adds preferences</h3>
+            <p>Each friend privately sets a budget, flight limits, weather and interests.</p>
+        </li>
+        <li class="card step">
+            <span class="step__number" aria-hidden="true">3</span>
+            <h3>Decide together</h3>
+            <p>See destinations ranked by Group Match, understand why, and lock in the choice.</p>
+        </li>
+    </ol>
+</section>
 {% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}My trips{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>My trips</h1>
+        <p class="muted">Trips you organize or have joined.</p>
+    </div>
+    <a class="btn btn--primary" href="{% url 'trips:create' %}">New trip</a>
+</div>
+
+{% if trips %}
+<ul class="trip-grid">
+    {% for trip in trips %}
+    <li>
+        <a class="card card--link trip-card" href="{% url 'trips:detail' trip.pk %}">
+            <div class="trip-card__top">
+                {% include "partials/_status_badge.html" %}
+                <span class="muted small">{{ trip.member_count }} member{{ trip.member_count|pluralize }}</span>
+            </div>
+            <h2 class="trip-card__name">{{ trip.name }}</h2>
+            <p class="route">
+                <span class="route__code">{{ trip.departure_city.airport_code }}</span>
+                <span class="route__line" aria-hidden="true">✈</span>
+                <span>{% if trip.selected_destination %}{{ trip.selected_destination.city }}{% else %}To be decided{% endif %}</span>
+            </p>
+            <p class="muted small">{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</p>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    {% url 'trips:create' as create_url %}
+    {% include "partials/_empty_state.html" with title="No trips yet" text="Create a trip and invite your friends with a code." action_url=create_url action_label="Create your first trip" %}
+{% endif %}
+{% endblock %}

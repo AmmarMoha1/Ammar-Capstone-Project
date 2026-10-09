@@ -1,28 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}
-Register | Wajha
-{% endblock %}
+{% block title %}Create account{% endblock %}
 
 {% block content %}
+<section class="auth card">
+    <h1>Create your account</h1>
+    <p class="muted">Plan trips with your friends in a few minutes.</p>
 
-<h1>Create Account</h1>
+    <form method="post" class="form" novalidate>
+        {% csrf_token %}
+        {% include "partials/_form_errors.html" %}
+        {% for field in form %}
+            {% include "partials/_form_field.html" %}
+        {% endfor %}
+        <button type="submit" class="btn btn--primary btn--block">Create account</button>
+    </form>
 
-<form method="post">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">
-        Create Account
-    </button>
-</form>
-
-<p>
-    Already have an account?
-    <a href="{% url 'accounts:login' %}">
-        Login
-    </a>
-</p>
-
+    <p class="auth__switch">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+</section>
 {% endblock %}

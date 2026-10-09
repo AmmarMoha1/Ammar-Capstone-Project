@@ -146,5 +146,5 @@ MAILERS = {
     },
 }
 
-LOGIN_REDIRECT_URL = "trips:home"
+LOGIN_REDIRECT_URL = "trips:my_trips"
 LOGOUT_REDIRECT_URL = "trips:home"

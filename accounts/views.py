@@ -7,7 +7,7 @@ from .forms import RegisterForm
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect("trips:home")
+        return redirect("trips:my_trips")
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -21,7 +21,7 @@ def register(request):
                 "Your account was created successfully."
             )
 
-            return redirect("trips:home")
+            return redirect("trips:my_trips")
 
     else:
         form = RegisterForm()

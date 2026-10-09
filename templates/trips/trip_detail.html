@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trip.name }}{% endblock %}
+
+{% block content %}
+<header class="trip-header card">
+    <div class="trip-header__meta">
+        {% include "partials/_status_badge.html" %}
+        {% if is_organizer %}<span class="tag">Organizer</span>{% else %}<span class="tag">Member</span>{% endif %}
+    </div>
+    <h1>{{ trip.name }}</h1>
+    <p class="route route--large">
+        <span class="route__code">{{ trip.departure_city.airport_code }}</span>
+        <span class="route__line" aria-hidden="true">✈</span>
+        <span>{% if trip.selected_destination %}{{ trip.selected_destination.city }}{% else %}Destination to be decided{% endif %}</span>
+    </p>
+    <p class="muted">
+        From {{ trip.departure_city.name }} ·
+        {{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }} ·
+        {{ trip.nights }} night{{ trip.nights|pluralize }}
+    </p>
+</header>
+
+<div class="trip-layout">
+    <section class="card" aria-labelledby="members-heading">
+        <h2 id="members-heading">Members <span class="muted">({{ members|length }} of {{ trip.MAX_MEMBERS }})</span></h2>
+        <ul class="member-list">
+            {% for member in members %}
+            <li class="member">
+                <span class="avatar avatar--{% cycle 1 2 3 4 5 6 %}" aria-hidden="true">{{ member.user.username|first|upper }}</span>
+                <span class="member__name">{{ member.user.username }}{% if member.user == user %} <span class="muted">(you)</span>{% endif %}</span>
+                {% if member.user_id == trip.owner_id %}<span class="tag">Organizer</span>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% if members|length < trip.MIN_MEMBERS %}
+        <p class="note">A trip needs at least {{ trip.MIN_MEMBERS }} members. Share the invite code to bring your friends in.</p>
+        {% endif %}
+    </section>
+
+    <aside class="ticket" aria-labelledby="invite-heading">
+        <h2 id="invite-heading" class="ticket__label">Invite code</h2>
+        <p class="ticket__code" id="invite-code">{{ trip.invite_code }}</p>
+        <p class="ticket__help">Friends with a Wajha account can join this trip with this code.</p>
+        <button type="button" class="btn btn--secondary btn--small" data-copy-target="invite-code" hidden>Copy code</button>
+    </aside>
+</div>
+{% endblock %}

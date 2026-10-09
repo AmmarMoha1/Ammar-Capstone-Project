@@ -1,0 +1,10 @@
+{% if messages %}
+<div class="messages" role="status">
+    {% for message in messages %}
+    <p class="message message--{{ message.tags|default:'info' }}">
+        <span class="message__icon" aria-hidden="true">{% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}!{% else %}i{% endif %}</span>
+        {{ message }}
+    </p>
+    {% endfor %}
+</div>
+{% endif %}

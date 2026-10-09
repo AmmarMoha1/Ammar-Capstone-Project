@@ -20,3 +20,6 @@ staticfiles/
 .vscode/
 .idea/
 .DS_Store
+
+# Local Claude Code settings
+.claude/settings.local.json
