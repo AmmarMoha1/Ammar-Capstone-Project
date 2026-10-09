@@ -61,7 +61,7 @@ The trip departs from Riyadh, 14–18 January 2027 (4 nights). January is in the
 
 ## Automated tests
 
-`python manage.py test` runs **198 tests**; all passed on the latest run.
+`python manage.py test` runs **206 tests**; all passed on the latest run.
 
 | File | Tests | What they protect |
 |---|---|---|
@@ -76,6 +76,7 @@ The trip departs from Riyadh, 14–18 January 2027 (4 nights). January is in the
 | `destinations/tests.py` | 11 | Catalog loader, catalog constraints, climate periods, bundled photos |
 | `trips/tests/test_pages.py` | 5 | Landing, credits, custom 404 and 403 pages |
 | `trips/tests/test_demo.py` | 5 | Demo data states, repeat runs, protection of real accounts |
+| `accounts/tests.py` | 8 | Registration (hashed password, duplicates, required email), login, logout by POST |
 
 ## Known limitations
 
