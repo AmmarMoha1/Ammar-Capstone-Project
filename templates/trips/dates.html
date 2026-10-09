@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% blocktranslate trimmed with trip=trip.name %}Shared dates · {{ trip }}{% endblocktranslate %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <p class="eyebrow"><a href="{% url 'trips:detail' trip.pk %}">{{ trip.name }}</a></p>
+        <h1>{% translate "Shared dates" %}</h1>
+        <p class="muted">{% blocktranslate trimmed count nights=trip.nights %}Add the dates you're free. Wajha finds when most of you can go for {{ nights }} night.{% plural %}Add the dates you're free. Wajha finds when most of you can go for {{ nights }} nights.{% endblocktranslate %}</p>
+    </div>
+</div>
+
+<div class="dates-layout">
+    <div class="trip-main">
+        <section class="card" aria-labelledby="my-dates-heading">
+            <h2 id="my-dates-heading">{% translate "Your free dates" %}</h2>
+            {% if my_ranges %}
+            <ul class="range-list">
+                {% for range in my_ranges %}
+                <li class="range">
+                    <span class="range__dates">{{ range.start_date|date:"j M" }} – {{ range.end_date|date:"j M Y" }}</span>
+                    {% if trip.is_planning %}
+                    <form method="post" action="{% url 'trips:availability_delete' trip.pk range.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--danger btn--small">{% translate "Remove" %}<span class="visually-hidden"> {{ range.start_date|date:"j M" }} – {{ range.end_date|date:"j M Y" }}</span></button>
+                    </form>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">{% translate "You haven't added any dates yet." %}</p>
+            {% endif %}
+
+            {% if trip.is_planning %}
+                {% if my_ranges|length < max_ranges %}
+                <form method="post" class="form range-form" novalidate>
+                    {% csrf_token %}
+                    {% include "partials/_form_errors.html" %}
+                    <div class="form-row">
+                        {% include "partials/_form_field.html" with field=form.start_date %}
+                        {% include "partials/_form_field.html" with field=form.end_date %}
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn--primary">{% translate "Add dates" %}</button>
+                        <p class="muted small">{% blocktranslate trimmed with max=max_ranges %}Up to {{ max }} ranges.{% endblocktranslate %}</p>
+                    </div>
+                </form>
+                {% else %}
+                <p class="muted small">{% blocktranslate trimmed with max=max_ranges %}You've added the maximum of {{ max }} ranges. Remove one to add another.{% endblocktranslate %}</p>
+                {% endif %}
+            {% endif %}
+        </section>
+
+        <section class="card" aria-labelledby="shared-heading">
+            <h2 id="shared-heading">{% translate "Who has shared" %}</h2>
+            <ul class="chips">
+                {% for member in members %}
+                <li class="chip{% if member.range_count %} chip--matched{% endif %}">
+                    <span aria-hidden="true">{% if member.range_count %}✓{% else %}◷{% endif %}</span>
+                    {{ member.user.username }}
+                    <span class="visually-hidden">{% if member.range_count %}{% translate "Shared" %}{% else %}{% translate "Waiting" %}{% endif %}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <section class="card" aria-labelledby="best-heading">
+        <h2 id="best-heading">{% translate "Best dates for the group" %}</h2>
+        <p class="muted small">{% translate "Each suggestion keeps the trip's length. Ranked by how many members are free, then the earliest date. Only totals are shown." %}</p>
+
+        <div class="window window--current">
+            <div>
+                <p class="pass__label">{% translate "Current trip dates" %}</p>
+                <p class="window__dates">{{ plan.current.start|date:"j M" }} – {{ plan.current.end|date:"j M Y" }}</p>
+            </div>
+            <p class="window__free">{% if plan.current.everyone %}{% translate "Everyone is free" %}{% else %}{% blocktranslate trimmed with available=plan.current.available total=plan.current.total %}{{ available }} of {{ total }} free{% endblocktranslate %}{% endif %}</p>
+        </div>
+
+        {% if plan.suggestions %}
+        <ol class="window-list">
+            {% for window in plan.suggestions %}
+            <li class="window{% if window.everyone %} window--everyone{% endif %}" data-reveal style="--d: {% widthratio forloop.counter0 1 80 %}ms">
+                <span class="window__rank" aria-hidden="true">{{ forloop.counter }}</span>
+                <div class="window__main">
+                    <p class="window__dates">{{ window.start|date:"j M" }} – {{ window.end|date:"j M Y" }}</p>
+                    <span class="score-bar" style="--score: {% widthratio window.available window.total 100 %}" aria-hidden="true"><span></span></span>
+                    <p class="window__free small">{% if window.everyone %}{% translate "Everyone is free" %}{% else %}{% blocktranslate trimmed with available=window.available total=window.total %}{{ available }} of {{ total }} free{% endblocktranslate %}{% endif %}</p>
+                </div>
+                {% if window.start == trip.start_date %}
+                <span class="tag tag--sky">{% translate "Current dates" %}</span>
+                {% elif is_organizer and trip.is_planning %}
+                <a class="btn btn--accent btn--small" href="{% url 'trips:dates_apply' trip.pk window.start|date:'Y-m-d' %}">{% translate "Use these dates" %}</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ol>
+        {% if not is_organizer and trip.is_planning %}<p class="muted small">{% translate "Only the organizer can change the trip dates." %}</p>{% endif %}
+        {% else %}
+        <p class="muted">{% translate "No suggestions yet. They appear once members add their free dates." %}</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,132 +1,157 @@
 {% extends "base.html" %}
+{% load i18n wajha %}
 
 {% block title %}{{ trip.name }}{% endblock %}
 
 {% block content %}
-<header class="trip-header card">
-    <div class="trip-header__meta">
-        {% include "partials/_status_badge.html" %}
-        {% if is_organizer %}<span class="tag">Organizer</span>{% else %}<span class="tag">Member</span>{% endif %}
-    </div>
-    <h1>{{ trip.name }}</h1>
-    <p class="route route--large">
-        <span class="route__code">{{ trip.departure_city.airport_code }}</span>
-        <span class="route__line" aria-hidden="true">✈</span>
-        <span>{% if trip.selected_destination %}{{ trip.selected_destination.city }}{% else %}Destination to be decided{% endif %}</span>
-    </p>
-    <p class="muted">
-        From {{ trip.departure_city.name }} ·
-        {{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }} ·
-        {{ trip.nights }} night{{ trip.nights|pluralize }}
-    </p>
-</header>
+<section class="pass pass--{{ trip.status|lower }}" aria-labelledby="trip-name">
+    <div class="pass__main">
+        <div class="pass__top">
+            <p class="pass__label">{% translate "Wajha boarding pass" %}</p>
+            <div class="pass__meta">
+                {% include "partials/_status_badge.html" %}
+                {% if is_organizer %}<span class="tag tag--yellow">{% translate "Organizer" %}</span>{% else %}<span class="tag tag--sky">{% translate "Member" %}</span>{% endif %}
+            </div>
+        </div>
+        <h1 class="pass__name" id="trip-name">{{ trip.name }}</h1>
 
-{% if trip.status == "DECIDED" %}
-<section class="boarding-pass" aria-labelledby="decision-heading">
-    <div class="boarding-pass__top">
-        <h2 id="decision-heading" class="boarding-pass__label">Final destination</h2>
-        <span class="badge badge--success"><span aria-hidden="true">✓</span> Decided</span>
-    </div>
-    <div class="boarding-pass__route">
-        <div>
-            <p class="boarding-pass__small">From</p>
-            <p class="boarding-pass__place">{{ trip.departure_city.airport_code }}</p>
-            <p class="boarding-pass__small">{{ trip.departure_city.name }}</p>
+        <div class="pass__route">
+            <div>
+                <p class="pass__label">{% translate "From" %}</p>
+                <p class="pass__place">{{ trip.departure_city.airport_code }}</p>
+                <p class="pass__city">{{ trip.departure_city.name|tr }}</p>
+            </div>
+            <div class="pass__line" aria-hidden="true"><span>✈️</span></div>
+            <div>
+                <p class="pass__label">{% translate "To" %}</p>
+                {% if trip.selected_destination %}
+                <p class="pass__place pass__place--city">{{ trip.selected_destination.city|tr }}</p>
+                <p class="pass__city">{{ trip.selected_destination.country|tr }}</p>
+                {% else %}
+                <div class="flaps" data-flaps="TBS CAI GYD SJJ IST" aria-hidden="true"><span class="flap">?</span><span class="flap">?</span><span class="flap">?</span></div>
+                <p class="pass__city">{% translate "Destination to be decided" %}</p>
+                {% endif %}
+            </div>
         </div>
-        <span class="boarding-pass__plane" aria-hidden="true">──✈──</span>
-        <div class="boarding-pass__to">
-            <p class="boarding-pass__small">To</p>
-            <p class="boarding-pass__place">{{ trip.selected_destination.city }}</p>
-            <p class="boarding-pass__small">{{ trip.selected_destination.country }}</p>
-        </div>
+
+        <dl class="pass__details">
+            <div><dt>{% translate "Dates" %}</dt><dd>{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</dd></div>
+            <div><dt>{% translate "Nights" %}</dt><dd>{{ trip.nights }}</dd></div>
+            <div><dt>{% translate "Travelers" %}</dt><dd>{% blocktranslate trimmed with total=readiness.total max=trip.MAX_MEMBERS %}{{ total }} of {{ max }}{% endblocktranslate %}</dd></div>
+            {% if decision %}
+            <div><dt>{% translate "Group Match" %}</dt><dd>{{ decision.score|floatformat:0 }}%</dd></div>
+            <div><dt>{% translate "Est. per person" %}</dt><dd>{% blocktranslate trimmed with amount=decision.estimated_total_cost|floatformat:"0g" %}{{ amount }} SAR{% endblocktranslate %}</dd></div>
+            {% endif %}
+        </dl>
     </div>
-    <dl class="boarding-pass__details">
-        <div><dt>Dates</dt><dd>{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</dd></div>
-        <div><dt>Travelers</dt><dd>{{ readiness.total }}</dd></div>
+
+    <div class="pass__stub">
+        {% if trip.is_planning %}
+        <h2 class="pass__label" id="invite-heading">{% translate "Invite code" %}</h2>
+        <p class="pass__code" id="invite-code">{{ trip.invite_code }}</p>
+        <div class="barcode" aria-hidden="true"></div>
+        <p class="pass__help">{% blocktranslate trimmed %}Friends sign in to Wajha, choose <strong>Join trip</strong> and enter this code.{% endblocktranslate %}</p>
+        <button type="button" class="btn btn--secondary btn--small" data-copy-target="invite-code" data-copied-label="{% translate 'Copied ✓' %}" data-failed-label="{% translate 'Copy failed' %}" hidden>✂ {% translate "Copy code" %}</button>
+        {% elif trip.status == "DECIDED" %}
+        <h2 class="pass__label">{% translate "Final destination" %}</h2>
+        <div class="pass__score">
+            {% if decision %}{% include "partials/_score_ring.html" with score=decision.score size="large" %}{% endif %}
+        </div>
         {% if decision %}
-        <div><dt>Group Match</dt><dd>{{ decision.score|floatformat:0 }}%</dd></div>
-        <div><dt>Est. per person</dt><dd>{{ decision.estimated_total_cost|floatformat:"0g" }} SAR</dd></div>
+        <a class="btn btn--secondary btn--small" href="{% url 'trips:recommendation_detail' trip.pk trip.selected_destination_id %}">{% translate "See why it fits" %}</a>
         {% endif %}
-    </dl>
-    {% if decision %}
-    <a class="btn btn--secondary btn--small boarding-pass__link" href="{% url 'trips:recommendation_detail' trip.pk trip.selected_destination_id %}">See why it fits</a>
-    {% endif %}
+        {% else %}
+        <h2 class="pass__label">{% translate "Cancelled" %}</h2>
+        <p class="pass__help">{% translate "This pass is no longer valid." %}</p>
+        {% endif %}
+    </div>
 </section>
-{% elif trip.status == "CANCELLED" %}
+
+{% if trip.status == "CANCELLED" %}
 <section class="card cancelled-note" aria-labelledby="cancelled-heading">
-    <h2 id="cancelled-heading">This trip was cancelled</h2>
-    <p class="muted">{% if trip.selected_destination %}It was cancelled after the group chose {{ trip.selected_destination.city }}. {% endif %}It stays here for your records, but nothing can be changed.</p>
+    <h2 id="cancelled-heading">{% translate "This trip was cancelled" %}</h2>
+    <p class="muted">{% if trip.selected_destination %}{% blocktranslate trimmed with city=trip.selected_destination.city|tr %}It was cancelled after the group chose {{ city }}.{% endblocktranslate %} {% endif %}{% translate "It stays here for your records, but nothing can be changed." %}</p>
 </section>
 {% endif %}
 
 <div class="trip-layout">
     <div class="trip-main">
         {% if trip.is_planning %}
-        <section class="card next-step{% if not my_membership.has_preferences %} next-step--action{% endif %}" aria-labelledby="next-step-heading">
+        <section class="card next-step{% if not my_membership.has_preferences %} next-step--action{% elif top_recommendation or can_generate %} next-step--ready{% endif %}" aria-labelledby="next-step-heading">
+            <p class="eyebrow">{% translate "Next step" %}</p>
             {% if not my_membership.has_preferences %}
-                <h2 id="next-step-heading">{% if readiness.waiting == 1 and readiness.has_enough_members %}Everyone's waiting on you{% else %}Add your preferences{% endif %}</h2>
-                <p>Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your budget next to your name, only group figures.</p>
-                <a class="btn btn--primary" href="{% url 'trips:preferences' trip.pk %}">Add your preferences</a>
+                <h2 id="next-step-heading">{% if readiness.waiting == 1 and readiness.has_enough_members %}{% translate "Everyone's waiting on you" %}{% else %}{% translate "Add your preferences" %}{% endif %}</h2>
+                <p>{% translate "Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your budget next to your name, only group figures." %}</p>
+                <a class="btn btn--primary" href="{% url 'trips:preferences' trip.pk %}">{% translate "Add your preferences" %}</a>
             {% else %}
                 {% if top_recommendation %}
-                    <h2 id="next-step-heading">Recommendations are ready</h2>
-                    <p>Top pick: <strong>{{ top_recommendation.destination.city }}</strong> with a {{ top_recommendation.score|floatformat:0 }}% Group Match.</p>
+                    <h2 id="next-step-heading">{% translate "Recommendations are ready" %} 🎉</h2>
+                    <p>{% blocktranslate trimmed with city=top_recommendation.destination.city|tr score=top_recommendation.score|floatformat:0 %}Top pick: <strong>{{ city }}</strong> with a {{ score }}% Group Match.{% endblocktranslate %}</p>
+                    {% if votes and votes.options %}
+                    <p class="small">
+                        {% blocktranslate trimmed with voted=votes.voted total=votes.members %}Group vote: {{ voted }} of {{ total }} members voted.{% endblocktranslate %}
+                        {% if votes.leader %}{% blocktranslate trimmed with city=votes.leader.destination.city|tr count counter=votes.leader.vote_count %}Leading: <strong>{{ city }}</strong> ({{ counter }} vote).{% plural %}Leading: <strong>{{ city }}</strong> ({{ counter }} votes).{% endblocktranslate %}{% endif %}
+                        {% if not votes.my_destination_id %}<a href="{% url 'trips:recommendations' trip.pk %}#vote">{% translate "Cast your vote" %}</a>{% endif %}
+                    </p>
+                    {% endif %}
                     <div class="actions">
-                        <a class="btn btn--primary" href="{% url 'trips:recommendations' trip.pk %}">View recommendations</a>
-                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                        <a class="btn btn--accent" href="{% url 'trips:recommendations' trip.pk %}">{% translate "View recommendations" %} <span class="btn__arrow" aria-hidden="true">→</span></a>
+                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">{% translate "Edit your preferences" %}</a>
                     </div>
                 {% elif can_generate %}
-                    <h2 id="next-step-heading">Everyone is ready</h2>
+                    <h2 id="next-step-heading">{% translate "Everyone is ready" %}</h2>
                     {% if is_organizer %}
-                    <p>All {{ readiness.total }} members have added their preferences. Generate recommendations to see destinations ranked for the whole group.</p>
+                    <p>{% blocktranslate trimmed with total=readiness.total %}All {{ total }} members have added their preferences. Generate recommendations to see destinations ranked for the whole group.{% endblocktranslate %}</p>
                     <form method="post" action="{% url 'trips:generate' trip.pk %}" class="actions">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn--primary">Generate recommendations</button>
-                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                        <button type="submit" class="btn btn--accent">{% translate "Generate recommendations" %}</button>
+                        <a class="btn btn--ghost" href="{% url 'trips:preferences' trip.pk %}">{% translate "Edit your preferences" %}</a>
                     </form>
                     {% else %}
-                    <p>All {{ readiness.total }} members have added their preferences. Waiting for the organizer to generate recommendations.</p>
-                    <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                    <p>{% blocktranslate trimmed with total=readiness.total %}All {{ total }} members have added their preferences. Waiting for the organizer to generate recommendations.{% endblocktranslate %}</p>
+                    <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">{% translate "Edit your preferences" %}</a>
                     {% endif %}
                 {% elif not readiness.has_enough_members %}
-                    <h2 id="next-step-heading">Invite your friends</h2>
-                    <p>A trip needs at least {{ trip.MIN_MEMBERS }} members before Wajha can recommend destinations. Share the invite code.</p>
+                    <h2 id="next-step-heading">{% translate "Invite your friends" %}</h2>
+                    <p>{% blocktranslate trimmed with min=trip.MIN_MEMBERS %}A trip needs at least {{ min }} members before Wajha can recommend destinations. Share the invite code.{% endblocktranslate %}</p>
                 {% else %}
-                    <h2 id="next-step-heading">Waiting for {{ readiness.waiting }} member{{ readiness.waiting|pluralize }}</h2>
-                    <p>Recommendations unlock once every member has added their preferences.</p>
+                    <h2 id="next-step-heading">{% blocktranslate trimmed count counter=readiness.waiting %}Waiting for {{ counter }} member{% plural %}Waiting for {{ counter }} members{% endblocktranslate %}</h2>
+                    <p>{% translate "Recommendations unlock once every member has added their preferences." %}</p>
                 {% endif %}
                 {% if not top_recommendation and not can_generate %}
-                <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+                <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">{% translate "Edit your preferences" %}</a>
                 {% endif %}
             {% endif %}
         </section>
         {% endif %}
 
         <section class="card" aria-labelledby="members-heading">
-            <h2 id="members-heading">Members <span class="muted">({{ readiness.total }} of {{ trip.MAX_MEMBERS }})</span></h2>
+            <h2 id="members-heading">{% translate "Members" %} <span class="muted">({% blocktranslate trimmed with total=readiness.total max=trip.MAX_MEMBERS %}{{ total }} of {{ max }}{% endblocktranslate %})</span></h2>
 
             <div class="readiness">
-                <div class="readiness__bar" aria-hidden="true">
-                    {% for member in members %}<span class="readiness__segment{% if member.has_preferences %} is-ready{% endif %}"></span>{% endfor %}
+                <div class="runway" style="--progress: {% if readiness.total %}{% widthratio readiness.ready readiness.total 100 %}{% else %}0{% endif %}" aria-hidden="true">
+                    <div class="runway__fill"></div>
+                    <div class="runway__checkpoints">{% for member in members %}<span{% if member.has_preferences %} class="is-ready"{% endif %}></span>{% endfor %}</div>
+                    <span class="runway__plane">🛫</span>
                 </div>
-                <p class="readiness__label"><strong>{{ readiness.ready }} of {{ readiness.total }}</strong> member{{ readiness.total|pluralize }} ready</p>
+                <p class="readiness__label">{% blocktranslate trimmed count counter=readiness.total with ready=readiness.ready %}<strong>{{ ready }} of {{ counter }}</strong> member ready{% plural %}<strong>{{ ready }} of {{ counter }}</strong> members ready{% endblocktranslate %}</p>
             </div>
 
             <ul class="member-list">
                 {% for member in members %}
-                <li class="member">
-                    <span class="avatar avatar--{% cycle 1 2 3 4 5 6 %}" aria-hidden="true">{{ member.user.username|first|upper }}</span>
+                <li class="member" style="--i: {{ forloop.counter0 }}">
+                    <span class="avatar" aria-hidden="true">{{ member.user.username|first|upper }}</span>
                     <span class="member__name">
-                        {{ member.user.username }}{% if member.user_id == user.id %} <span class="muted">(you)</span>{% endif %}
-                        {% if member.user_id == trip.owner_id %}<span class="tag tag--small">Organizer</span>{% endif %}
+                        {{ member.user.username }}{% if member.user_id == user.id %} <span class="muted">({% translate "you" %})</span>{% endif %}
+                        {% if member.user_id == trip.owner_id %}<br><span class="tag tag--small">{% translate "Organizer" %}</span>{% endif %}
                     </span>
                     {% if member.has_preferences %}
-                    <span class="badge badge--success"><span aria-hidden="true">✓</span> Ready</span>
+                    <span class="stamp stamp--mint">{% translate "Ready" %}</span>
                     {% else %}
-                    <span class="badge badge--warning"><span aria-hidden="true">◷</span> Waiting</span>
+                    <span class="stamp stamp--waiting">{% translate "Waiting" %}</span>
                     {% endif %}
                     {% if is_organizer and trip.is_planning and member.user_id != trip.owner_id %}
-                    <a class="btn btn--danger btn--small" href="{% url 'trips:remove_member' trip.pk member.pk %}">Remove<span class="visually-hidden"> {{ member.user.username }}</span></a>
+                    <a class="btn btn--danger btn--small" href="{% url 'trips:remove_member' trip.pk member.pk %}">{% translate "Remove" %}<span class="visually-hidden"> {{ member.user.username }}</span></a>
                     {% endif %}
                 </li>
                 {% endfor %}
@@ -135,71 +160,83 @@
     </div>
 
     <aside class="trip-side">
-    {% if trip.is_planning %}
-    <section class="ticket" aria-labelledby="invite-heading">
-        <h2 id="invite-heading" class="ticket__label">Invite code</h2>
-        <p class="ticket__code" id="invite-code">{{ trip.invite_code }}</p>
-        <p class="ticket__help">Friends sign in to Wajha, choose <strong>Join trip</strong> and enter this code.</p>
-        <button type="button" class="btn btn--secondary btn--small" data-copy-target="invite-code" hidden>Copy code</button>
-    </section>
-    {% endif %}
-
-    <section class="card summary" aria-labelledby="summary-heading">
-        <h2 id="summary-heading">Group summary</h2>
-        {% if summary.has_data %}
-        <dl class="stats">
-            <div class="stat">
-                <dt>Preferences in</dt>
-                <dd>{{ summary.submitted }} / {{ readiness.total }}</dd>
-            </div>
-            <div class="stat">
-                <dt>Shortest max flight</dt>
-                <dd>{{ summary.shortest_flight_hours|floatformat:"-1" }} h</dd>
-                <p class="stat__note">The longest flight everyone accepts</p>
-            </div>
-            {% if summary.shows_budgets %}
-            <div class="stat">
-                <dt>Group budget limit</dt>
-                <dd>{{ summary.lowest_budget|floatformat:"0g" }} SAR</dd>
-                <p class="stat__note">The lowest budget: no destination can cost more for everyone to go</p>
-            </div>
-            <div class="stat">
-                <dt>Average budget</dt>
-                <dd>{{ summary.average_budget|floatformat:"0g" }} SAR</dd>
+        {% if plan %}
+        <section class="card dates-card" aria-labelledby="dates-heading">
+            <h2 id="dates-heading">{% translate "When can everyone go?" %}</h2>
+            <p class="muted small">{% blocktranslate trimmed with shared=plan.shared total=plan.total %}{{ shared }} of {{ total }} members shared their free dates.{% endblocktranslate %}</p>
+            {% with best=plan.suggestions.0 %}
+            {% if best %}
+            <div class="date-chip">
+                <p class="pass__label">{% translate "Best dates" %}</p>
+                <p class="date-chip__range">{{ best.start|date:"j M" }} – {{ best.end|date:"j M Y" }}</p>
+                <p class="small">{% if best.everyone %}{% translate "Everyone is free" %}{% else %}{% blocktranslate trimmed with available=best.available total=best.total %}{{ available }} of {{ total }} free{% endblocktranslate %}{% endif %}</p>
             </div>
             {% endif %}
-            <div class="stat">
-                <dt>Need direct flights</dt>
-                <dd>{{ summary.direct_only_count }}</dd>
-            </div>
-            <div class="stat">
-                <dt>Average max flight</dt>
-                <dd>{{ summary.average_flight_hours|floatformat:"-1" }} h</dd>
-            </div>
-        </dl>
-        {% if not summary.shows_budgets %}
-        <p class="stat__note">Budget figures appear once {{ budget_threshold }} members have added preferences, so no one's budget can be worked out.</p>
+            {% endwith %}
+            <a class="btn btn--secondary btn--small" href="{% url 'trips:dates' trip.pk %}">{% translate "Share your dates" %}</a>
+        </section>
         {% endif %}
-        <h3 class="summary__subheading">Top interests</h3>
-        <ul class="chips">
-            {% for interest in summary.top_interests %}
-            <li class="chip">{{ interest.name }} <strong>{{ interest.votes }}</strong><span class="visually-hidden"> member{{ interest.votes|pluralize }}</span></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="muted">No preferences yet. The summary fills in as members add theirs.</p>
-        {% endif %}
-    </section>
 
-    {% if is_organizer and trip.status != "CANCELLED" %}
-    <section class="card organizer-actions" aria-labelledby="organizer-heading">
-        <h2 id="organizer-heading">Organizer actions</h2>
-        <div class="actions">
-            {% if trip.is_planning %}<a class="btn btn--secondary btn--small" href="{% url 'trips:edit' trip.pk %}">Edit trip</a>{% endif %}
-            <a class="btn btn--danger btn--small" href="{% url 'trips:cancel' trip.pk %}">Cancel trip</a>
-        </div>
-    </section>
-    {% endif %}
+        <section class="card summary" aria-labelledby="summary-heading">
+            <h2 id="summary-heading">{% translate "Group summary" %}</h2>
+            {% if summary.has_data %}
+            <dl class="stats">
+                <div class="stat">
+                    <dt>{% translate "Preferences in" %}</dt>
+                    <dd>{{ summary.submitted }} / {{ readiness.total }}</dd>
+                </div>
+                <div class="stat">
+                    <dt>{% translate "Shortest max flight" %}</dt>
+                    <dd>{% blocktranslate trimmed with hours=summary.shortest_flight_hours|floatformat:"-1" %}{{ hours }} h{% endblocktranslate %}</dd>
+                    <p class="stat__note">{% translate "The longest flight everyone accepts" %}</p>
+                </div>
+                {% if summary.shows_budgets %}
+                <div class="stat">
+                    <dt>{% translate "Group budget limit" %}</dt>
+                    <dd>{% blocktranslate trimmed with amount=summary.lowest_budget|floatformat:"0g" %}{{ amount }} SAR{% endblocktranslate %}</dd>
+                    <p class="stat__note">{% translate "The lowest budget: no destination can cost more for everyone to go" %}</p>
+                </div>
+                <div class="stat">
+                    <dt>{% translate "Average budget" %}</dt>
+                    <dd>{% blocktranslate trimmed with amount=summary.average_budget|floatformat:"0g" %}{{ amount }} SAR{% endblocktranslate %}</dd>
+                </div>
+                {% endif %}
+                <div class="stat">
+                    <dt>{% translate "Need direct flights" %}</dt>
+                    <dd>{{ summary.direct_only_count }}</dd>
+                </div>
+                <div class="stat">
+                    <dt>{% translate "Average max flight" %}</dt>
+                    <dd>{% blocktranslate trimmed with hours=summary.average_flight_hours|floatformat:"-1" %}{{ hours }} h{% endblocktranslate %}</dd>
+                </div>
+            </dl>
+            {% if not summary.shows_budgets %}
+            <p class="stat__note">{% blocktranslate trimmed with threshold=budget_threshold %}Budget figures appear once {{ threshold }} members have added preferences, so no one's budget can be worked out.{% endblocktranslate %}</p>
+            {% endif %}
+            <h3 class="summary__subheading">{% translate "Top interests" %}</h3>
+            <ul class="interest-bars">
+                {% for interest in summary.top_interests %}
+                <li>
+                    <span>{{ interest.name|tr }}</span>
+                    <span class="score-bar" style="--score: {% widthratio interest.votes summary.submitted 100 %}" aria-hidden="true"><span></span></span>
+                    <b>{{ interest.votes }}<span class="visually-hidden"> {% blocktranslate trimmed count counter=interest.votes %}member{% plural %}members{% endblocktranslate %}</span></b>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">{% translate "No preferences yet. The summary fills in as members add theirs." %}</p>
+            {% endif %}
+        </section>
+
+        {% if is_organizer and trip.status != "CANCELLED" %}
+        <section class="card organizer-actions" aria-labelledby="organizer-heading">
+            <h2 id="organizer-heading">{% translate "Organizer actions" %}</h2>
+            <div class="actions">
+                {% if trip.is_planning %}<a class="btn btn--secondary btn--small" href="{% url 'trips:edit' trip.pk %}">{% translate "Edit trip" %}</a>{% endif %}
+                <a class="btn btn--danger btn--small" href="{% url 'trips:cancel' trip.pk %}">{% translate "Cancel trip" %}</a>
+            </div>
+        </section>
+        {% endif %}
     </aside>
 </div>
 {% endblock %}

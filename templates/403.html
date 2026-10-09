@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Not allowed{% endblock %}
+{% block title %}{% translate "Not allowed" %}{% endblock %}
 
 {% block content %}
 <section class="error-page">
     <p class="error-page__code">403</p>
-    <h1>Only the organizer can do that</h1>
-    <p class="muted">Actions like generating recommendations, choosing the destination, editing, removing members and cancelling are reserved for the trip's organizer.</p>
+    <h1>{% translate "Only the organizer can do that" %}</h1>
+    <p class="muted">{% translate "Actions like generating recommendations, choosing the destination, editing, removing members and cancelling are reserved for the trip's organizer." %}</p>
     <div class="actions">
-        <a class="btn btn--primary" href="{% url 'trips:home' %}">Back to my trips</a>
+        <a class="btn btn--primary" href="{% url 'trips:home' %}">{% translate "Back to my trips" %}</a>
     </div>
 </section>
 {% endblock %}

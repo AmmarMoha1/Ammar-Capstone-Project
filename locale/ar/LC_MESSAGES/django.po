@@ -1,0 +1,1445 @@
+# Arabic translation of Wajha.
+# Catalog values (cities, countries, interests, descriptions, photo text) are translated
+# with the |tr template filter, so they are listed here too.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Wajha\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Wajha"
+msgstr "وجهة"
+
+msgid "Skip to content"
+msgstr "تخطَّ إلى المحتوى"
+
+msgid "Main"
+msgstr "التنقل الرئيسي"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "Wajha — decide your group trip together."
+msgstr "وجهة — قرّروا رحلتكم الجماعية معًا."
+
+msgid "Prices shown are illustrative estimates, not live prices."
+msgstr "الأسعار المعروضة تقديرية للتوضيح، وليست أسعارًا مباشرة."
+
+msgid "Photo and font credits"
+msgstr "حقوق الصور والخطوط"
+
+msgid "My trips"
+msgstr "رحلاتي"
+
+msgid "Join trip"
+msgstr "انضم لرحلة"
+
+msgid "New trip"
+msgstr "رحلة جديدة"
+
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+msgid "Sign up"
+msgstr "إنشاء حساب"
+
+msgid "Not allowed"
+msgstr "غير مسموح"
+
+msgid "Only the organizer can do that"
+msgstr "هذا الإجراء للمنظّم فقط"
+
+msgid "Actions like generating recommendations, choosing the destination, editing, removing members and cancelling are reserved for the trip's organizer."
+msgstr "إنشاء التوصيات واختيار الوجهة وتعديل الرحلة وإزالة الأعضاء وإلغاء الرحلة كلها صلاحيات خاصة بمنظّم الرحلة."
+
+msgid "Back to my trips"
+msgstr "العودة إلى رحلاتي"
+
+msgid "Page not found"
+msgstr "الصفحة غير موجودة"
+
+msgid "We couldn't find that page"
+msgstr "لم نجد هذه الصفحة"
+
+msgid "The link may be wrong, or the trip may not exist. If it's a trip, you need to be a member to see it."
+msgstr "قد يكون الرابط خاطئًا، أو أن الرحلة غير موجودة. وإذا كانت رحلة، فيجب أن تكون عضوًا فيها لتراها."
+
+msgid "Go to my trips"
+msgstr "اذهب إلى رحلاتي"
+
+msgid "Join a trip with a code"
+msgstr "انضم لرحلة بالكود"
+
+msgid "Please try again"
+msgstr "حاول مرة أخرى"
+
+msgid "Your form expired"
+msgstr "انتهت صلاحية النموذج"
+
+msgid "For your security, forms only work for a limited time. Go back, refresh the page and submit again."
+msgstr "لحمايتك، تعمل النماذج لفترة محدودة فقط. ارجع للصفحة السابقة وحدّثها ثم أرسل مرة أخرى."
+
+msgid "Back to Wajha"
+msgstr "العودة إلى وجهة"
+
+msgid "Credits"
+msgstr "الحقوق"
+
+msgid "Wajha uses freely licensed photos and open-source fonts. Thank you to their creators."
+msgstr "تستخدم وجهة صورًا بتراخيص حرة وخطوطًا مفتوحة المصدر. شكرًا لمبدعيها."
+
+msgid "Destination photos"
+msgstr "صور الوجهات"
+
+msgid "Photos are resized and converted to WebP for faster loading; no other changes were made."
+msgstr "تم تصغير الصور وتحويلها إلى صيغة WebP لتحميل أسرع، دون أي تعديل آخر."
+
+msgid "Fonts"
+msgstr "الخطوط"
+
+msgid "Baloo Bhaijaan 2 by The Baloo 2 Project Authors, licensed under the"
+msgstr "خط Baloo Bhaijaan 2 من مؤلفي مشروع Baloo 2، مرخّص بموجب"
+
+msgid "JetBrains Mono by The JetBrains Mono Project Authors, licensed under the"
+msgstr "خط JetBrains Mono من مؤلفي مشروع JetBrains Mono، مرخّص بموجب"
+
+msgid "Photo:"
+msgstr "الصورة:"
+
+msgid "via"
+msgstr "عبر"
+
+msgid "Create account"
+msgstr "إنشاء حساب"
+
+msgid "Wajha boarding pass"
+msgstr "بطاقة صعود وجهة"
+
+msgid "Where are we going?"
+msgstr "وين نروح؟"
+
+msgid "One account, every group trip."
+msgstr "حساب واحد لكل رحلاتكم الجماعية."
+
+msgid "Create your account"
+msgstr "أنشئ حسابك"
+
+msgid "Plan trips with your friends in a few minutes."
+msgstr "خطّط رحلاتك مع أصحابك في دقائق."
+
+msgid "Already have an account?"
+msgstr "عندك حساب؟"
+
+msgid "Your crew is waiting."
+msgstr "الشلة بانتظارك."
+
+msgid "Pick up where your group left off."
+msgstr "كمّل من حيث توقفت مجموعتك."
+
+msgid "Welcome back"
+msgstr "أهلًا بعودتك"
+
+msgid "Log in to see your trips."
+msgstr "سجّل دخولك لتشاهد رحلاتك."
+
+msgid "New to Wajha?"
+msgstr "جديد في وجهة؟"
+
+msgid "Create an account"
+msgstr "أنشئ حسابًا"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "Your account was created successfully."
+msgstr "تم إنشاء حسابك بنجاح."
+
+msgid "Edit trip"
+msgstr "تعديل الرحلة"
+
+msgid "New boarding pass"
+msgstr "بطاقة صعود جديدة"
+
+msgid "Changing the dates or departure city clears any recommendations, because costs, flights and weather change."
+msgstr "تغيير التواريخ أو مدينة المغادرة يمسح التوصيات الحالية، لأن التكاليف والرحلات والطقس تتغير."
+
+msgid "Create a trip"
+msgstr "أنشئ رحلة"
+
+msgid "You'll get an invite code to share with your friends."
+msgstr "ستحصل على كود دعوة تشاركه مع أصحابك."
+
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+msgid "Create trip"
+msgstr "إنشاء الرحلة"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Trip name"
+msgstr "اسم الرحلة"
+
+msgid "Departing from"
+msgstr "المغادرة من"
+
+msgid "Start date"
+msgstr "تاريخ البداية"
+
+msgid "End date"
+msgstr "تاريخ النهاية"
+
+msgid "For example: Winter Getaway."
+msgstr "مثال: رحلة الشتاء."
+
+msgid "Winter Getaway"
+msgstr "رحلة الشتاء"
+
+msgid "Choose a city"
+msgstr "اختر مدينة"
+
+msgid "The start date can't be in the past."
+msgstr "لا يمكن أن يكون تاريخ البداية في الماضي."
+
+msgid "The end date must be after the start date."
+msgstr "يجب أن يكون تاريخ النهاية بعد تاريخ البداية."
+
+msgid "Please check what this will do:"
+msgstr "راجع ما سيحدث:"
+
+msgid "Join a trip"
+msgstr "انضم لرحلة"
+
+msgid "Got a code?"
+msgstr "عندك كود؟"
+
+msgid "Enter the invite code your organizer shared with you."
+msgstr "أدخل كود الدعوة الذي أرسله لك المنظّم."
+
+msgid "Invite code"
+msgstr "كود الدعوة"
+
+msgid "Ask your organizer for the code. It looks like WJ-8K32L."
+msgstr "اطلب الكود من منظّم الرحلة. شكله مثل WJ-8K32L."
+
+msgid "That doesn't look like a Wajha code. Codes look like WJ-8K32L."
+msgstr "هذا لا يبدو كود وجهة. الأكواد تكون بهذا الشكل: WJ-8K32L."
+
+#, python-format
+msgid "Your preferences · %(trip)s"
+msgstr "تفضيلاتك · %(trip)s"
+
+msgid "Edit your preferences"
+msgstr "عدّل تفضيلاتك"
+
+msgid "Add your preferences"
+msgstr "أضف تفضيلاتك"
+
+msgid "Wajha uses everyone's answers to find destinations that fit the whole group."
+msgstr "تستخدم وجهة إجابات الجميع لتجد الوجهات المناسبة للمجموعة كلها."
+
+msgid "Other members never see your budget next to your name, only group figures."
+msgstr "لن يرى الأعضاء الآخرون ميزانيتك باسمك أبدًا، فقط أرقام المجموعة."
+
+msgid "Save preferences"
+msgstr "حفظ التفضيلات"
+
+msgid "What do you want to do there?"
+msgstr "ماذا تحب أن تفعل هناك؟"
+
+msgid "Choose at least one."
+msgstr "اختر واحدًا على الأقل."
+
+msgid "Choose at least one interest."
+msgstr "اختر اهتمامًا واحدًا على الأقل."
+
+msgid "Maximum budget per person (SAR)"
+msgstr "الحد الأعلى للميزانية للشخص (ريال)"
+
+msgid "Longest flight you'll accept (hours)"
+msgstr "أطول رحلة طيران تقبلها (بالساعات)"
+
+msgid "Preferred weather"
+msgstr "الطقس المفضل"
+
+msgid "Direct flights only"
+msgstr "رحلات مباشرة فقط"
+
+msgid "Your total for the whole trip: return flight plus accommodation, food and local transport."
+msgstr "المجموع للرحلة كاملة: تذكرة الذهاب والعودة مع السكن والأكل والمواصلات المحلية."
+
+msgid "One way. Use whole or half hours, e.g. 4 or 5.5."
+msgstr "لاتجاه واحد. استخدم ساعات كاملة أو أنصاف ساعات، مثل 4 أو 5.5."
+
+msgid "Only show destinations with a direct flight from your departure city."
+msgstr "اعرض فقط الوجهات التي لها رحلة مباشرة من مدينة المغادرة."
+
+msgid "Budget must be at least 500 SAR."
+msgstr "يجب ألا تقل الميزانية عن 500 ريال."
+
+msgid "Budget can't be more than 100,000 SAR."
+msgstr "لا يمكن أن تزيد الميزانية عن 100,000 ريال."
+
+msgid "Flight time must be at least 1 hour."
+msgstr "يجب ألا تقل مدة الطيران عن ساعة واحدة."
+
+msgid "Flight time can't be more than 24 hours."
+msgstr "لا يمكن أن تزيد مدة الطيران عن 24 ساعة."
+
+msgid "Use whole or half hours, e.g. 4 or 5.5."
+msgstr "استخدم ساعات كاملة أو أنصاف ساعات، مثل 4 أو 5.5."
+
+msgid "Cold"
+msgstr "بارد"
+
+msgid "Mild"
+msgstr "معتدل"
+
+msgid "Warm"
+msgstr "دافئ"
+
+msgid "Hot"
+msgstr "حار"
+
+msgid "No preference"
+msgstr "بدون تفضيل"
+
+msgid "cold"
+msgstr "بارد"
+
+msgid "mild"
+msgstr "معتدل"
+
+msgid "warm"
+msgstr "دافئ"
+
+msgid "hot"
+msgstr "حار"
+
+msgid "Decide your group trip"
+msgstr "قرّروا رحلتكم الجماعية"
+
+msgid "Group travel, decided together"
+msgstr "سفر جماعي، بقرار مشترك"
+
+msgid "Where are <span class=\"hl\">we</span> going?"
+msgstr "وين <span class=\"hl\">نروح</span>؟"
+
+msgid "Everyone has a preference. Wajha finds the destination everyone can agree on."
+msgstr "كل واحد له رأي، ووجهة تلقى المكان اللي يتفق عليه الكل."
+
+msgid "Create a trip, invite your friends with a code, let everyone privately add their budget, flight limits and interests, and get destinations ranked for the whole group."
+msgstr "أنشئ رحلة، وادعُ أصحابك بكود، وخلّ كل واحد يضيف ميزانيته وحدود الطيران واهتماماته بسرية، واحصل على وجهات مرتبة تناسب المجموعة كلها."
+
+msgid "Start planning"
+msgstr "ابدأ التخطيط"
+
+msgid "I have an account"
+msgstr "عندي حساب"
+
+msgid "Example recommendations"
+msgstr "أمثلة على التوصيات"
+
+msgid "Top pick · example"
+msgstr "الخيار الأول · مثال"
+
+#, python-format
+msgid "%(hours)sh"
+msgstr "%(hours)s س"
+
+#, python-format
+msgid "≈ %(cost)s SAR"
+msgstr "≈ %(cost)s ريال"
+
+msgid "Click the stack to shuffle"
+msgstr "اضغط على البطاقات لتقليبها"
+
+msgid "How it works"
+msgstr "كيف تشتغل؟"
+
+msgid "Tap to flip ↻"
+msgstr "اضغط لقلب البطاقة ↻"
+
+msgid "Pick your departure city and dates. You get an invite code to share."
+msgstr "اختر مدينة المغادرة والتواريخ، وتحصل على كود دعوة تشاركه."
+
+msgid "Everyone adds preferences"
+msgstr "كل واحد يضيف تفضيلاته"
+
+msgid "Each friend privately sets a budget, flight limits, weather and interests."
+msgstr "كل صديق يحدد بسرية ميزانيته وحدود الطيران والطقس واهتماماته."
+
+msgid "Decide together"
+msgstr "قرّروا مع بعض"
+
+msgid "See destinations ranked by Group Match, understand why, and lock in the choice."
+msgstr "شوفوا الوجهات مرتبة حسب توافق المجموعة، وافهموا السبب، وثبّتوا الاختيار."
+
+msgid "The fairness rule"
+msgstr "قاعدة العدل"
+
+msgid "One unhappy friend can't be averaged away."
+msgstr "المتوسط ما يخفي صديقًا غير راضٍ."
+
+msgid "Group Match blends the average with the lowest member's score, so a place everyone likes beats a place most people love."
+msgstr "توافق المجموعة يجمع بين المتوسط وأقل درجة بين الأعضاء، فالمكان الذي يعجب الجميع يتفوق على مكان يحبه أغلبهم فقط."
+
+msgid "Average"
+msgstr "المتوسط"
+
+msgid "Lowest member"
+msgstr "أقل عضو"
+
+msgid "Group Match"
+msgstr "توافق المجموعة"
+
+msgid "0.7 × average + 0.3 × lowest"
+msgstr "0.7 × المتوسط + 0.3 × الأقل"
+
+#, python-format
+msgid "Recommendations · %(trip)s"
+msgstr "التوصيات · %(trip)s"
+
+msgid "Recommended destinations"
+msgstr "الوجهات المقترحة"
+
+#, python-format
+msgid "Ranked by Group Match for travelers from %(city)s, %(start)s – %(end)s (%(nights)s night)."
+msgid_plural "Ranked by Group Match for travelers from %(city)s, %(start)s – %(end)s (%(nights)s nights)."
+msgstr[0] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (%(nights)s ليالٍ)."
+msgstr[1] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (ليلة واحدة)."
+msgstr[2] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (ليلتان)."
+msgstr[3] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (%(nights)s ليالٍ)."
+msgstr[4] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (%(nights)s ليلة)."
+msgstr[5] "مرتبة حسب توافق المجموعة للمسافرين من %(city)s، %(start)s – %(end)s (%(nights)s ليلة)."
+
+msgid "carousel"
+msgstr "عرض دوّار"
+
+msgid "Previous destination"
+msgstr "الوجهة السابقة"
+
+msgid "Next destination"
+msgstr "الوجهة التالية"
+
+msgid "Top pick"
+msgstr "الخيار الأول"
+
+#, python-format
+msgid "#%(rank)s pick"
+msgstr "الخيار رقم %(rank)s"
+
+msgid "Matched interests"
+msgstr "الاهتمامات المتوافقة"
+
+#, python-format
+msgid "Weak fit for %(counter)s member"
+msgid_plural "Weak fit for %(counter)s members"
+msgstr[0] "توافق ضعيف لـ %(counter)s أعضاء"
+msgstr[1] "توافق ضعيف لعضو واحد"
+msgstr[2] "توافق ضعيف لعضوين"
+msgstr[3] "توافق ضعيف لـ %(counter)s أعضاء"
+msgstr[4] "توافق ضعيف لـ %(counter)s عضوًا"
+msgstr[5] "توافق ضعيف لـ %(counter)s عضو"
+
+msgid "See why it fits"
+msgstr "لماذا تناسبكم؟"
+
+#, python-format
+msgid "Choose %(city)s"
+msgstr "اختر %(city)s"
+
+msgid "Lowest member match: %(score)s%%"
+msgstr "أقل توافق بين الأعضاء: %(score)s%%"
+
+msgid "Full ranking"
+msgstr "الترتيب الكامل"
+
+msgid "No destination fits everyone"
+msgstr "لا توجد وجهة تناسب الجميع"
+
+msgid "Every destination breaks at least one member's budget, flight limit or direct-flight need. See what is blocking each one below. A member can relax a limit by editing their preferences."
+msgstr "كل وجهة تتعارض مع ميزانية عضو واحد على الأقل أو حدّه في مدة الطيران أو حاجته لرحلة مباشرة. شاهد سبب استبعاد كل وجهة بالأسفل. يمكن لأي عضو تخفيف حدوده بتعديل تفضيلاته."
+
+msgid "Everyone is ready"
+msgstr "الجميع جاهزون"
+
+msgid "All members have added their preferences. Generate recommendations to see destinations ranked for the whole group."
+msgstr "أضاف جميع الأعضاء تفضيلاتهم. أنشئ التوصيات لتشاهد الوجهات مرتبة حسب ما يناسب المجموعة كلها."
+
+msgid "Generate recommendations"
+msgstr "إنشاء التوصيات"
+
+msgid "All members have added their preferences. Waiting for the organizer to generate recommendations."
+msgstr "أضاف جميع الأعضاء تفضيلاتهم. بانتظار المنظّم لإنشاء التوصيات."
+
+msgid "Not ready yet"
+msgstr "ليست جاهزة بعد"
+
+#, python-format
+msgid "Recommendations unlock when the trip has at least %(min)s members and everyone has added their preferences."
+msgstr "تظهر التوصيات عندما لا يقل عدد أعضاء الرحلة عن %(min)s ويضيف الجميع تفضيلاتهم."
+
+msgid "Back to the trip"
+msgstr "العودة إلى الرحلة"
+
+#, python-format
+msgid "Didn't fit everyone (%(count)s)"
+msgstr "لم تناسب الجميع (%(count)s)"
+
+msgid "These destinations break at least one member's hard limit. Members are never named."
+msgstr "هذه الوجهات تتعارض مع حدٍّ أساسي لعضو واحد على الأقل. لا نذكر أسماء الأعضاء أبدًا."
+
+msgid "No fit"
+msgstr "لا تناسب"
+
+msgid "Prices are illustrative estimates per person (return flight plus accommodation, food and local transport), not live prices."
+msgstr "الأسعار تقديرية للشخص الواحد (تذكرة ذهاب وعودة مع السكن والأكل والمواصلات المحلية)، وليست أسعارًا مباشرة."
+
+msgid "Organizer"
+msgstr "المنظّم"
+
+msgid "Member"
+msgstr "عضو"
+
+msgid "From"
+msgstr "من"
+
+msgid "To"
+msgstr "إلى"
+
+msgid "Destination to be decided"
+msgstr "الوجهة لم تُحدد بعد"
+
+msgid "Dates"
+msgstr "التواريخ"
+
+msgid "Nights"
+msgstr "الليالي"
+
+msgid "Travelers"
+msgstr "المسافرون"
+
+#, python-format
+msgid "%(total)s of %(max)s"
+msgstr "%(total)s من %(max)s"
+
+msgid "Est. per person"
+msgstr "التكلفة التقريبية للشخص"
+
+#, python-format
+msgid "%(amount)s SAR"
+msgstr "%(amount)s ريال"
+
+msgid "Friends sign in to Wajha, choose <strong>Join trip</strong> and enter this code."
+msgstr "يسجّل أصحابك الدخول إلى وجهة، ويختارون <strong>انضم لرحلة</strong>، ثم يدخلون هذا الكود."
+
+msgid "Copied ✓"
+msgstr "تم النسخ ✓"
+
+msgid "Copy failed"
+msgstr "تعذّر النسخ"
+
+msgid "Copy code"
+msgstr "انسخ الكود"
+
+msgid "Final destination"
+msgstr "الوجهة النهائية"
+
+msgid "Planning"
+msgstr "قيد التخطيط"
+
+msgid "Decided"
+msgstr "تم الاختيار"
+
+msgid "Cancelled"
+msgstr "ملغاة"
+
+msgid "All"
+msgstr "الكل"
+
+msgid "This pass is no longer valid."
+msgstr "هذه البطاقة لم تعد صالحة."
+
+msgid "This trip was cancelled"
+msgstr "تم إلغاء هذه الرحلة"
+
+#, python-format
+msgid "It was cancelled after the group chose %(city)s."
+msgstr "أُلغيت بعد أن اختارت المجموعة %(city)s."
+
+msgid "It stays here for your records, but nothing can be changed."
+msgstr "تبقى هنا للرجوع إليها، لكن لا يمكن تغيير أي شيء."
+
+msgid "Next step"
+msgstr "الخطوة التالية"
+
+msgid "Everyone's waiting on you"
+msgstr "الكل بانتظارك"
+
+msgid "Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your budget next to your name, only group figures."
+msgstr "أخبر وجهة بميزانيتك وحدود الطيران والطقس واهتماماتك لهذه الرحلة. لن يرى الأعضاء الآخرون ميزانيتك باسمك أبدًا، فقط أرقام المجموعة."
+
+msgid "Recommendations are ready"
+msgstr "التوصيات جاهزة"
+
+msgid "Top pick: <strong>%(city)s</strong> with a %(score)s%% Group Match."
+msgstr "الخيار الأول: <strong>%(city)s</strong> بتوافق %(score)s%% مع المجموعة."
+
+msgid "View recommendations"
+msgstr "عرض التوصيات"
+
+#, python-format
+msgid "All %(total)s members have added their preferences. Generate recommendations to see destinations ranked for the whole group."
+msgstr "أضاف جميع الأعضاء (%(total)s) تفضيلاتهم. أنشئ التوصيات لتشاهد الوجهات مرتبة حسب ما يناسب المجموعة كلها."
+
+#, python-format
+msgid "All %(total)s members have added their preferences. Waiting for the organizer to generate recommendations."
+msgstr "أضاف جميع الأعضاء (%(total)s) تفضيلاتهم. بانتظار المنظّم لإنشاء التوصيات."
+
+msgid "Invite your friends"
+msgstr "ادعُ أصحابك"
+
+#, python-format
+msgid "A trip needs at least %(min)s members before Wajha can recommend destinations. Share the invite code."
+msgstr "يجب ألا يقل عدد أعضاء الرحلة عن %(min)s قبل أن تقترح وجهة أي وجهات. شارك كود الدعوة."
+
+#, python-format
+msgid "Waiting for %(counter)s member"
+msgid_plural "Waiting for %(counter)s members"
+msgstr[0] "بانتظار %(counter)s أعضاء"
+msgstr[1] "بانتظار عضو واحد"
+msgstr[2] "بانتظار عضوين"
+msgstr[3] "بانتظار %(counter)s أعضاء"
+msgstr[4] "بانتظار %(counter)s عضوًا"
+msgstr[5] "بانتظار %(counter)s عضو"
+
+msgid "Recommendations unlock once every member has added their preferences."
+msgstr "تظهر التوصيات بعد أن يضيف كل الأعضاء تفضيلاتهم."
+
+msgid "Members"
+msgstr "الأعضاء"
+
+#, python-format
+msgid "<strong>%(ready)s of %(counter)s</strong> member ready"
+msgid_plural "<strong>%(ready)s of %(counter)s</strong> members ready"
+msgstr[0] "<strong>%(ready)s من %(counter)s</strong> جاهزون"
+msgstr[1] "<strong>%(ready)s من %(counter)s</strong> جاهز"
+msgstr[2] "<strong>%(ready)s من %(counter)s</strong> جاهزون"
+msgstr[3] "<strong>%(ready)s من %(counter)s</strong> جاهزون"
+msgstr[4] "<strong>%(ready)s من %(counter)s</strong> جاهزون"
+msgstr[5] "<strong>%(ready)s من %(counter)s</strong> جاهزون"
+
+msgid "you"
+msgstr "أنت"
+
+msgid "Ready"
+msgstr "جاهز"
+
+msgid "Waiting"
+msgstr "بالانتظار"
+
+msgid "Remove"
+msgstr "إزالة"
+
+msgid "Group summary"
+msgstr "ملخص المجموعة"
+
+msgid "Preferences in"
+msgstr "التفضيلات المضافة"
+
+msgid "Shortest max flight"
+msgstr "أقصر حد للطيران"
+
+#, python-format
+msgid "%(hours)s h"
+msgstr "%(hours)s ساعة"
+
+msgid "The longest flight everyone accepts"
+msgstr "أطول رحلة يقبلها الجميع"
+
+msgid "Group budget limit"
+msgstr "حد ميزانية المجموعة"
+
+msgid "The lowest budget: no destination can cost more for everyone to go"
+msgstr "أقل ميزانية: لا يمكن لأي وجهة أن تكلف أكثر منها ليذهب الجميع"
+
+msgid "Average budget"
+msgstr "متوسط الميزانية"
+
+msgid "Need direct flights"
+msgstr "يحتاجون رحلة مباشرة"
+
+msgid "Average max flight"
+msgstr "متوسط حد الطيران"
+
+#, python-format
+msgid "Budget figures appear once %(threshold)s members have added preferences, so no one's budget can be worked out."
+msgstr "تظهر أرقام الميزانية بعد أن يضيف %(threshold)s أعضاء تفضيلاتهم، حتى لا يمكن استنتاج ميزانية أي شخص."
+
+msgid "Top interests"
+msgstr "أبرز الاهتمامات"
+
+msgid "member"
+msgid_plural "members"
+msgstr[0] "أعضاء"
+msgstr[1] "عضو"
+msgstr[2] "عضوان"
+msgstr[3] "أعضاء"
+msgstr[4] "عضوًا"
+msgstr[5] "عضو"
+
+msgid "No preferences yet. The summary fills in as members add theirs."
+msgstr "لا توجد تفضيلات بعد. يكتمل الملخص كلما أضاف الأعضاء تفضيلاتهم."
+
+msgid "Organizer actions"
+msgstr "إجراءات المنظّم"
+
+msgid "Cancel trip"
+msgstr "إلغاء الرحلة"
+
+msgid "Your boarding passes"
+msgstr "بطاقات صعودك"
+
+msgid "Trips you organize or have joined."
+msgstr "الرحلات التي تنظمها أو انضممت إليها."
+
+msgid "Join with code"
+msgstr "انضم بالكود"
+
+msgid "Filter trips by status"
+msgstr "تصفية الرحلات حسب الحالة"
+
+#, python-format
+msgid "%(counter)s member"
+msgid_plural "%(counter)s members"
+msgstr[0] "%(counter)s أعضاء"
+msgstr[1] "عضو واحد"
+msgstr[2] "عضوان"
+msgstr[3] "%(counter)s أعضاء"
+msgstr[4] "%(counter)s عضوًا"
+msgstr[5] "%(counter)s عضو"
+
+msgid "To be decided"
+msgstr "لم تُحدد بعد"
+
+#, python-format
+msgid "<strong>%(ready)s of %(total)s</strong> ready"
+msgstr "<strong>%(ready)s من %(total)s</strong> جاهزون"
+
+msgid "No trips here"
+msgstr "لا توجد رحلات هنا"
+
+msgid "None of your trips have this status."
+msgstr "لا توجد لديك رحلات بهذه الحالة."
+
+msgid "Show all trips"
+msgstr "عرض كل الرحلات"
+
+msgid "No trips yet"
+msgstr "لا توجد رحلات بعد"
+
+msgid "Create a trip and invite your friends, or join a friend's trip with their invite code."
+msgstr "أنشئ رحلة وادعُ أصحابك، أو انضم لرحلة صديق بكود الدعوة."
+
+msgid "Create your first trip"
+msgstr "أنشئ رحلتك الأولى"
+
+msgid "All recommendations"
+msgstr "كل التوصيات"
+
+#, python-format
+msgid "#%(rank)s for %(trip)s"
+msgstr "رقم %(rank)s في %(trip)s"
+
+msgid "This is the group's final destination."
+msgstr "هذه هي الوجهة النهائية للمجموعة."
+
+#, python-format
+msgid "<strong>Happy with %(city)s?</strong> As organizer, you make the final choice for the group."
+msgstr "<strong>راضٍ عن %(city)s؟</strong> بصفتك المنظّم، أنت من يتخذ القرار النهائي للمجموعة."
+
+msgid "Only the organizer can choose the final destination."
+msgstr "المنظّم فقط يمكنه اختيار الوجهة النهائية."
+
+msgid "Why it fits the group"
+msgstr "لماذا تناسب المجموعة"
+
+msgid "Met:"
+msgstr "متحقق:"
+
+msgid "Partly met:"
+msgstr "متحقق جزئيًا:"
+
+msgid "Score breakdown"
+msgstr "تفصيل الدرجة"
+
+msgid "Group average for each factor. The weight is how much it counts towards each member's score."
+msgstr "متوسط المجموعة في كل عامل. الوزن هو مقدار تأثيره في درجة كل عضو."
+
+msgid "Member compatibility"
+msgstr "توافق الأعضاء"
+
+msgid "Group Match = 70%% of the average + 30%% of the lowest member, so nobody is left out."
+msgstr "توافق المجموعة = 70%% من المتوسط + 30%% من أقل عضو، حتى لا يُهمَل أحد."
+
+msgid "lowest"
+msgstr "الأقل"
+
+msgid "Details unavailable"
+msgstr "التفاصيل غير متاحة"
+
+msgid "This destination's catalog data changed after the recommendations were generated, so the breakdown can't be shown. The saved Group Match above is unchanged."
+msgstr "تغيّرت بيانات هذه الوجهة بعد إنشاء التوصيات، لذلك لا يمكن عرض التفصيل. توافق المجموعة المحفوظ أعلاه لم يتغير."
+
+msgid "Prices are illustrative estimates per person, not live prices."
+msgstr "الأسعار تقديرية للشخص الواحد، وليست أسعارًا مباشرة."
+
+#, python-format
+msgid "Cold in %(month)s"
+msgstr "بارد في %(month)s"
+
+#, python-format
+msgid "Mild in %(month)s"
+msgstr "معتدل في %(month)s"
+
+#, python-format
+msgid "Warm in %(month)s"
+msgstr "دافئ في %(month)s"
+
+#, python-format
+msgid "Hot in %(month)s"
+msgstr "حار في %(month)s"
+
+msgid "Direct"
+msgstr "مباشرة"
+
+msgid "Connecting"
+msgstr "غير مباشرة"
+
+#, python-format
+msgid "≈ %(cost)s SAR / person"
+msgstr "≈ %(cost)s ريال للشخص"
+
+#, python-format
+msgid "Group Match %(score)s percent"
+msgstr "توافق المجموعة %(score)s بالمئة"
+
+msgid "Match"
+msgstr "توافق"
+
+msgid "Interests"
+msgstr "الاهتمامات"
+
+msgid "Budget comfort"
+msgstr "راحة الميزانية"
+
+msgid "Weather"
+msgstr "الطقس"
+
+msgid "Flight comfort"
+msgstr "راحة الطيران"
+
+msgid "Direct flight"
+msgstr "رحلة مباشرة"
+
+msgid "Members can still open the trip, but nothing can be changed afterwards."
+msgstr "يستطيع الأعضاء فتح الرحلة، لكن لا يمكن تغيير أي شيء بعد ذلك."
+
+msgid "No one can join, edit preferences or generate recommendations."
+msgstr "لن يتمكن أحد من الانضمام أو تعديل التفضيلات أو إنشاء التوصيات."
+
+msgid "This can't be undone."
+msgstr "لا يمكن التراجع عن هذا."
+
+msgid "Only a trip that is still being planned can be edited."
+msgstr "لا يمكن تعديل الرحلة إلا وهي قيد التخطيط."
+
+msgid "This trip is already cancelled."
+msgstr "هذه الرحلة ملغاة بالفعل."
+
+msgid "Keep trip"
+msgstr "إبقاء الرحلة"
+
+msgid "Preferences can only be changed while the trip is being planned."
+msgstr "لا يمكن تغيير التفضيلات إلا والرحلة قيد التخطيط."
+
+msgid "No destination fits everyone yet. See what is blocking each one below."
+msgstr "لا توجد وجهة تناسب الجميع حتى الآن. شاهد ما يمنع كل وجهة بالأسفل."
+
+msgid "Only a trip that is still being planned can be decided."
+msgstr "لا يمكن حسم الوجهة إلا والرحلة قيد التخطيط."
+
+msgid "Not yet"
+msgstr "ليس الآن"
+
+msgid "This member can't be removed."
+msgstr "لا يمكن إزالة هذا العضو."
+
+msgid "Keep member"
+msgstr "إبقاء العضو"
+
+msgid "Trip details were updated."
+msgstr "تم تحديث تفاصيل الرحلة."
+
+#, python-format
+msgid "The decision for %(city)s stays on record as cancelled."
+msgstr "سيبقى قرار اختيار %(city)s في السجل كرحلة ملغاة."
+
+#, python-format
+msgid "Cancel %(trip)s?"
+msgstr "إلغاء %(trip)s؟"
+
+msgid "Your preferences were saved."
+msgstr "تم حفظ تفضيلاتك."
+
+#, python-format
+msgid "Recommendations are ready: %(count)d destination fits everyone."
+msgid_plural "Recommendations are ready: %(count)d destinations fit everyone."
+msgstr[0] "التوصيات جاهزة: %(count)d وجهات تناسب الجميع."
+msgstr[1] "التوصيات جاهزة: وجهة واحدة تناسب الجميع."
+msgstr[2] "التوصيات جاهزة: وجهتان تناسبان الجميع."
+msgstr[3] "التوصيات جاهزة: %(count)d وجهات تناسب الجميع."
+msgstr[4] "التوصيات جاهزة: %(count)d وجهة تناسب الجميع."
+msgstr[5] "التوصيات جاهزة: %(count)d وجهة تناسب الجميع."
+
+#, python-format
+msgid "Choose %(city)s for %(trip)s?"
+msgstr "اختيار %(city)s لرحلة %(trip)s؟"
+
+msgid "The trip becomes Decided and is locked: no more joining, preference changes or new recommendations."
+msgstr "تصبح الرحلة محسومة ومقفلة: لا انضمام جديد ولا تعديل للتفضيلات ولا توصيات جديدة."
+
+msgid "All members will see the decision in the Trip Room."
+msgstr "سيرى جميع الأعضاء القرار في غرفة الرحلة."
+
+#, python-format
+msgid "Remove %(name)s from %(trip)s?"
+msgstr "إزالة %(name)s من %(trip)s؟"
+
+msgid "Their preferences for this trip will be deleted."
+msgstr "ستُحذف تفضيلاته لهذه الرحلة."
+
+msgid "Current recommendations will be cleared."
+msgstr "ستُمسح التوصيات الحالية."
+
+#, python-format
+msgid "Remove %(name)s"
+msgstr "إزالة %(name)s"
+
+#, python-format
+msgid "Trip created. Share the code %(code)s with your friends."
+msgstr "تم إنشاء الرحلة. شارك الكود %(code)s مع أصحابك."
+
+msgid "Recommendations were cleared because the dates or departure city changed."
+msgstr "تم مسح التوصيات لأن التواريخ أو مدينة المغادرة تغيّرت."
+
+#, python-format
+msgid "%(trip)s was cancelled."
+msgstr "تم إلغاء %(trip)s."
+
+msgid "Recommendations were cleared because the group's preferences changed."
+msgstr "تم مسح التوصيات لأن تفضيلات المجموعة تغيّرت."
+
+#, python-format
+msgid "Decision saved: %(city)s it is!"
+msgstr "تم حفظ القرار: %(city)s هي وجهتكم!"
+
+msgid "%(city)s becomes the group's destination, with a %(score)s%% Group Match."
+msgstr "تصبح %(city)s وجهة المجموعة بتوافق %(score)s%%."
+
+#, python-format
+msgid "%(name)s was removed from the trip."
+msgstr "تمت إزالة %(name)s من الرحلة."
+
+msgid "Recommendations were cleared because the group changed."
+msgstr "تم مسح التوصيات لأن المجموعة تغيّرت."
+
+#, python-format
+msgid "%(name)s will lose access to this trip."
+msgstr "سيفقد %(name)s الوصول إلى هذه الرحلة."
+
+#, python-format
+msgid "%(name)s can rejoin with the invite code while the trip is still being planned."
+msgstr "يستطيع %(name)s الانضمام مجددًا بكود الدعوة ما دامت الرحلة قيد التخطيط."
+
+#, python-format
+msgid "You joined %(trip)s. Next, add your preferences."
+msgstr "انضممت إلى %(trip)s. الخطوة التالية: أضف تفضيلاتك."
+
+#, python-format
+msgid "You're already a member of %(trip)s."
+msgstr "أنت عضو في %(trip)s بالفعل."
+
+msgid "Recommendations need at least 2 members, and every member must add their preferences first."
+msgstr "تحتاج التوصيات إلى عضوين على الأقل، ويجب أن يضيف كل عضو تفضيلاته أولًا."
+
+#, python-format
+msgid "Over budget for %(count)d member"
+msgid_plural "Over budget for %(count)d members"
+msgstr[0] "تتجاوز ميزانية %(count)d أعضاء"
+msgstr[1] "تتجاوز ميزانية عضو واحد"
+msgstr[2] "تتجاوز ميزانية عضوين"
+msgstr[3] "تتجاوز ميزانية %(count)d أعضاء"
+msgstr[4] "تتجاوز ميزانية %(count)d عضوًا"
+msgstr[5] "تتجاوز ميزانية %(count)d عضو"
+
+#, python-format
+msgid "Flight too long for %(count)d member"
+msgid_plural "Flight too long for %(count)d members"
+msgstr[0] "الطيران أطول من حد %(count)d أعضاء"
+msgstr[1] "الطيران أطول من حد عضو واحد"
+msgstr[2] "الطيران أطول من حد عضوين"
+msgstr[3] "الطيران أطول من حد %(count)d أعضاء"
+msgstr[4] "الطيران أطول من حد %(count)d عضوًا"
+msgstr[5] "الطيران أطول من حد %(count)d عضو"
+
+#, python-format
+msgid "No direct flight (%(count)d member needs one)"
+msgid_plural "No direct flight (%(count)d members need one)"
+msgstr[0] "لا توجد رحلة مباشرة (يحتاجها %(count)d أعضاء)"
+msgstr[1] "لا توجد رحلة مباشرة (يحتاجها عضو واحد)"
+msgstr[2] "لا توجد رحلة مباشرة (يحتاجها عضوان)"
+msgstr[3] "لا توجد رحلة مباشرة (يحتاجها %(count)d أعضاء)"
+msgstr[4] "لا توجد رحلة مباشرة (يحتاجها %(count)d عضوًا)"
+msgstr[5] "لا توجد رحلة مباشرة (يحتاجها %(count)d عضو)"
+
+#, python-format
+msgid "Fits everyone's budget: about %(cost)s SAR per person"
+msgstr "تناسب ميزانية الجميع: حوالي %(cost)s ريال للشخص"
+
+#, python-format
+msgid "Within everyone's maximum flight time (%(hours)s hours)"
+msgstr "ضمن أقصى مدة طيران يقبلها الجميع (%(hours)s ساعة)"
+
+msgid "Connecting flight (no one in the group requires a direct flight)"
+msgstr "رحلة غير مباشرة (لا أحد في المجموعة يشترط رحلة مباشرة)"
+
+msgid ", "
+msgstr "، "
+
+msgid "Doesn't match anyone's selected interests"
+msgstr "لا تطابق اهتمامات أي عضو"
+
+#, python-format
+msgid "Typically %(weather)s in %(month)s: suits %(count)s of %(total)s members"
+msgstr "الطقس عادةً %(weather)s في %(month)s: يناسب %(count)s من أصل %(total)s"
+
+#, python-format
+msgid "Direct flight from %(city)s"
+msgstr "رحلة مباشرة من %(city)s"
+
+#, python-format
+msgid "Matches interests for %(count)s of %(total)s members: %(top)s"
+msgstr "تطابق اهتمامات %(count)s من أصل %(total)s: %(top)s"
+
+msgid "No trip uses that code. Check it with your organizer."
+msgstr "لا توجد رحلة بهذا الكود. تأكد منه مع المنظّم."
+
+msgid "This trip is cancelled and no longer accepts new members."
+msgstr "هذه الرحلة ملغاة ولم تعد تقبل أعضاء جددًا."
+
+msgid "You can only choose one of this trip's current recommendations."
+msgstr "يمكنك اختيار واحدة فقط من التوصيات الحالية لهذه الرحلة."
+
+msgid "Members can only be changed while the trip is being planned."
+msgstr "لا يمكن تغيير الأعضاء إلا والرحلة قيد التخطيط."
+
+msgid "The organizer can't be removed from their own trip."
+msgstr "لا يمكن إزالة المنظّم من رحلته."
+
+msgid "This trip is decided and no longer accepts new members."
+msgstr "تم حسم وجهة هذه الرحلة ولم تعد تقبل أعضاء جددًا."
+
+#, python-format
+msgid "This trip is full. A trip can have up to %(max)d members."
+msgstr "هذه الرحلة مكتملة. الحد الأقصى للرحلة %(max)d أعضاء."
+
+msgid "Excellent match"
+msgstr "توافق ممتاز"
+
+msgid "Strong match"
+msgstr "توافق قوي"
+
+msgid "Fair match"
+msgstr "توافق مقبول"
+
+msgid "Weak match"
+msgstr "توافق ضعيف"
+
+msgid "Riyadh"
+msgstr "الرياض"
+
+msgid "Jeddah"
+msgstr "جدة"
+
+msgid "Dammam"
+msgstr "الدمام"
+
+msgid "Nature"
+msgstr "الطبيعة"
+
+msgid "Food"
+msgstr "الأكل"
+
+msgid "Culture"
+msgstr "الثقافة"
+
+msgid "Shopping"
+msgstr "التسوق"
+
+msgid "Nightlife"
+msgstr "الحياة الليلية"
+
+msgid "Beaches"
+msgstr "الشواطئ"
+
+msgid "Adventure"
+msgstr "المغامرة"
+
+msgid "Cairo"
+msgstr "القاهرة"
+
+msgid "Egypt"
+msgstr "مصر"
+
+msgid "Baku"
+msgstr "باكو"
+
+msgid "Azerbaijan"
+msgstr "أذربيجان"
+
+msgid "Tbilisi"
+msgstr "تبليسي"
+
+msgid "Georgia"
+msgstr "جورجيا"
+
+msgid "Dubai"
+msgstr "دبي"
+
+msgid "United Arab Emirates"
+msgstr "الإمارات العربية المتحدة"
+
+msgid "Istanbul"
+msgstr "إسطنبول"
+
+msgid "Türkiye"
+msgstr "تركيا"
+
+msgid "Trabzon"
+msgstr "طرابزون"
+
+msgid "Sarajevo"
+msgstr "سراييفو"
+
+msgid "Bosnia and Herzegovina"
+msgstr "البوسنة والهرسك"
+
+msgid "Vienna"
+msgstr "فيينا"
+
+msgid "Austria"
+msgstr "النمسا"
+
+msgid "Prague"
+msgstr "براغ"
+
+msgid "Czechia"
+msgstr "التشيك"
+
+msgid "Kuala Lumpur"
+msgstr "كوالالمبور"
+
+msgid "Malaysia"
+msgstr "ماليزيا"
+
+msgid "Bali"
+msgstr "بالي"
+
+msgid "Indonesia"
+msgstr "إندونيسيا"
+
+msgid "Malé"
+msgstr "ماليه"
+
+msgid "Maldives"
+msgstr "جزر المالديف"
+
+msgid "Ancient wonders, lively markets and a famous food scene along the Nile."
+msgstr "عجائب أثرية وأسواق نابضة بالحياة ومطبخ شهير على ضفاف النيل."
+
+msgid "A Caspian capital mixing a medieval old city with modern skyline and great food."
+msgstr "عاصمة على بحر قزوين تجمع بين مدينة قديمة من العصور الوسطى وأفق حديث وأكل رائع."
+
+msgid "Hillside old town, sulphur baths and easy day trips into the Caucasus mountains."
+msgstr "بلدة قديمة على التلال، وحمّامات كبريتية، ورحلات يومية سهلة إلى جبال القوقاز."
+
+msgid "Short-hop city break with malls, beaches, desert trips and dining."
+msgstr "عطلة قريبة فيها مراكز تسوق وشواطئ ورحلات صحراوية ومطاعم."
+
+msgid "Two continents, grand mosques, bazaars and one of the world's great food cities."
+msgstr "قارتان، ومساجد عظيمة، وأسواق، وواحدة من أشهر مدن الأكل في العالم."
+
+msgid "Green Black Sea highlands, mountain lakes and misty plateau villages."
+msgstr "مرتفعات خضراء على البحر الأسود، وبحيرات جبلية، وقرى هضاب يلفّها الضباب."
+
+msgid "Ottoman and European heritage surrounded by forested mountains and rivers."
+msgstr "تراث عثماني وأوروبي تحيط به جبال مكسوّة بالغابات وأنهار."
+
+msgid "Imperial palaces, coffee houses and classical culture in a very walkable city."
+msgstr "قصور إمبراطورية ومقاهٍ عريقة وثقافة كلاسيكية في مدينة يسهل التجول فيها مشيًا."
+
+msgid "Fairytale old town, castle views and a lively evening atmosphere."
+msgstr "بلدة قديمة كأنها من الحكايات، وإطلالات على القلعة، وأجواء مسائية حيوية."
+
+msgid "Street food, huge malls and rainforest escapes close to the city."
+msgstr "أكل شوارع، ومراكز تسوق ضخمة، وغابات مطيرة قريبة من المدينة."
+
+msgid "Rice terraces, temples, surf beaches and volcano sunrise hikes."
+msgstr "مدرجات أرز، ومعابد، وشواطئ لركوب الأمواج، وصعود البركان لمشاهدة الشروق."
+
+msgid "Island resorts, clear lagoons and some of the world's best snorkelling."
+msgstr "منتجعات على الجزر، وبحيرات صافية، ومن أفضل أماكن الغطس السطحي في العالم."
+
+msgid "The Nile running through central Cairo, with river boats and high-rise buildings along the bank"
+msgstr "نهر النيل يمر وسط القاهرة، مع قوارب نهرية ومبانٍ شاهقة على الضفة"
+
+msgid "Rooftops of Baku's old city with the three Flame Towers on the skyline"
+msgstr "أسطح مدينة باكو القديمة وأبراج اللهب الثلاثة في الأفق"
+
+msgid "Old Tbilisi's houses climbing the hill below Narikala Fortress, above the river"
+msgstr "بيوت تبليسي القديمة تصعد التل أسفل قلعة ناريكالا فوق النهر"
+
+msgid "Dubai Marina's cluster of skyscrapers rising above the water"
+msgstr "ناطحات سحاب دبي مارينا ترتفع فوق الماء"
+
+msgid "Galata Tower above waterfront buildings, seen across the water in Istanbul"
+msgstr "برج غلطة فوق المباني المطلة على الماء في إسطنبول"
+
+msgid "Uzungöl lake and town in a green mountain valley near Trabzon"
+msgstr "بحيرة وبلدة أوزنجول في وادٍ جبلي أخضر قرب طرابزون"
+
+msgid "Red-roofed houses of Sarajevo filling the valley, with the river and green hills"
+msgstr "بيوت سراييفو ذات الأسقف الحمراء تملأ الوادي، مع النهر والتلال الخضراء"
+
+msgid "The yellow façade of Schönbrunn Palace in Vienna under a clear sky"
+msgstr "الواجهة الصفراء لقصر شونبرون في فيينا تحت سماء صافية"
+
+msgid "Charles Bridge crossing the Vltava river towards Prague's old town"
+msgstr "جسر تشارلز يعبر نهر فلتافا نحو بلدة براغ القديمة"
+
+msgid "The Petronas Twin Towers rising above Kuala Lumpur at dusk"
+msgstr "برجا بتروناس التوأم يرتفعان فوق كوالالمبور عند الغروب"
+
+msgid "Palm trees and terraced rice fields on a green hillside in Bali"
+msgstr "أشجار نخيل وحقول أرز مدرّجة على تلة خضراء في بالي"
+
+msgid "A small palm-covered island in a shallow turquoise lagoon in the Maldives"
+msgstr "جزيرة صغيرة مغطاة بالنخيل في بحيرة فيروزية ضحلة في جزر المالديف"
+
+msgid "Group vote"
+msgstr "تصويت المجموعة"
+
+msgid "Which of the top 3 do you prefer?"
+msgstr "أي وجهة تفضّل من أفضل 3؟"
+
+msgid "One vote each, and you can change it. Only totals are shown, never who voted for what. The organizer makes the final choice."
+msgstr "لكل عضو صوت واحد ويمكنه تغييره. تظهر المجاميع فقط، ولا يظهر من صوّت لأي وجهة. القرار النهائي للمنظّم."
+
+#, python-format
+msgid "<strong>%(voted)s of %(total)s</strong> voted"
+msgstr "صوّت <strong>%(voted)s من %(total)s</strong>"
+
+msgid "Leading"
+msgstr "في الصدارة"
+
+#, python-format
+msgid "%(counter)s vote"
+msgid_plural "%(counter)s votes"
+msgstr[0] "%(counter)s أصوات"
+msgstr[1] "صوت واحد"
+msgstr[2] "صوتان"
+msgstr[3] "%(counter)s أصوات"
+msgstr[4] "%(counter)s صوتًا"
+msgstr[5] "%(counter)s صوت"
+
+msgid "%(score)s%% Group Match"
+msgstr "توافق المجموعة %(score)s%%"
+
+msgid "Your vote"
+msgstr "صوتك"
+
+msgid "Change vote"
+msgstr "غيّر صوتك"
+
+msgid "Vote"
+msgstr "صوّت"
+
+#, python-format
+msgid "Group vote: %(voted)s of %(total)s members voted."
+msgstr "تصويت المجموعة: صوّت %(voted)s من %(total)s."
+
+#, python-format
+msgid "Leading: <strong>%(city)s</strong> (%(counter)s vote)."
+msgid_plural "Leading: <strong>%(city)s</strong> (%(counter)s votes)."
+msgstr[0] "في الصدارة: <strong>%(city)s</strong> (%(counter)s أصوات)."
+msgstr[1] "في الصدارة: <strong>%(city)s</strong> (صوت واحد)."
+msgstr[2] "في الصدارة: <strong>%(city)s</strong> (صوتان)."
+msgstr[3] "في الصدارة: <strong>%(city)s</strong> (%(counter)s أصوات)."
+msgstr[4] "في الصدارة: <strong>%(city)s</strong> (%(counter)s صوتًا)."
+msgstr[5] "في الصدارة: <strong>%(city)s</strong> (%(counter)s صوت)."
+
+msgid "Cast your vote"
+msgstr "صوّت الآن"
+
+#, python-format
+msgid "Your vote for %(city)s was saved."
+msgstr "تم حفظ صوتك لـ %(city)s."
+
+msgid "Voting is closed because the trip is no longer being planned."
+msgstr "انتهى التصويت لأن الرحلة لم تعد قيد التخطيط."
+
+msgid "You can only vote for one of the top 3 recommendations."
+msgstr "يمكنك التصويت فقط لإحدى أفضل 3 توصيات."
+
+msgid "When can everyone go?"
+msgstr "متى يقدر الكل يسافر؟"
+
+#, python-format
+msgid "%(shared)s of %(total)s members shared their free dates."
+msgstr "شارك %(shared)s من %(total)s أوقات فراغهم."
+
+msgid "Best dates"
+msgstr "أفضل التواريخ"
+
+msgid "Everyone is free"
+msgstr "الكل متفرغ"
+
+#, python-format
+msgid "%(available)s of %(total)s free"
+msgstr "%(available)s من %(total)s متفرغون"
+
+msgid "Share your dates"
+msgstr "شارك تواريخك"
+
+#, python-format
+msgid "Shared dates · %(trip)s"
+msgstr "التواريخ المشتركة · %(trip)s"
+
+msgid "Shared dates"
+msgstr "التواريخ المشتركة"
+
+#, python-format
+msgid "Add the dates you're free. Wajha finds when most of you can go for %(nights)s night."
+msgid_plural "Add the dates you're free. Wajha finds when most of you can go for %(nights)s nights."
+msgstr[0] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها %(nights)s ليالٍ."
+msgstr[1] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها ليلة واحدة."
+msgstr[2] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها ليلتان."
+msgstr[3] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها %(nights)s ليالٍ."
+msgstr[4] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها %(nights)s ليلة."
+msgstr[5] "أضف الأيام التي تكون فيها متفرغًا، وتجد وجهة الوقت الذي يناسب أغلبكم لرحلة مدتها %(nights)s ليلة."
+
+msgid "Your free dates"
+msgstr "أوقات فراغك"
+
+msgid "You haven't added any dates yet."
+msgstr "لم تضف أي تواريخ بعد."
+
+msgid "Add dates"
+msgstr "أضف التواريخ"
+
+#, python-format
+msgid "Up to %(max)s ranges."
+msgstr "حتى %(max)s فترات."
+
+#, python-format
+msgid "You've added the maximum of %(max)s ranges. Remove one to add another."
+msgstr "أضفت الحد الأقصى وهو %(max)s فترات. احذف واحدة لتضيف غيرها."
+
+msgid "Who has shared"
+msgstr "من شارك تواريخه"
+
+msgid "Shared"
+msgstr "شارك"
+
+msgid "Best dates for the group"
+msgstr "أفضل التواريخ للمجموعة"
+
+msgid "Each suggestion keeps the trip's length. Ranked by how many members are free, then the earliest date. Only totals are shown."
+msgstr "كل اقتراح يحافظ على مدة الرحلة. الترتيب حسب عدد المتفرغين، ثم الأقرب تاريخًا. تظهر المجاميع فقط."
+
+msgid "Current trip dates"
+msgstr "تواريخ الرحلة الحالية"
+
+msgid "Current dates"
+msgstr "التواريخ الحالية"
+
+msgid "Use these dates"
+msgstr "استخدم هذه التواريخ"
+
+msgid "Only the organizer can change the trip dates."
+msgstr "المنظّم فقط يمكنه تغيير تواريخ الرحلة."
+
+msgid "No suggestions yet. They appear once members add their free dates."
+msgstr "لا توجد اقتراحات بعد. تظهر عندما يضيف الأعضاء أوقات فراغهم."
+
+msgid "Free from"
+msgstr "متفرغ من"
+
+msgid "Free until"
+msgstr "متفرغ حتى"
+
+msgid "The last day you could be back home."
+msgstr "آخر يوم يمكنك فيه العودة إلى البيت."
+
+msgid "A range can be at most 90 days. Add another range for more."
+msgstr "أقصى مدة للفترة 90 يومًا. أضف فترة أخرى إذا احتجت أكثر."
+
+msgid "Ranges can end at most a year from today."
+msgstr "يجب أن تنتهي الفترة خلال سنة من اليوم."
+
+#, python-format
+msgid "%(start)s – %(end)s"
+msgstr "%(start)s – %(end)s"
+
+msgid "Costs and weather depend on the dates, so current recommendations and votes will be cleared."
+msgstr "التكاليف والطقس تعتمد على التواريخ، لذلك ستُمسح التوصيات والأصوات الحالية."
+
+msgid "The organizer can generate new recommendations once everyone is ready."
+msgstr "يمكن للمنظّم إنشاء توصيات جديدة عندما يكون الجميع جاهزين."
+
+msgid "The trip dates were updated."
+msgstr "تم تحديث تواريخ الرحلة."
+
+msgid "Only a trip that is still being planned can change its dates."
+msgstr "لا يمكن تغيير التواريخ إلا والرحلة قيد التخطيط."
+
+#, python-format
+msgid "The trip will run %(period)s, keeping its %(nights)s nights."
+msgstr "ستكون الرحلة %(period)s، بنفس عدد الليالي (%(nights)s)."
+
+msgid "The date range was removed."
+msgstr "تم حذف الفترة."
+
+msgid "Dates can only be shared while the trip is being planned."
+msgstr "لا يمكن مشاركة التواريخ إلا والرحلة قيد التخطيط."
+
+#, python-format
+msgid "Move %(trip)s to %(period)s?"
+msgstr "نقل %(trip)s إلى %(period)s؟"
+
+msgid "Your free dates were added."
+msgstr "تمت إضافة أوقات فراغك."
+
+#, python-format
+msgid "You can add up to %(max)d date ranges. Remove one to add another."
+msgstr "يمكنك إضافة %(max)d فترات كحد أقصى. احذف واحدة لتضيف غيرها."

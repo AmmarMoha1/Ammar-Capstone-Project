@@ -12,9 +12,10 @@ from django.db import transaction
 
 from destinations.models import Interest, OriginCity
 
-from .models import Preference, Trip
+from .models import Availability, Preference, Trip
 from .services.recommendations import generate_recommendations
 from .services.trip_actions import cancel_trip, create_trip, finalize_trip, join_trip
+from .services.voting import cast_vote
 
 DEMO_PASSWORD = "wajha-demo-2026"
 DEMO_EMAIL_DOMAIN = "demo.wajha.test"
@@ -41,6 +42,21 @@ SUMMER_PREFERENCES = {
 EID_PREFERENCES = {
     "ammar": (5000, 6, "ANY", False, ["Food"]),
 }
+# Free date ranges (both days included). Spring Break's current dates (25-30 Mar) don't suit
+# khalid; the shared-dates page suggests 27 Mar - 1 Apr, when all three are free.
+SPRING_AVAILABILITY = {
+    "ammar": [(date(2027, 3, 20), date(2027, 4, 5))],
+    "sara": [(date(2027, 3, 24), date(2027, 4, 2))],
+    "khalid": [(date(2027, 3, 27), date(2027, 4, 10))],
+}
+WINTER_AVAILABILITY = {
+    "ammar": [(date(2027, 1, 10), date(2027, 1, 25))],
+    "faisal": [(date(2027, 1, 12), date(2027, 1, 20))],
+    "mohammed": [(date(2027, 1, 14), date(2027, 1, 31))],
+}
+# Winter Getaway votes among the top 3 (ammar hasn't voted yet, so the demo can show voting).
+WINTER_VOTES = {"faisal": "Tbilisi", "khalid": "Tbilisi", "mohammed": "Sarajevo"}
+
 BUDGET_PREFERENCES = {
     "ammar": (1500, 3, "ANY", True, ["Food"]),
     "khalid": (1800, 2, "ANY", True, ["Shopping"]),
@@ -92,6 +108,19 @@ def _add_trip(users, owner, name, origin_code, start, end, members, preferences)
     return trip
 
 
+def _add_availability(trip, users, availability):
+    for username, ranges in availability.items():
+        member = trip.members.get(user=users[username])
+        for start, end in ranges:
+            Availability.objects.create(trip_member=member, start_date=start, end_date=end)
+
+
+def _add_votes(trip, users, votes):
+    for username, city in votes.items():
+        recommendation = trip.recommendations.get(destination__city=city)
+        cast_vote(trip.members.get(user=users[username]), recommendation.destination_id)
+
+
 @transaction.atomic
 def load_demo_trips():
     """Rebuild the demo trips. Returns the created trips by name."""
@@ -115,9 +144,12 @@ def load_demo_trips():
 
     spring = _add_trip(users, "ammar", "Spring Break", "JED", date(2027, 3, 25), date(2027, 3, 30),
                        ["sara", "khalid"], SPRING_PREFERENCES)
+    _add_availability(spring, users, SPRING_AVAILABILITY)
 
     winter = _add_trip(users, "ammar", "Winter Getaway", "RUH", date(2027, 1, 14), date(2027, 1, 18),
                        ["faisal", "mohammed", "khalid"], WINTER_PREFERENCES)
     generate_recommendations(winter)
+    _add_availability(winter, users, WINTER_AVAILABILITY)
+    _add_votes(winter, users, WINTER_VOTES)
 
     return {trip.name: trip for trip in (budget, eid, summer, spring, winter)}

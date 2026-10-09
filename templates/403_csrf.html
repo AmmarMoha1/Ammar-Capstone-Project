@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Please try again{% endblock %}
+{% block title %}{% translate "Please try again" %}{% endblock %}
 
 {% block content %}
 <section class="error-page">
     <p class="error-page__code">403</p>
-    <h1>Your form expired</h1>
-    <p class="muted">For your security, forms only work for a limited time. Go back, refresh the page and submit again.</p>
+    <h1>{% translate "Your form expired" %}</h1>
+    <p class="muted">{% translate "For your security, forms only work for a limited time. Go back, refresh the page and submit again." %}</p>
     <div class="actions">
-        <a class="btn btn--primary" href="{% url 'trips:home' %}">Back to Wajha</a>
+        <a class="btn btn--primary" href="{% url 'trips:home' %}">{% translate "Back to Wajha" %}</a>
     </div>
 </section>
 {% endblock %}

@@ -1,15 +1,16 @@
+{% load i18n %}
 {% if user.is_authenticated %}
     {% url 'trips:my_trips' as my_trips_url %}
-    <a href="{{ my_trips_url }}" class="nav__link"{% if request.path == my_trips_url %} aria-current="page"{% endif %}>My trips</a>
+    <a href="{{ my_trips_url }}" class="nav__link"{% if request.path == my_trips_url %} aria-current="page"{% endif %}>{% translate "My trips" %}</a>
     {% url 'trips:join' as join_url %}
-    <a href="{{ join_url }}" class="nav__link"{% if request.path == join_url %} aria-current="page"{% endif %}>Join trip</a>
-    <a href="{% url 'trips:create' %}" class="btn btn--primary btn--small">New trip</a>
+    <a href="{{ join_url }}" class="nav__link"{% if request.path == join_url %} aria-current="page"{% endif %}>{% translate "Join trip" %}</a>
+    <a href="{% url 'trips:create' %}" class="btn btn--primary btn--small">{% translate "New trip" %}</a>
     <form method="post" action="{% url 'accounts:logout' %}" class="nav__logout">
         {% csrf_token %}
-        <span class="nav__user">{{ user.username }}</span>
-        <button type="submit" class="btn btn--ghost btn--small">Log out</button>
+        <span class="nav__user"><span class="avatar avatar--1" aria-hidden="true">{{ user.username|first|upper }}</span>{{ user.username }}</span>
+        <button type="submit" class="btn btn--ghost btn--small">{% translate "Log out" %}</button>
     </form>
 {% else %}
-    <a href="{% url 'accounts:login' %}" class="nav__link">Log in</a>
-    <a href="{% url 'accounts:register' %}" class="btn btn--primary btn--small">Sign up</a>
+    <a href="{% url 'accounts:login' %}" class="nav__link">{% translate "Log in" %}</a>
+    <a href="{% url 'accounts:register' %}" class="btn btn--primary btn--small">{% translate "Sign up" %}</a>
 {% endif %}

@@ -21,6 +21,9 @@ erDiagram
     INTEREST ||--o{ DESTINATION_INTERESTS : "offered by"
     TRIP ||--o{ RECOMMENDATION : "ranked results"
     DESTINATION ||--o{ RECOMMENDATION : "recommended as"
+    TRIPMEMBER ||--o| VOTE : "casts"
+    RECOMMENDATION ||--o{ VOTE : "receives"
+    TRIPMEMBER ||--o{ AVAILABILITY : "is free during"
 
     USER {
         int id PK
@@ -110,6 +113,20 @@ erDiagram
         int estimated_total_cost "SAR per person"
         datetime generated_at
     }
+    VOTE {
+        bigint id PK
+        bigint trip_member_id FK,UK
+        bigint recommendation_id FK
+        datetime created_at
+        datetime updated_at
+    }
+    AVAILABILITY {
+        bigint id PK
+        bigint trip_member_id FK
+        date start_date
+        date end_date
+        datetime created_at
+    }
 ```
 
 `DESTINATION_INTERESTS` (`destinations_destination_interests`) and `PREFERENCE_INTERESTS` (`trips_preference_interests`) are the link tables Django creates for the two many-to-many fields. Each has a unique pair constraint.
@@ -130,6 +147,9 @@ erDiagram
 | Destination ↔ Interest | A destination offers zero or more interests | CASCADE on the link rows | |
 | Trip → Recommendation | A trip has zero or more saved recommendations | CASCADE | Results belong to the trip |
 | Destination → Recommendation | A destination appears in zero or more recommendations | PROTECT | Saved results can't lose their destination; retire destinations with `is_active` instead |
+| TripMember → Vote | One membership has zero or one vote | CASCADE | A removed member's vote disappears with them |
+| Recommendation → Vote | A recommendation receives zero or more votes | CASCADE | Regenerating or clearing recommendations clears the votes, so a vote always refers to the current ranking |
+| TripMember → Availability | One membership has zero or more free date ranges (at most 5, form rule) | CASCADE | Free dates belong to the member's place in this trip |
 
 ## Constraints protecting business rules
 
@@ -143,6 +163,8 @@ erDiagram
 | Preference | `preference_budget_positive`, `preference_flight_hours_positive` | Budget and flight hours greater than 0 (the form also enforces 500–100,000 SAR and 1–24 hours) |
 | Recommendation | `unique_recommendation_destination`, `unique_recommendation_rank` | A destination appears once per trip, and each rank is used once |
 | Recommendation | `recommendation_rank_positive`, `recommendation_score_range`, `recommendation_lowest_score_range` | Rank ≥ 1; scores between 0 and 100 |
+| Vote | one-to-one `trip_member` | One vote per member per trip |
+| Availability | `availability_end_after_start` | `end_date > start_date` (the form also limits ranges to 90 days and one year ahead) |
 | Destination | `unique_destination_city_country`, `destination_daily_cost_positive` | No duplicate cities; daily cost greater than 0 |
 | DestinationClimate | `unique_climate_destination_period` | One weather value per destination per period |
 | RouteProfile | `unique_route_origin_destination`, `route_flight_duration_positive`, `route_flight_cost_positive` | One route per pair; positive duration and fare |
@@ -152,6 +174,8 @@ Rules that span several tables are enforced in the application and covered by te
 - The organizer always has a TripMember row, because the trip and the membership are created in one transaction and the organizer can't be removed.
 - At most 8 members per trip.
 - Recommendations can only be generated when every member has submitted preferences.
+- A vote can only point at one of its own trip's top 3 recommendations, and only while the trip is being planned.
+- Applying suggested dates keeps the trip's number of nights and clears recommendations (and with them the votes).
 
 ## Where information belongs, and why
 
@@ -160,4 +184,7 @@ Rules that span several tables are enforced in the application and covered by te
 - **Flight data belongs to RouteProfile, not Destination.** Riyadh → Baku and Jeddah → Baku have different durations, fares and direct-flight availability.
 - **Weather belongs to DestinationClimate, not Destination.** It depends on the time of year, and periods (not "winter/summer") work for both hemispheres. Four columns on Destination would be a repeating group.
 - **Organizer role isn't stored on TripMember.** It's `Trip.owner`, so the two can never disagree.
+- **Vote points at Recommendation, not Destination.** Votes are about the current ranking; when the ranking is regenerated the old votes no longer apply, and CASCADE removes them without extra code.
+- **Availability belongs to TripMember, not User.** Being free in March matters for this trip; another trip may need different dates.
+- **Suggested dates aren't stored.** Like member breakdowns, they are recalculated from the availability rows by a pure function (`trips/services/dates.py`).
 - **Recommendation stores group-level results only.** Each member's breakdown is recalculated with the same deterministic function, which avoids duplicating data that can be derived.

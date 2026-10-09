@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n wajha %}
 
-{% block title %}{{ recommendation.destination.city }} · {{ trip.name }}{% endblock %}
+{% block title %}{{ recommendation.destination.city|tr }} · {{ trip.name }}{% endblock %}
 
 {% block content %}
-<p class="back-link"><a href="{% url 'trips:recommendations' trip.pk %}">← All recommendations</a></p>
+<p class="back-link"><a href="{% url 'trips:recommendations' trip.pk %}"><span class="btn__arrow" aria-hidden="true">←</span> {% translate "All recommendations" %}</a></p>
 
 {% with photo=recommendation.destination.photo %}
 <header class="rec-hero{% if photo %} rec-hero--photo{% endif %}">
-    {% if photo %}<img class="rec-hero__img" src="{% static photo.wide %}" alt="{{ photo.alt }}" width="1280" height="640">{% endif %}
+    {% if photo %}<img class="rec-hero__img" src="{% static photo.wide %}" alt="{{ photo.alt|tr }}" width="1280" height="640">{% endif %}
     <div class="rec-hero__text">
-        <p class="rec-hero__rank">#{{ recommendation.rank }} for {{ trip.name }}</p>
-        <h1 class="rec-hero__city">{{ recommendation.destination.city }}</h1>
-        <p class="rec-hero__country">{{ recommendation.destination.country }}</p>
-        <p class="rec-hero__description">{{ recommendation.destination.description }}</p>
+        <p class="rec-hero__rank">{% blocktranslate trimmed with rank=recommendation.rank trip=trip.name %}#{{ rank }} for {{ trip }}{% endblocktranslate %}</p>
+        <h1 class="rec-hero__city">{{ recommendation.destination.city|tr }}</h1>
+        <p class="rec-hero__country">{{ recommendation.destination.country|tr }}</p>
+        <p class="rec-hero__description">{{ recommendation.destination.description|tr }}</p>
     </div>
     <div class="rec-hero__score">
-        {% include "partials/_score_ring.html" with score=recommendation.score size="large" tone="dark" %}
+        {% include "partials/_score_ring.html" with score=recommendation.score size="large" %}
         <p class="rec-band rec-band--light">{{ band }}</p>
     </div>
 </header>
@@ -24,14 +24,14 @@
 {% endwith %}
 
 {% if trip.selected_destination_id == recommendation.destination_id %}
-<p class="message message--success"><span class="message__icon" aria-hidden="true">✓</span> This is the group's final destination.</p>
+<p class="message message--success"><span class="message__icon" aria-hidden="true">✓</span> {% translate "This is the group's final destination." %}</p>
 {% elif trip.is_planning %}
 <div class="decide-bar card">
     {% if is_organizer %}
-    <p><strong>Happy with {{ recommendation.destination.city }}?</strong> As organizer, you make the final choice for the group.</p>
-    <a class="btn btn--primary" href="{% url 'trips:finalize' trip.pk recommendation.destination_id %}">Choose {{ recommendation.destination.city }}</a>
+    <p>{% blocktranslate trimmed with city=recommendation.destination.city|tr %}<strong>Happy with {{ city }}?</strong> As organizer, you make the final choice for the group.{% endblocktranslate %}</p>
+    <a class="btn btn--primary" href="{% url 'trips:finalize' trip.pk recommendation.destination_id %}">{% blocktranslate trimmed with city=recommendation.destination.city|tr %}Choose {{ city }}{% endblocktranslate %}</a>
     {% else %}
-    <p class="muted">Only the organizer can choose the final destination.</p>
+    <p class="muted">{% translate "Only the organizer can choose the final destination." %}</p>
     {% endif %}
 </div>
 {% endif %}
@@ -39,31 +39,31 @@
 {% if match %}
 <div class="detail-layout">
     <div class="detail-main">
-        <section class="card" aria-labelledby="why-heading">
-            <h2 id="why-heading">Why it fits the group</h2>
+        <section class="card" aria-labelledby="why-heading" data-reveal>
+            <h2 id="why-heading">{% translate "Why it fits the group" %}</h2>
             <ul class="checklist">
                 {% for fully_met, text in reasons %}
                 <li class="{% if fully_met %}is-met{% else %}is-partial{% endif %}">
                     <span class="checklist__icon" aria-hidden="true">{% if fully_met %}✓{% else %}~{% endif %}</span>
-                    <span><span class="visually-hidden">{% if fully_met %}Met: {% else %}Partly met: {% endif %}</span>{{ text }}</span>
+                    <span><span class="visually-hidden">{% if fully_met %}{% translate "Met:" %} {% else %}{% translate "Partly met:" %} {% endif %}</span>{{ text }}</span>
                 </li>
                 {% endfor %}
             </ul>
             {% include "partials/_trip_facts.html" with match=match cost=recommendation.estimated_total_cost %}
             {% if interests %}
-            <ul class="chips" aria-label="Matched interests">
+            <ul class="chips" aria-label="{% translate 'Matched interests' %}">
                 {% for interest in interests %}<li class="chip chip--matched"><span aria-hidden="true">✓</span> {{ interest }}</li>{% endfor %}
             </ul>
             {% endif %}
         </section>
 
-        <section class="card" aria-labelledby="breakdown-heading">
-            <h2 id="breakdown-heading">Score breakdown</h2>
-            <p class="muted small">Group average for each factor. The weight is how much it counts towards each member's score.</p>
+        <section class="card" aria-labelledby="breakdown-heading" data-reveal>
+            <h2 id="breakdown-heading">{% translate "Score breakdown" %}</h2>
+            <p class="muted small">{% translate "Group average for each factor. The weight is how much it counts towards each member's score." %}</p>
             <ul class="bars">
                 {% for row in factor_rows %}
                 <li class="bars__row">
-                    <span class="bars__label">{{ row.label }} <span class="muted">· {{ row.weight }}%</span></span>
+                    <span class="bars__label">{{ row.label }} <span class="muted">· <span class="ltr">{{ row.weight }}%</span></span></span>
                     <span class="score-bar" style="--score: {{ row.percent }}" aria-hidden="true"><span></span></span>
                     <span class="bars__value">{{ row.percent }}%</span>
                 </li>
@@ -72,13 +72,13 @@
         </section>
     </div>
 
-    <section class="card" aria-labelledby="members-heading">
-        <h2 id="members-heading">Member compatibility</h2>
-        <p class="muted small">Group Match = 70% of the average + 30% of the lowest member, so nobody is left out.</p>
+    <section class="card" aria-labelledby="members-heading" data-reveal>
+        <h2 id="members-heading">{% translate "Member compatibility" %}</h2>
+        <p class="muted small">{% translate "Group Match = 70% of the average + 30% of the lowest member, so nobody is left out." %}</p>
         <ul class="bars">
             {% for row in member_rows %}
             <li class="bars__row">
-                <span class="bars__label">{{ row.member.name }}{% if forloop.last and member_rows|length > 1 %} <span class="muted">· lowest</span>{% endif %}</span>
+                <span class="bars__label">{{ row.member.name }}{% if forloop.last and member_rows|length > 1 %} <span class="muted">· {% translate "lowest" %}</span>{% endif %}</span>
                 <span class="score-bar" style="--score: {{ row.score }}" aria-hidden="true"><span></span></span>
                 <span class="bars__value">{{ row.score|floatformat:0 }}%</span>
             </li>
@@ -88,10 +88,10 @@
 </div>
 {% else %}
 <div class="empty-state">
-    <h2 class="empty-state__title">Details unavailable</h2>
-    <p>This destination's catalog data changed after the recommendations were generated, so the breakdown can't be shown. The saved Group Match above is unchanged.</p>
+    <h2 class="empty-state__title">{% translate "Details unavailable" %}</h2>
+    <p>{% translate "This destination's catalog data changed after the recommendations were generated, so the breakdown can't be shown. The saved Group Match above is unchanged." %}</p>
 </div>
 {% endif %}
 
-<p class="muted small price-note">Prices are illustrative estimates per person, not live prices.</p>
+<p class="muted small price-note">{% translate "Prices are illustrative estimates per person, not live prices." %}</p>
 {% endblock %}

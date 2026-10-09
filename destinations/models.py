@@ -1,15 +1,16 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from .photos import photo_for_city
 
 
 class WeatherType(models.TextChoices):
-    COLD = "COLD", "Cold"
-    MILD = "MILD", "Mild"
-    WARM = "WARM", "Warm"
-    HOT = "HOT", "Hot"
+    COLD = "COLD", _("Cold")
+    MILD = "MILD", _("Mild")
+    WARM = "WARM", _("Warm")
+    HOT = "HOT", _("Hot")
 
 
 class ClimatePeriod(models.IntegerChoices):

@@ -9,6 +9,9 @@ from collections import Counter
 from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import transaction
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy, ngettext
 
 from destinations.models import ClimatePeriod, RouteProfile
 
@@ -88,10 +91,10 @@ def generate_recommendations(trip):
     """Replace the trip's recommendations with a fresh ranking. Returns the number saved."""
     if not trip.can_generate_recommendations():
         raise TripActionError(
-            "Recommendations need at least 2 members, and every member must add their preferences first."
+            _("Recommendations need at least 2 members, and every member must add their preferences first.")
         )
 
-    ranked, _ = evaluate_trip(trip)
+    ranked, _excluded = evaluate_trip(trip)
     trip.recommendations.all().delete()
     Recommendation.objects.bulk_create(
         Recommendation(
@@ -109,20 +112,29 @@ def generate_recommendations(trip):
 
 # --- Plain-language explanations --------------------------------------------
 
-def _members(count):
-    return f"{count} member{'' if count == 1 else 's'}"
+WEATHER_WORDS = {
+    "COLD": gettext_lazy("cold"),
+    "MILD": gettext_lazy("mild"),
+    "WARM": gettext_lazy("warm"),
+    "HOT": gettext_lazy("hot"),
+}
 
 
 def describe_exclusion(group_match):
     """Reasons a destination was excluded, as counts only (never names)."""
     reasons = []
-    if group_match.blocked.get(OVER_BUDGET):
-        reasons.append(f"Over budget for {_members(group_match.blocked[OVER_BUDGET])}")
-    if group_match.blocked.get(FLIGHT_TOO_LONG):
-        reasons.append(f"Flight too long for {_members(group_match.blocked[FLIGHT_TOO_LONG])}")
-    if group_match.blocked.get(NO_DIRECT_FLIGHT):
-        count = group_match.blocked[NO_DIRECT_FLIGHT]
-        reasons.append(f"No direct flight ({_members(count)} {'needs' if count == 1 else 'need'} one)")
+    if count := group_match.blocked.get(OVER_BUDGET):
+        reasons.append(ngettext(
+            "Over budget for %(count)d member", "Over budget for %(count)d members", count
+        ) % {"count": count})
+    if count := group_match.blocked.get(FLIGHT_TOO_LONG):
+        reasons.append(ngettext(
+            "Flight too long for %(count)d member", "Flight too long for %(count)d members", count
+        ) % {"count": count})
+    if count := group_match.blocked.get(NO_DIRECT_FLIGHT):
+        reasons.append(ngettext(
+            "No direct flight (%(count)d member needs one)", "No direct flight (%(count)d members need one)", count
+        ) % {"count": count})
     return reasons
 
 
@@ -132,29 +144,39 @@ def explain_group_match(group_match, trip):
     matches = group_match.member_matches
     total = len(matches)
     reasons = [
-        (True, f"Fits everyone's budget: about {group_match.estimated_cost:,} SAR per person"),
-        (True, f"Within everyone's maximum flight time ({option.flight_hours:g} hours)"),
+        (True, _("Fits everyone's budget: about %(cost)s SAR per person") % {
+            "cost": f"{group_match.estimated_cost:,}",
+        }),
+        (True, _("Within everyone's maximum flight time (%(hours)s hours)") % {"hours": f"{option.flight_hours:g}"}),
     ]
 
     if option.direct:
-        reasons.append((True, f"Direct flight from {trip.departure_city.name}"))
+        reasons.append((True, _("Direct flight from %(city)s") % {"city": _(trip.departure_city.name)}))
     else:
-        reasons.append((False, "Connecting flight (no one in the group requires a direct flight)"))
+        reasons.append((False, _("Connecting flight (no one in the group requires a direct flight)")))
 
     with_shared = sum(1 for m in matches if m.shared_interests)
     interest_votes = Counter(name for m in matches for name in m.shared_interests)
     if interest_votes:
-        top = ", ".join(f"{name} ({count})" for name, count in sorted(interest_votes.items(), key=lambda i: (-i[1], i[0])))
-        reasons.append((with_shared == total, f"Matches interests for {with_shared} of {total} members: {top}"))
+        top = _(", ").join(
+            f"{_(name)} ({count})" for name, count in sorted(interest_votes.items(), key=lambda i: (-i[1], i[0]))
+        )
+        reasons.append((with_shared == total, _("Matches interests for %(count)s of %(total)s members: %(top)s") % {
+            "count": with_shared, "total": total, "top": top,
+        }))
     else:
-        reasons.append((False, "Doesn't match anyone's selected interests"))
+        reasons.append((False, _("Doesn't match anyone's selected interests")))
 
     weather_fits = sum(
         1 for m in matches if m.member.weather in (NO_WEATHER_PREFERENCE, option.weather)
     )
-    month = trip.start_date.strftime("%B")
     reasons.append((
         weather_fits == total,
-        f"Typically {option.weather.lower()} in {month}: suits {weather_fits} of {total} members",
+        _("Typically %(weather)s in %(month)s: suits %(count)s of %(total)s members") % {
+            "weather": WEATHER_WORDS[option.weather],
+            "month": date_format(trip.start_date, "F"),
+            "count": weather_fits,
+            "total": total,
+        },
     ))
     return reasons

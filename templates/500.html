@@ -7,13 +7,20 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    {# Standalone on purpose: a server error page must not depend on the database or request context. #}
+    {# Standalone on purpose: a server error page must not depend on the database, request context or translations, so it shows both languages. #}
     <main class="container main">
         <section class="error-page">
             <p class="error-page__code">500</p>
             <h1>Something went wrong on our side</h1>
             <p class="muted">Your data is safe. Please try again in a moment.</p>
-            <a class="btn btn--primary" href="/">Back to Wajha</a>
+            <div dir="rtl" lang="ar">
+                <h2>حصل خطأ من جهتنا</h2>
+                <p class="muted">بياناتك محفوظة. حاول مرة ثانية بعد شوي.</p>
+            </div>
+            <div class="actions">
+                <a class="btn btn--primary" href="/">Back to Wajha</a>
+                <a class="btn btn--secondary" href="/ar/" lang="ar">الرجوع إلى وجهة</a>
+            </div>
         </section>
     </main>
 </body>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Trip, TripMember
+from .models import Availability, Trip, TripMember, Vote
 
 
 class TripMemberInline(admin.TabularInline):
@@ -16,3 +16,15 @@ class TripAdmin(admin.ModelAdmin):
     search_fields = ["name", "invite_code", "owner__username"]
     readonly_fields = ["invite_code", "created_at", "updated_at"]
     inlines = [TripMemberInline]
+
+
+@admin.register(Vote)
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ["trip_member", "recommendation", "updated_at"]
+    list_select_related = ["trip_member__user", "trip_member__trip", "recommendation__destination"]
+
+
+@admin.register(Availability)
+class AvailabilityAdmin(admin.ModelAdmin):
+    list_display = ["trip_member", "start_date", "end_date"]
+    list_select_related = ["trip_member__user", "trip_member__trip"]

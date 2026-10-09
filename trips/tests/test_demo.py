@@ -26,6 +26,24 @@ class LoadDemoDataTests(TestCase):
         self.assertTrue(trips["Weekend on a Budget"].can_generate_recommendations())
         self.assertFalse(trips["Weekend on a Budget"].recommendations.exists())
 
+    def test_demo_votes_and_shared_dates(self):
+        from trips.services.dates import date_plan
+        from trips.services.voting import vote_summary
+
+        self.load()
+        winter = Trip.objects.get(name="Winter Getaway")
+        spring = Trip.objects.get(name="Spring Break")
+
+        votes = vote_summary(winter, winter.members.get(user__username="ammar"))
+        self.assertEqual((votes.voted, votes.members), (3, 4))
+        self.assertEqual(votes.leader.destination.city, "Tbilisi")
+        self.assertIsNone(votes.my_destination_id)
+
+        plan = date_plan(spring)
+        self.assertEqual(plan.current.available, 2)
+        best = plan.suggestions[0]
+        self.assertEqual((best.start.isoformat(), best.end.isoformat(), best.everyone), ("2027-03-27", "2027-04-01", True))
+
     def test_demo_accounts_can_log_in(self):
         self.load()
 

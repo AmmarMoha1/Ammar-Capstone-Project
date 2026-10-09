@@ -87,4 +87,4 @@ The trip departs from Riyadh, 14–18 January 2027 (4 nights). January is in the
 5. **Budget privacy is partial in small groups.** Budget figures are hidden until 3 members have submitted, but with 3 members the lowest and average budgets still narrow down the others' budgets. No budget is ever shown next to a name.
 6. **Custom error pages only appear with `DEBUG=False`.** In development (`DEBUG=True`) Django shows its technical pages instead.
 7. **The 8-member limit relies on a row lock** (`select_for_update`). SQLite ignores row locks, but it only allows one write at a time, so the limit still holds for this local setup.
-8. **English only.** The Readex Pro font supports Arabic for a future version.
+8. **User-entered text isn't translated.** The interface and catalog are available in English and Arabic, but trip names and usernames appear exactly as typed in both versions.

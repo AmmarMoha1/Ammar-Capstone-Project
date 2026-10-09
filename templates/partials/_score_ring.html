@@ -1,4 +1,5 @@
-{# Group Match ring. Pass score (0-100) and optionally size="large" and tone="dark". #}
-<div class="score-ring{% if size == 'large' %} score-ring--large{% endif %}{% if tone == 'dark' %} score-ring--dark{% endif %}" style="--score: {{ score }}" role="img" aria-label="Group Match {{ score|floatformat:0 }} percent">
-    <span class="score-ring__value">{{ score|floatformat:0 }}<small>%</small></span>
+{% load i18n %}
+{# Group Match passport stamp. Pass score (0-100) and optionally size="large" or "small" and tone="sky". #}
+<div class="stamp{% if size == 'large' %} stamp--large{% elif size == 'small' %} stamp--small{% endif %}{% if tone == 'sky' %} stamp--sky{% endif %}" role="img" aria-label="{% blocktranslate trimmed with score=score|floatformat:0 %}Group Match {{ score }} percent{% endblocktranslate %}">
+    <span><span class="ltr">{{ score|floatformat:0 }}<small>%</small></span><span class="stamp__label">{% translate "Match" %}</span></span>
 </div>

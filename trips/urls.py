@@ -23,4 +23,8 @@ urlpatterns = [
     ),
     path("trips/<int:pk>/finalize/<int:destination_id>/", views.trip_finalize, name="finalize"),
     path("trips/<int:pk>/members/<int:member_id>/remove/", views.member_remove, name="remove_member"),
+    path("trips/<int:pk>/vote/<int:destination_id>/", views.vote, name="vote"),
+    path("trips/<int:pk>/dates/", views.dates, name="dates"),
+    path("trips/<int:pk>/dates/<int:availability_id>/delete/", views.availability_delete, name="availability_delete"),
+    path("trips/<int:pk>/dates/use/<str:start>/", views.dates_apply, name="dates_apply"),
 ]

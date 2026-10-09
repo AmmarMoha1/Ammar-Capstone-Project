@@ -1,4 +1,5 @@
 from django.db import IntegrityError, transaction
+from django.utils.translation import gettext as _
 
 from ..models import Trip, TripMember, generate_invite_code
 
@@ -36,7 +37,7 @@ def create_trip(owner, **fields):
 
 def clear_recommendations(trip):
     """Delete saved recommendations because the group changed. Returns how many were removed."""
-    deleted, _ = trip.recommendations.all().delete()
+    deleted, _by_model = trip.recommendations.all().delete()
     return deleted
 
 
@@ -66,18 +67,20 @@ def join_trip(user, invite_code):
     # people joining at the same moment cannot push the trip past the member limit.
     trip = Trip.objects.select_for_update().filter(invite_code=invite_code).first()
     if trip is None:
-        raise TripActionError("No trip uses that code. Check it with your organizer.")
+        raise TripActionError(_("No trip uses that code. Check it with your organizer."))
 
     if trip.members.filter(user=user).exists():
         return trip, False
 
     if not trip.is_planning:
-        raise TripActionError(
-            f"This trip is {trip.get_status_display().lower()} and no longer accepts new members."
-        )
+        if trip.status == Trip.Status.DECIDED:
+            raise TripActionError(_("This trip is decided and no longer accepts new members."))
+        raise TripActionError(_("This trip is cancelled and no longer accepts new members."))
 
     if trip.members.count() >= Trip.MAX_MEMBERS:
-        raise TripActionError(f"This trip is full. A trip can have up to {Trip.MAX_MEMBERS} members.")
+        raise TripActionError(
+            _("This trip is full. A trip can have up to %(max)d members.") % {"max": Trip.MAX_MEMBERS}
+        )
 
     try:
         # A savepoint, so a duplicate-membership error doesn't break the outer transaction.
@@ -108,11 +111,11 @@ def finalize_trip(trip, destination_id):
     """Save the organizer's final choice. Only a currently recommended destination can be chosen."""
     trip = Trip.objects.select_for_update().get(pk=trip.pk)
     if not trip.is_planning:
-        raise TripActionError("Only a trip that is still being planned can be decided.")
+        raise TripActionError(_("Only a trip that is still being planned can be decided."))
 
     recommendation = trip.recommendations.filter(destination_id=destination_id).first()
     if recommendation is None:
-        raise TripActionError("You can only choose one of this trip's current recommendations.")
+        raise TripActionError(_("You can only choose one of this trip's current recommendations."))
 
     trip.status = Trip.Status.DECIDED
     trip.selected_destination_id = destination_id
@@ -124,7 +127,7 @@ def finalize_trip(trip, destination_id):
 def cancel_trip(trip):
     """Retire the trip instead of deleting it. A decided trip keeps its chosen destination."""
     if trip.status == Trip.Status.CANCELLED:
-        raise TripActionError("This trip is already cancelled.")
+        raise TripActionError(_("This trip is already cancelled."))
     trip.status = Trip.Status.CANCELLED
     trip.save(update_fields=["status", "updated_at"])
     return trip
@@ -138,8 +141,8 @@ def remove_member(trip, member):
     which keeps the rule that every trip has its organizer as a member.
     """
     if not trip.is_planning:
-        raise TripActionError("Members can only be changed while the trip is being planned.")
+        raise TripActionError(_("Members can only be changed while the trip is being planned."))
     if member.user_id == trip.owner_id:
-        raise TripActionError("The organizer can't be removed from their own trip.")
+        raise TripActionError(_("The organizer can't be removed from their own trip."))
     member.delete()
     return clear_recommendations(trip)

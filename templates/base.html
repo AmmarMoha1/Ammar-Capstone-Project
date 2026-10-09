@@ -1,22 +1,26 @@
-{% load static %}<!DOCTYPE html>
-<html lang="en">
+{% load static i18n %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" class="no-js">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Wajha{% endblock %} · Wajha</title>
+    <title>{% block title %}{% translate "Wajha" %}{% endblock %} · {% translate "Wajha" %}</title>
+    <link rel="preload" href="{% static 'fonts/BalooBhaijaan2-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+    {% if LANGUAGE_BIDI %}<link rel="preload" href="{% static 'fonts/BalooBhaijaan2-arabic.woff2' %}" as="font" type="font/woff2" crossorigin>{% endif %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="alternate" hreflang="{{ other_language.code }}" href="{{ other_language.url }}">
     <script src="{% static 'js/app.js' %}" defer></script>
 </head>
 
 <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{% translate "Skip to content" %}</a>
 
     <header class="site-header">
-        <nav class="nav container" aria-label="Main">
+        <nav class="nav container" aria-label="{% translate 'Main' %}">
             <a class="brand" href="{% url 'trips:home' %}">
                 {% include "partials/_logo.html" %}
-                <span>Wajha</span>
+                <span>{% translate "Wajha" %}</span>
             </a>
 
             <div class="nav__links nav__links--desktop">
@@ -26,12 +30,16 @@
             <details class="nav__menu">
                 <summary>
                     <span class="nav__menu-icon" aria-hidden="true"></span>
-                    Menu
+                    {% translate "Menu" %}
                 </summary>
                 <div class="nav__links nav__links--mobile">
                     {% include "partials/_nav_links.html" %}
                 </div>
             </details>
+
+            <a class="lang-switch" href="{{ other_language.url }}" lang="{{ other_language.code }}" hreflang="{{ other_language.code }}">
+                <span aria-hidden="true">🌐</span> {{ other_language.name }}
+            </a>
         </nav>
     </header>
 
@@ -42,8 +50,9 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>Wajha — decide your group trip together. Prices shown are illustrative estimates, not live prices.</p>
-            <p><a href="{% url 'trips:credits' %}">Photo and font credits</a></p>
+            <p class="site-footer__brand">{% include "partials/_logo.html" %} {% translate "Wajha — decide your group trip together." %}</p>
+            <p>{% translate "Prices shown are illustrative estimates, not live prices." %}</p>
+            <p><a href="{% url 'trips:credits' %}">{% translate "Photo and font credits" %}</a></p>
         </div>
     </footer>
 </body>

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Your preferences · {{ trip.name }}{% endblock %}
+{% block title %}{% blocktranslate trimmed with trip=trip.name %}Your preferences · {{ trip }}{% endblocktranslate %}{% endblock %}
 
 {% block content %}
 <section class="form-page form-page--wide card">
-    <p class="eyebrow">{{ trip.name }}</p>
-    <h1>{% if is_update %}Edit your preferences{% else %}Add your preferences{% endif %}</h1>
+    <p class="eyebrow"><a href="{% url 'trips:detail' trip.pk %}">{{ trip.name }}</a></p>
+    <h1>{% if is_update %}{% translate "Edit your preferences" %}{% else %}{% translate "Add your preferences" %}{% endif %}</h1>
     <p class="muted">
-        Wajha uses everyone's answers to find destinations that fit the whole group.
-        Other members never see your budget next to your name, only group figures.
+        {% translate "Wajha uses everyone's answers to find destinations that fit the whole group." %}
+        {% translate "Other members never see your budget next to your name, only group figures." %}
     </p>
 
     <form method="post" class="form" novalidate>
@@ -22,8 +23,8 @@
         {% include "partials/_form_field.html" with field=form.weather_preference %}
         {% include "partials/_form_field.html" with field=form.interests %}
         <div class="actions">
-            <button type="submit" class="btn btn--primary">Save preferences</button>
-            <a class="btn btn--ghost" href="{% url 'trips:detail' trip.pk %}">Cancel</a>
+            <button type="submit" class="btn btn--primary">{% translate "Save preferences" %}</button>
+            <a class="btn btn--ghost" href="{% url 'trips:detail' trip.pk %}">{% translate "Cancel" %}</a>
         </div>
     </form>
 </section>

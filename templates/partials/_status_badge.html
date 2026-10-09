@@ -1,7 +1,8 @@
+{% load i18n %}
 {% if trip.status == "PLANNING" %}
-<span class="badge badge--warning"><span aria-hidden="true">◷</span> Planning</span>
+<span class="badge badge--warning"><span aria-hidden="true">◷</span> {% translate "Planning" %}</span>
 {% elif trip.status == "DECIDED" %}
-<span class="badge badge--success"><span aria-hidden="true">✓</span> Decided</span>
+<span class="badge badge--success"><span aria-hidden="true">✓</span> {% translate "Decided" %}</span>
 {% else %}
-<span class="badge badge--neutral"><span aria-hidden="true">✕</span> Cancelled</span>
+<span class="badge badge--neutral"><span aria-hidden="true">✕</span> {% translate "Cancelled" %}</span>
 {% endif %}

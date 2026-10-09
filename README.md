@@ -25,14 +25,20 @@ Wajha is a Django web application that helps a group of friends in Saudi Arabia 
   - a deterministic matching engine ranks destinations
   - a "Didn't fit everyone" section shows reasons without naming members
 - **Explanation page:** plain-language reasons, a breakdown by factor and each member's compatibility.
+- **Group vote:** each member votes for one of the top 3 recommendations and can change their vote. Only totals are shown, and the leader is highlighted. The organizer still makes the final decision.
+- **Shared dates:** members add the date ranges when they are free. Wajha suggests the best non-overlapping windows of the trip's length, ranked by how many members are free and then by the earliest date. The organizer can move the trip to a suggestion after a confirmation; this keeps the number of nights and clears the recommendations.
 - **Decision:** the organizer confirms the final destination. The trip becomes **Decided**, is locked, and shows a boarding-pass card.
 - **Organizer tools:** edit the trip, remove a member, cancel the trip. Each needs confirmation and is enforced on the server.
 - **Reports:**
   - a group summary (lowest and average budget, shortest maximum flight, top interests)
   - My Trips with status filters and per-trip member/ready counts
-- **Polished, responsive interface:**
-  - custom design system with the bundled Readex Pro font
-  - freely licensed destination photos with alt text
+- **Two language versions:** English at `/` and Arabic at `/ar/` (right-to-left). The header switch opens the same page in the other language. Catalog data (cities, countries, interests, descriptions, photo text), plurals, dates and numbers are all localised.
+- **"Boarding Pass" interface:**
+  - paper-and-ink design system with hard shadows, written with logical CSS properties so the Arabic version mirrors automatically
+  - pure CSS 3D and small vanilla JavaScript: a shuffling postcard deck, flip cards, a split-flap destination board, a tear-to-copy invite stub, a runway readiness bar and a 3D coverflow of recommendations
+  - every page still works without JavaScript, and motion is turned off for people who prefer reduced motion
+  - bundled Baloo Bhaijaan 2 (Arabic and Latin) and JetBrains Mono fonts
+  - freely licensed destination photos with alt text in both languages
   - custom 404/403 pages
   - WCAG AA colour contrast
 
@@ -56,7 +62,7 @@ The engine is pure Python with no database access ([trips/services/matching.py](
 | Database | SQLite (Django's default; managed through models and migrations) |
 | Other packages | `python-dotenv` 1.2.4 (reads `.env`); see [requirements.txt](requirements.txt) |
 
-There are no external APIs and no CSS or JavaScript frameworks. The app works fully offline.
+There are no external APIs and no CSS or JavaScript frameworks. The app works fully offline (fonts and photos are bundled).
 
 ## Setup
 
@@ -122,13 +128,25 @@ Optional: `python manage.py createsuperuser` gives access to the admin at `/admi
 
 | Trip | Organizer | State |
 |---|---|---|
-| Winter Getaway (RUH, Jan 2027) | ammar | 4/4 ready, recommendations generated (Tbilisi 87.7%) |
-| Spring Break (JED, Mar 2027) | ammar | 2 of 3 ready (khalid waiting) |
+| Winter Getaway (RUH, Jan 2027) | ammar | 4/4 ready, recommendations generated (Tbilisi 87.7%); 3 of 4 voted, Tbilisi leading (ammar hasn't voted) |
+| Spring Break (JED, Mar 2027) | ammar | 2 of 3 ready (khalid waiting); everyone shared free dates, best window 27 Mar – 1 Apr |
 | Summer Escape (RUH, Jul 2027) | faisal | Decided: Sarajevo |
 | Eid Trip (RUH, Mar 2027) | ammar | Cancelled |
 | Weekend on a Budget (RUH, Feb 2027) | ammar | Ready, but no destination fits everyone |
 
+Open <http://127.0.0.1:8000/ar/> for the Arabic version of any page.
+
 Run the command again at any time to reset the demo trips. It never modifies an existing account that isn't a demo account. Use `--catalog-only` to load destinations without demo accounts.
+
+## Translations
+
+Arabic text lives in [locale/ar/LC_MESSAGES/django.po](locale/ar/LC_MESSAGES/django.po). After editing it, rebuild the compiled file:
+
+```bash
+python manage.py compile_translations
+```
+
+This command needs only Python. Django's own `makemessages` and `compilemessages` also work if the GNU gettext tools are installed. Catalog rows are stored in English and translated in templates with the `|tr` filter, so a new city or interest needs a matching entry in `django.po`.
 
 ## Tests
 
@@ -136,25 +154,29 @@ Run the command again at any time to reset the demo trips. It never modifies an 
 python manage.py test
 ```
 
-There are 206 automated tests covering business rules, permissions, validation, the matching calculations (with hand-calculated expected values), reports and the demo data. Manual acceptance scenarios and results are in [docs/verification.md](docs/verification.md).
+There are 256 automated tests covering business rules, permissions, validation, the matching calculations (with hand-calculated expected values), reports and the demo data. Manual acceptance scenarios and results are in [docs/verification.md](docs/verification.md).
 
 ## Project structure
 
 ```
-config/          settings (reads .env), root URLs
+config/          settings (reads .env), root URLs (English at /, Arabic under /ar/),
+                 language switch context processor, Arabic number formats
+locale/ar/       Arabic translations (django.po source and compiled django.mo)
 accounts/        registration, login, logout
 destinations/    catalog: OriginCity, Destination, DestinationClimate, Interest, RouteProfile,
                  catalog data and loader, bundled photo credits
 trips/           Trip, TripMember, Preference, Recommendation; views, forms, permissions
   services/      trip_actions.py (create, join, preferences, finalize, cancel, edit, remove)
                  matching.py (pure scoring engine) · recommendations.py (DB ↔ engine)
-                 summary.py (group summary report)
+                 summary.py (group summary report) · voting.py (group vote)
+                 dates.py (shared dates: pure suggestion function + apply)
   demo.py        fictitious demo accounts and trips
-  management/    load_demo_data command
+  management/    load_demo_data and compile_translations commands
+  templatetags/  |tr filter that translates catalog values from the database
   tests/         automated tests
 templates/       base layout, partials, pages, error pages
-static/          css/style.css (design system), js/app.js (copy button),
-                 fonts/ (Readex Pro + licence), img/destinations/ (photos)
+static/          css/style.css (design system), js/app.js (motion and copy button),
+                 fonts/ (Baloo Bhaijaan 2, JetBrains Mono + licences), img/destinations/ (photos)
 docs/            ERD, verification record, demo script, market validation, screenshots
 ```
 
@@ -162,11 +184,11 @@ docs/            ERD, verification record, demo script, market validation, scree
 
 | Capability | Where in the app |
 |---|---|
-| CRUD | Trip: create / edit / cancel (retire) · TripMember: join / remove · Preference: create / update (deleted with its member) · Recommendation: generate / clear |
+| CRUD | Trip: create / edit / cancel (retire) · TripMember: join / remove · Preference: create / update (deleted with its member) · Recommendation: generate / clear · Vote: cast / change · Availability: add / delete |
 | Filtering and ordering | My Trips status filter, newest first · recommendations by rank · active destinations only |
 | Relationship queries | My Trips (trips through memberships) · destinations through routes from the departure city · group summary through Preference → TripMember → Trip |
 | Aggregation | Trip Room group summary (`Avg`, `Min`, `Count`) · readiness counts · My Trips status counts |
-| Annotation | My Trips member and ready counts per trip · top interests with vote counts |
+| Annotation | My Trips member and ready counts per trip · top interests with vote counts · `Count("votes")` per top-3 recommendation · `Count("availabilities")` per member on the shared-dates page |
 
 ## Documentation
 
@@ -188,5 +210,5 @@ The full list is in [docs/verification.md](docs/verification.md#known-limitation
 
 - **AI assistance:** this project was built with significant help from **Claude (Anthropic)**, an AI assistant used for planning, writing and reviewing code, tests and documentation. All work was reviewed, run and verified, and I can explain every part of the implementation.
 - **Destination photos:** 12 freely licensed photos from Wikimedia Commons (CC BY, CC BY-SA or public domain), resized and converted to WebP. Each author and licence is listed on the in-app **Credits** page (`/credits/`, linked in the footer) and in [destinations/photos.py](destinations/photos.py).
-- **Font:** [Readex Pro](https://github.com/ThomasJockin/readexpro) by The Readex Pro Project Authors, under the SIL Open Font License 1.1 ([static/fonts/OFL.txt](static/fonts/OFL.txt)).
+- **Fonts:** [Baloo Bhaijaan 2](https://github.com/EkType/Baloo2) by The Baloo 2 Project Authors and [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by The JetBrains Mono Project Authors, both under the SIL Open Font License 1.1 ([static/fonts/OFL-BalooBhaijaan2.txt](static/fonts/OFL-BalooBhaijaan2.txt), [static/fonts/OFL-JetBrainsMono.txt](static/fonts/OFL-JetBrainsMono.txt)).
 - **Framework:** [Django](https://www.djangoproject.com/) and its documentation.

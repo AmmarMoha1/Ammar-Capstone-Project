@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Page not found{% endblock %}
+{% block title %}{% translate "Page not found" %}{% endblock %}
 
 {% block content %}
 <section class="error-page">
     <p class="error-page__code">404</p>
-    <h1>We couldn't find that page</h1>
-    <p class="muted">The link may be wrong, or the trip may not exist. If it's a trip, you need to be a member to see it.</p>
+    <h1>{% translate "We couldn't find that page" %}</h1>
+    <p class="muted">{% translate "The link may be wrong, or the trip may not exist. If it's a trip, you need to be a member to see it." %}</p>
     <div class="actions">
-        <a class="btn btn--primary" href="{% url 'trips:home' %}">Go to my trips</a>
-        <a class="btn btn--secondary" href="{% url 'trips:join' %}">Join a trip with a code</a>
+        <a class="btn btn--primary" href="{% url 'trips:home' %}">{% translate "Go to my trips" %}</a>
+        <a class="btn btn--secondary" href="{% url 'trips:join' %}">{% translate "Join a trip with a code" %}</a>
     </div>
 </section>
 {% endblock %}

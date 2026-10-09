@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n wajha %}
 
-{% block title %}Credits{% endblock %}
+{% block title %}{% translate "Credits" %}{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div>
-        <h1>Credits</h1>
-        <p class="muted">Wajha uses freely licensed photos and an open-source font. Thank you to their creators.</p>
+        <h1>{% translate "Credits" %}</h1>
+        <p class="muted">{% translate "Wajha uses freely licensed photos and open-source fonts. Thank you to their creators." %}</p>
     </div>
 </div>
 
 <section class="card credits" aria-labelledby="photos-heading">
-    <h2 id="photos-heading">Destination photos</h2>
-    <p class="muted small">Photos are resized and converted to WebP for faster loading; no other changes were made.</p>
+    <h2 id="photos-heading">{% translate "Destination photos" %}</h2>
+    <p class="muted small">{% translate "Photos are resized and converted to WebP for faster loading; no other changes were made." %}</p>
     <ul class="credits__list">
         {% for photo in photos %}
         <li class="credits__item">
-            <img src="{% static photo.thumb %}" alt="{{ photo.alt }}" width="120" height="80" loading="lazy">
+            <img src="{% static photo.thumb %}" alt="{{ photo.alt|tr }}" width="120" height="80" loading="lazy">
             <div>
-                <strong>{{ photo.city }}</strong>
+                <strong>{{ photo.city|tr }}</strong>
                 {% include "partials/_photo_credit.html" %}
             </div>
         </li>
@@ -28,7 +28,8 @@
 </section>
 
 <section class="card credits" aria-labelledby="font-heading">
-    <h2 id="font-heading">Font</h2>
-    <p>Readex Pro by The Readex Pro Project Authors, licensed under the <a href="{% static 'fonts/OFL.txt' %}">SIL Open Font License 1.1</a>.</p>
+    <h2 id="font-heading">{% translate "Fonts" %}</h2>
+    <p>{% translate "Baloo Bhaijaan 2 by The Baloo 2 Project Authors, licensed under the" %} <a href="{% static 'fonts/OFL-BalooBhaijaan2.txt' %}">SIL Open Font License 1.1</a>.</p>
+    <p>{% translate "JetBrains Mono by The JetBrains Mono Project Authors, licensed under the" %} <a href="{% static 'fonts/OFL-JetBrainsMono.txt' %}">SIL Open Font License 1.1</a>.</p>
 </section>
 {% endblock %}

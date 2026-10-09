@@ -1,21 +1,23 @@
 {% extends "base.html" %}
+{% load i18n wajha %}
 
-{% block title %}My trips{% endblock %}
+{% block title %}{% translate "My trips" %}{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div>
-        <h1>My trips</h1>
-        <p class="muted">Trips you organize or have joined.</p>
+        <p class="eyebrow">{% translate "Your boarding passes" %}</p>
+        <h1>{% translate "My trips" %}</h1>
+        <p class="muted">{% translate "Trips you organize or have joined." %}</p>
     </div>
     <div class="actions">
-        <a class="btn btn--secondary" href="{% url 'trips:join' %}">Join with code</a>
-        <a class="btn btn--primary" href="{% url 'trips:create' %}">New trip</a>
+        <a class="btn btn--secondary" href="{% url 'trips:join' %}">{% translate "Join with code" %}</a>
+        <a class="btn btn--primary" href="{% url 'trips:create' %}">{% translate "New trip" %}</a>
     </div>
 </div>
 
 {% if has_any_trips %}
-<nav class="filter-tabs" aria-label="Filter trips by status">
+<nav class="filter-tabs" aria-label="{% translate 'Filter trips by status' %}">
     {% for f in filters %}
     <a class="filter-tab" href="{% if f.key == 'all' %}{% url 'trips:my_trips' %}{% else %}?status={{ f.key }}{% endif %}"{% if f.key == active_filter %} aria-current="page"{% endif %}>
         {{ f.label }} <span class="filter-tab__count">{{ f.count }}</span>
@@ -27,31 +29,38 @@
 {% if trips %}
 <ul class="trip-grid">
     {% for trip in trips %}
-    <li>
-        <a class="card card--link trip-card" href="{% url 'trips:detail' trip.pk %}">
-            <div class="trip-card__top">
-                {% include "partials/_status_badge.html" %}
-                <span class="muted small">{{ trip.member_count }} member{{ trip.member_count|pluralize }}</span>
+    <li data-reveal style="--d: {% widthratio forloop.counter0 1 60 %}ms">
+        <a class="card card--link trip-card trip-card--{{ trip.status|lower }}" href="{% url 'trips:detail' trip.pk %}">
+            <div class="trip-card__stripe" aria-hidden="true"></div>
+            <div class="trip-card__body">
+                <div class="trip-card__top">
+                    {% include "partials/_status_badge.html" %}
+                    <span class="muted small">{% blocktranslate trimmed count counter=trip.member_count %}{{ counter }} member{% plural %}{{ counter }} members{% endblocktranslate %}</span>
+                </div>
+                <h2 class="trip-card__name">{{ trip.name }}</h2>
+                <p class="route">
+                    <span class="route__code">{{ trip.departure_city.airport_code }}</span>
+                    <span class="route__line" aria-hidden="true">✈</span>
+                    <span>{% if trip.selected_destination %}{{ trip.selected_destination.city|tr }}{% else %}{% translate "To be decided" %}{% endif %}</span>
+                </p>
             </div>
-            <h2 class="trip-card__name">{{ trip.name }}</h2>
-            <p class="route">
-                <span class="route__code">{{ trip.departure_city.airport_code }}</span>
-                <span class="route__line" aria-hidden="true">✈</span>
-                <span>{% if trip.selected_destination %}{{ trip.selected_destination.city }}{% else %}To be decided{% endif %}</span>
-            </p>
-            <p class="muted small">{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</p>
-            {% if trip.status == "PLANNING" %}
-            <p class="trip-card__ready small"><strong>{{ trip.ready_count }} of {{ trip.member_count }}</strong> ready</p>
-            {% endif %}
+            <div class="trip-card__foot">
+                <p class="muted">{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</p>
+                {% if trip.status == "PLANNING" %}
+                <p class="trip-card__ready">{% blocktranslate trimmed with ready=trip.ready_count total=trip.member_count %}<strong>{{ ready }} of {{ total }}</strong> ready{% endblocktranslate %}</p>
+                {% endif %}
+            </div>
         </a>
     </li>
     {% endfor %}
 </ul>
 {% elif has_any_trips %}
     {% url 'trips:my_trips' as all_url %}
-    {% include "partials/_empty_state.html" with title="No trips here" text="None of your trips have this status." action_url=all_url action_label="Show all trips" %}
+    {% translate "No trips here" as empty_title %}{% translate "None of your trips have this status." as empty_text %}{% translate "Show all trips" as empty_action %}
+    {% include "partials/_empty_state.html" with title=empty_title text=empty_text action_url=all_url action_label=empty_action %}
 {% else %}
     {% url 'trips:create' as create_url %}
-    {% include "partials/_empty_state.html" with title="No trips yet" text="Create a trip and invite your friends, or join a friend's trip with their invite code." action_url=create_url action_label="Create your first trip" %}
+    {% translate "No trips yet" as empty_title %}{% translate "Create a trip and invite your friends, or join a friend's trip with their invite code." as empty_text %}{% translate "Create your first trip" as empty_action %}
+    {% include "partials/_empty_state.html" with title=empty_title text=empty_text action_url=create_url action_label=empty_action %}
 {% endif %}
 {% endblock %}

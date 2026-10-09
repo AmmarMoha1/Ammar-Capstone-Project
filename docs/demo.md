@@ -34,9 +34,12 @@ Logged in as **ammar**:
 4. Click **See why it fits**:
    - The checklist: fits everyone's budget (≈ 3,200 SAR), direct 3.5 h flight, interests match 4 of 4 members, typically cold in January.
    - **Member compatibility:** Khalid is lowest at 80%. Explain the fairness rule: *Group Match = 70% of the average + 30% of the lowest member, so one unhappy friend pulls the score down instead of being averaged away.*
+   - Back on the recommendations page, scroll to **Group vote**: 3 of 4 members voted and Tbilisi is leading. Vote as ammar to show the counts change. Only totals are shown, never who voted for what; the organizer still decides.
 5. Click **Choose Tbilisi** → read the confirmation → confirm.
    - The **boarding pass** shows RUH → Tbilisi, dates, 4 travelers, 88% Group Match. The trip is now **Decided** and locked.
 6. In **faisal's** window, refresh the trip. He sees the same decision but has no organizer actions.
+
+**Optional: shared dates (Spring Break).** Open **Share your dates** from the Trip Room. Everyone has added their free dates; the current dates (25–30 Mar) suit 2 of 3, and the best suggestion is **27 Mar – 1 Apr, everyone free**. As organizer, click **Use these dates** → confirm. The trip keeps its 5 nights. The suggestion comes from a pure function (`suggest_windows()` in `trips/services/dates.py`) that can be checked by hand.
 
 ## 3. One validation or failure case (about 1 minute)
 
@@ -82,7 +85,7 @@ Show `docs/erd.md`.
 
 **Trace a request: My Trips**
 1. URL `/trips/` → `trips/urls.py` (`name="my_trips"`, namespace `trips`)
-2. View `trips/views.py` → `my_trips()` (line 50)
+2. View `trips/views.py` → `my_trips()` (line 65)
 3. ORM, in this order:
    - a subquery of the user's memberships (relationship query)
    - `aggregate()` per-status counts
@@ -92,7 +95,7 @@ Show `docs/erd.md`.
 4. Template `templates/trips/my_trips.html`, which uses the shared partials (`_status_badge.html`, `_empty_state.html`)
 
 **Explain a constraint**
-- `trip_status_matches_selected_destination` in `trips/models.py` (line 90): PLANNING → no destination, DECIDED → destination required, CANCELLED → either. Finalizing sets both together in `finalize_trip()` (`trips/services/trip_actions.py`, line 107).
+- `trip_status_matches_selected_destination` in `trips/models.py` (line 91): PLANNING → no destination, DECIDED → destination required, CANCELLED → either. Finalizing sets both together in `finalize_trip()` (`trips/services/trip_actions.py`, line 110).
 
 **Show a calculation**
 - `calculate_member_match()` and `combine_member_scores()` in `trips/services/matching.py` (lines 166 and 184), with the worked Tbilisi example in `docs/verification.md`.

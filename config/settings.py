@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -79,6 +80,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'config.context_processors.language_switch',
             ],
         },
     },
@@ -120,7 +123,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# English is served without a prefix (/trips/), Arabic under /ar/ (/ar/trips/).
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('ar', 'العربية'),
+]
+
+LOCALE_PATHS = [BASE_DIR / "locale"]
+
+# Number separators for Arabic pages (Django's default Arabic format uses "." for thousands).
+FORMAT_MODULE_PATH = "config.formats"
 
 TIME_ZONE = 'Asia/Riyadh'
 
@@ -146,5 +160,6 @@ MAILERS = {
     },
 }
 
+LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "trips:my_trips"
 LOGOUT_REDIRECT_URL = "trips:home"

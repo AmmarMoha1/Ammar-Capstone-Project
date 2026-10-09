@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Count, F, Q
+from django.utils.translation import gettext_lazy as _
 
 from destinations.models import Destination, Interest, OriginCity
 
@@ -47,9 +48,9 @@ class Trip(models.Model):
     MAX_MEMBERS = 8
 
     class Status(models.TextChoices):
-        PLANNING = "PLANNING", "Planning"
-        DECIDED = "DECIDED", "Decided"
-        CANCELLED = "CANCELLED", "Cancelled"
+        PLANNING = "PLANNING", _("Planning")
+        DECIDED = "DECIDED", _("Decided")
+        CANCELLED = "CANCELLED", _("Cancelled")
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="owned_trips"
@@ -145,11 +146,11 @@ class TripMember(models.Model):
 
 class WeatherPreference(models.TextChoices):
     # Same values as destinations.WeatherType, plus "no preference".
-    COLD = "COLD", "Cold"
-    MILD = "MILD", "Mild"
-    WARM = "WARM", "Warm"
-    HOT = "HOT", "Hot"
-    ANY = "ANY", "No preference"
+    COLD = "COLD", _("Cold")
+    MILD = "MILD", _("Mild")
+    WARM = "WARM", _("Warm")
+    HOT = "HOT", _("Hot")
+    ANY = "ANY", _("No preference")
 
 
 class Preference(models.Model):
@@ -231,3 +232,51 @@ class Recommendation(models.Model):
 
     def __str__(self):
         return f"#{self.rank} {self.destination.city} for {self.trip} ({self.score}%)"
+
+
+class Vote(models.Model):
+    """A member's vote for one of the trip's top recommendations (one vote per member).
+
+    The vote points at a Recommendation row, so it is deleted with it whenever the
+    recommendations are regenerated or cleared: a vote always refers to the current ranking.
+    The organizer still makes the final decision; votes only show what the group prefers.
+    """
+
+    MAX_RANK = 3  # members vote among the top 3 recommendations
+
+    trip_member = models.OneToOneField(TripMember, on_delete=models.CASCADE, related_name="vote")
+    recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE, related_name="votes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.trip_member} votes {self.recommendation.destination.city}"
+
+
+class Availability(models.Model):
+    """A date range when a member is free to travel for this trip (both days included).
+
+    A trip fits the range when it leaves on or after start_date and returns on or before end_date.
+    """
+
+    MAX_PER_MEMBER = 5
+    MAX_DAYS = 90         # longest single range
+    MAX_DAYS_AHEAD = 365  # how far ahead a range may end
+
+    trip_member = models.ForeignKey(TripMember, on_delete=models.CASCADE, related_name="availabilities")
+    start_date = models.DateField()
+    end_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["start_date"]
+        verbose_name_plural = "availabilities"
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(end_date__gt=F("start_date")),
+                name="availability_end_after_start",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.trip_member}: {self.start_date} – {self.end_date}"

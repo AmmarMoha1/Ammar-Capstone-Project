@@ -1,57 +1,96 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n wajha %}
 
-{% block title %}Decide your group trip{% endblock %}
+{% block title %}{% translate "Decide your group trip" %}{% endblock %}
 
 {% block content %}
 <section class="hero">
+    <svg class="flight-path" viewBox="0 0 1160 560" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M -40 500 C 200 600, 380 360, 560 450 S 900 160, 1240 70"/></svg>
+    <span class="paper-plane" aria-hidden="true">✈️</span>
+
     <div class="hero__text">
-        <p class="eyebrow">Group travel, decided together</p>
-        <h1 class="hero__title">Everyone has a preference. Wajha finds the destination everyone can agree on.</h1>
+        <p class="hero__kicker">{% translate "Group travel, decided together" %}</p>
+        <h1 class="hero__title">{% blocktranslate trimmed %}Where are <span class="hl">we</span> going?{% endblocktranslate %}</h1>
         <p class="hero__lead">
-            Create a trip, invite your friends with a code, let everyone add their budget,
-            flight limits and interests, and get destinations ranked for the whole group.
+            {% translate "Everyone has a preference. Wajha finds the destination everyone can agree on." %}
+            {% translate "Create a trip, invite your friends with a code, let everyone privately add their budget, flight limits and interests, and get destinations ranked for the whole group." %}
         </p>
         <div class="actions">
-            <a class="btn btn--primary btn--large" href="{% url 'accounts:register' %}">Start planning</a>
-            <a class="btn btn--secondary btn--large" href="{% url 'accounts:login' %}">I have an account</a>
+            <a class="btn btn--primary btn--large" href="{% url 'accounts:register' %}">{% translate "Start planning" %} <span class="btn__arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--secondary btn--large" href="{% url 'accounts:login' %}">{% translate "I have an account" %}</a>
         </div>
     </div>
 
-    <figure class="hero__preview" aria-label="Example of a Wajha recommendation">
-        <img src="{% static 'img/destinations/tbilisi-thumb.webp' %}" alt="Old Tbilisi's houses climbing the hill below Narikala Fortress" width="480" height="320">
-        <figcaption class="preview">
-            <span class="badge badge--accent"><span aria-hidden="true">★</span> Top pick · example</span>
-            <div class="preview__row">
-                <div>
-                    <p class="preview__city">Tbilisi</p>
-                    <p class="muted small">✈ 3.5h · Direct · ≈ 3,200 SAR</p>
-                </div>
-                {% include "partials/_score_ring.html" with score=83 %}
-            </div>
-            <p class="preview__members small">Fits all 4 friends' budgets and flight limits</p>
-        </figcaption>
+    <figure class="deck" data-deck aria-label="{% translate 'Example recommendations' %}">
+        {% for city, slug, score, hours, cost in example_cards %}
+        <article class="deck__card">
+            <img src="{% static 'img/destinations/'|add:slug|add:'-thumb.webp' %}" alt="" width="480" height="320">
+            {% if forloop.first %}<span class="badge badge--accent"><span aria-hidden="true">★</span> {% translate "Top pick · example" %}</span>{% endif %}
+            <h3>{{ city|tr }}</h3>
+            <p class="muted">✈ {% blocktranslate trimmed %}{{ hours }}h{% endblocktranslate %} · {% blocktranslate trimmed %}≈ {{ cost }} SAR{% endblocktranslate %}</p>
+            {% include "partials/_score_ring.html" with score=score %}
+        </article>
+        {% endfor %}
+        <figcaption class="deck__hint">{% translate "Click the stack to shuffle" %}</figcaption>
     </figure>
 </section>
 
-<section class="steps" aria-labelledby="how-it-works">
-    <h2 id="how-it-works">How it works</h2>
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+        {% for city in marquee_cities %}<span>{{ city|tr }} ✦</span>{% endfor %}
+        {% for city in marquee_cities %}<span>{{ city|tr }} ✦</span>{% endfor %}
+    </div>
+</div>
+
+<section aria-labelledby="how-it-works">
+    <h2 id="how-it-works" class="section-title">{% translate "How it works" %}</h2>
     <ol class="steps__list">
-        <li class="card step">
-            <span class="step__number" aria-hidden="true">1</span>
-            <h3>Create a trip</h3>
-            <p>Pick your departure city and dates. You get an invite code to share.</p>
+        <li class="flip" data-reveal>
+            <button type="button" class="flip__inner" aria-pressed="false">
+                <span class="flip__face flip__front" style="--face: var(--saffron)">
+                    <span class="flip__num" aria-hidden="true">01</span>
+                    <h3>{% translate "Create a trip" %}</h3>
+                    <span class="flip__hint" aria-hidden="true">{% translate "Tap to flip ↻" %}</span>
+                </span>
+                <span class="flip__face flip__back">{% translate "Pick your departure city and dates. You get an invite code to share." %}</span>
+            </button>
         </li>
-        <li class="card step">
-            <span class="step__number" aria-hidden="true">2</span>
-            <h3>Everyone adds preferences</h3>
-            <p>Each friend privately sets a budget, flight limits, weather and interests.</p>
+        <li class="flip" data-reveal style="--d: .1s">
+            <button type="button" class="flip__inner" aria-pressed="false">
+                <span class="flip__face flip__front" style="--face: var(--pink-tint)">
+                    <span class="flip__num" aria-hidden="true">02</span>
+                    <h3>{% translate "Everyone adds preferences" %}</h3>
+                    <span class="flip__hint" aria-hidden="true">{% translate "Tap to flip ↻" %}</span>
+                </span>
+                <span class="flip__face flip__back">{% translate "Each friend privately sets a budget, flight limits, weather and interests." %}</span>
+            </button>
         </li>
-        <li class="card step">
-            <span class="step__number" aria-hidden="true">3</span>
-            <h3>Decide together</h3>
-            <p>See destinations ranked by Group Match, understand why, and lock in the choice.</p>
+        <li class="flip" data-reveal style="--d: .2s">
+            <button type="button" class="flip__inner" aria-pressed="false">
+                <span class="flip__face flip__front" style="--face: var(--sky-tint)">
+                    <span class="flip__num" aria-hidden="true">03</span>
+                    <h3>{% translate "Decide together" %}</h3>
+                    <span class="flip__hint" aria-hidden="true">{% translate "Tap to flip ↻" %}</span>
+                </span>
+                <span class="flip__face flip__back">{% translate "See destinations ranked by Group Match, understand why, and lock in the choice." %}</span>
+            </button>
         </li>
     </ol>
+</section>
+
+<section class="fair card" data-reveal aria-labelledby="fair-heading">
+    <div>
+        <p class="eyebrow">{% translate "The fairness rule" %}</p>
+        <h2 id="fair-heading">{% translate "One unhappy friend can't be averaged away." %}</h2>
+        <p class="muted">{% translate "Group Match blends the average with the lowest member's score, so a place everyone likes beats a place most people love." %}</p>
+    </div>
+    <div>
+        <ul class="bars">
+            <li class="bars__row"><span class="bars__label">{% translate "Average" %}</span><span class="score-bar" style="--score: 91" aria-hidden="true"><span></span></span><span class="bars__value">91%</span></li>
+            <li class="bars__row"><span class="bars__label">{% translate "Lowest member" %}</span><span class="score-bar" style="--score: 80" aria-hidden="true"><span></span></span><span class="bars__value">80%</span></li>
+            <li class="bars__row"><span class="bars__label">{% translate "Group Match" %}</span><span class="score-bar" style="--score: 88" aria-hidden="true"><span></span></span><span class="bars__value">88%</span></li>
+        </ul>
+        <p class="fair__formula">{% translate "0.7 × average + 0.3 × lowest" %}</p>
+    </div>
 </section>
 {% endblock %}

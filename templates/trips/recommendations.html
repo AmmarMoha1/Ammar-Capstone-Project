@@ -1,122 +1,184 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n wajha %}
 
-{% block title %}Recommendations · {{ trip.name }}{% endblock %}
+{% block title %}{% blocktranslate trimmed with trip=trip.name %}Recommendations · {{ trip }}{% endblocktranslate %}{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div>
         <p class="eyebrow"><a href="{% url 'trips:detail' trip.pk %}">{{ trip.name }}</a></p>
-        <h1>Recommended destinations</h1>
+        <h1>{% translate "Recommended destinations" %}</h1>
         <p class="muted">
-            Ranked by Group Match for travelers from {{ trip.departure_city.name }},
-            {{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }} ({{ trip.nights }} night{{ trip.nights|pluralize }}).
+            {% blocktranslate trimmed count nights=trip.nights with city=trip.departure_city.name|tr start=trip.start_date|date:"j M" end=trip.end_date|date:"j M Y" %}
+            Ranked by Group Match for travelers from {{ city }}, {{ start }} – {{ end }} ({{ nights }} night).
+            {% plural %}
+            Ranked by Group Match for travelers from {{ city }}, {{ start }} – {{ end }} ({{ nights }} nights).
+            {% endblocktranslate %}
         </p>
     </div>
 </div>
 
 {% if cards %}
-    {% with first=cards.0 %}
-    <article class="rec-featured">
-        {% with photo=first.recommendation.destination.photo %}
-        <div class="rec-featured__band{% if photo %} rec-featured__band--photo{% endif %}">
-            {% if photo %}<img class="rec-featured__img" src="{% static photo.wide %}" alt="{{ photo.alt }}" width="1280" height="640">{% endif %}
-            <span class="badge badge--accent"><span aria-hidden="true">★</span> Top pick</span>
-            <p class="rec-featured__country">{{ first.recommendation.destination.country }}</p>
-            <h2 class="rec-featured__city">{{ first.recommendation.destination.city }}</h2>
+    <section class="coverflow" data-coverflow tabindex="0" aria-roledescription="{% translate 'carousel' %}" aria-label="{% translate 'Recommended destinations' %}">
+        <ol class="coverflow__stage">
+            {% for card in cards %}
+            {% with rec=card.recommendation photo=card.recommendation.destination.photo %}
+            <li class="cover" data-label="{{ rec.destination.city|tr }}">
+                <a class="cover__link" href="{% url 'trips:recommendation_detail' trip.pk rec.destination_id %}">
+                    <span class="cover__rank">#{{ rec.rank }}</span>
+                    {% if photo %}<img src="{% static photo.thumb %}" alt="{{ photo.alt|tr }}" width="480" height="320"{% if not forloop.first %} loading="lazy"{% endif %}>{% endif %}
+                    <h2>{{ rec.destination.city|tr }}</h2>
+                    <p class="cover__country">{{ rec.destination.country|tr }}</p>
+                    {% if forloop.first %}{% include "partials/_score_ring.html" with score=rec.score %}{% else %}{% include "partials/_score_ring.html" with score=rec.score tone="sky" %}{% endif %}
+                </a>
+            </li>
+            {% endwith %}
+            {% endfor %}
+        </ol>
+        <div class="coverflow__nav">
+            <button type="button" class="round" data-prev aria-label="{% translate 'Previous destination' %}"><span aria-hidden="true">←</span></button>
+            <div class="dots"></div>
+            <button type="button" class="round" data-next aria-label="{% translate 'Next destination' %}"><span aria-hidden="true">→</span></button>
         </div>
-        <div class="rec-featured__body">
-            <div class="rec-featured__score">
-                {% include "partials/_score_ring.html" with score=first.recommendation.score size="large" %}
-                <div>
-                    <p class="rec-band">{{ first.band }}</p>
-                    <p class="muted small">Lowest member match: {{ first.recommendation.lowest_member_score|floatformat:0 }}%</p>
-                </div>
-            </div>
-            <div class="rec-featured__details">
-                {% include "partials/_trip_facts.html" with match=first.match cost=first.recommendation.estimated_total_cost %}
-                {% if first.interests %}
-                <ul class="chips" aria-label="Matched interests">
-                    {% for interest in first.interests %}<li class="chip chip--matched"><span aria-hidden="true">✓</span> {{ interest }}</li>{% endfor %}
+    </section>
+
+    <div class="rec-panels" aria-live="polite">
+        {% for card in cards %}
+        {% with rec=card.recommendation %}
+        <article class="rec-panel card{% if forloop.first %} is-active{% endif %}">
+            <div>
+                {% if forloop.first %}
+                <span class="badge badge--accent"><span aria-hidden="true">★</span> {% translate "Top pick" %}</span>
+                {% else %}
+                <span class="badge">{% blocktranslate trimmed with rank=rec.rank %}#{{ rank }} pick{% endblocktranslate %}</span>
+                {% endif %}
+                <h2>{{ rec.destination.city|tr }} <span class="muted small">{{ rec.destination.country|tr }}</span></h2>
+                {% include "partials/_trip_facts.html" with match=card.match cost=rec.estimated_total_cost %}
+                {% if card.interests %}
+                <ul class="chips" aria-label="{% translate 'Matched interests' %}">
+                    {% for interest in card.interests %}<li class="chip chip--matched"><span aria-hidden="true">✓</span> {{ interest }}</li>{% endfor %}
                 </ul>
                 {% endif %}
-                {% if first.match.weak_fit_count %}
-                <p class="warning-line"><span aria-hidden="true">⚠</span> Weak fit for {{ first.match.weak_fit_count }} member{{ first.match.weak_fit_count|pluralize }}</p>
+                {% if card.match.weak_fit_count %}
+                <p class="warning-line"><span aria-hidden="true">⚠</span> {% blocktranslate trimmed count counter=card.match.weak_fit_count %}Weak fit for {{ counter }} member{% plural %}Weak fit for {{ counter }} members{% endblocktranslate %}</p>
                 {% endif %}
-                <a class="btn btn--primary" href="{% url 'trips:recommendation_detail' trip.pk first.recommendation.destination_id %}">See why it fits</a>
-                {% if photo %}{% include "partials/_photo_credit.html" %}{% endif %}
-            </div>
-        </div>
-        {% endwith %}
-    </article>
-    {% endwith %}
-
-    {% if cards|length > 1 %}
-    <ol class="rec-list" start="2">
-        {% for card in cards|slice:"1:" %}
-        <li>
-            <a class="card card--link rec-card" href="{% url 'trips:recommendation_detail' trip.pk card.recommendation.destination_id %}">
-                <div class="rec-card__media">
-                    {% with photo=card.recommendation.destination.photo %}
-                    {% if photo %}<img class="rec-card__img" src="{% static photo.thumb %}" alt="{{ photo.alt }}" width="480" height="320" loading="lazy">{% endif %}
-                    {% endwith %}
-                    <span class="rec-card__rank" aria-hidden="true">#{{ card.recommendation.rank }}</span>
-                </div>
-                <div class="rec-card__main">
-                    <h2 class="rec-card__city">{{ card.recommendation.destination.city }} <span class="muted">{{ card.recommendation.destination.country }}</span></h2>
-                    {% include "partials/_trip_facts.html" with match=card.match cost=card.recommendation.estimated_total_cost %}
-                    {% if card.match.weak_fit_count %}
-                    <p class="warning-line"><span aria-hidden="true">⚠</span> Weak fit for {{ card.match.weak_fit_count }} member{{ card.match.weak_fit_count|pluralize }}</p>
+                <div class="actions">
+                    <a class="btn btn--primary" href="{% url 'trips:recommendation_detail' trip.pk rec.destination_id %}">{% translate "See why it fits" %}</a>
+                    {% if is_organizer and trip.is_planning %}
+                    <a class="btn btn--secondary" href="{% url 'trips:finalize' trip.pk rec.destination_id %}">{% blocktranslate trimmed with city=rec.destination.city|tr %}Choose {{ city }}{% endblocktranslate %}</a>
                     {% endif %}
                 </div>
+            </div>
+            <div class="rec-panel__score">
+                {% include "partials/_score_ring.html" with score=rec.score size="large" %}
+                <div>
+                    <p class="rec-band">{{ card.band }}</p>
+                    <p class="muted small">{% blocktranslate trimmed with score=rec.lowest_member_score|floatformat:0 %}Lowest member match: {{ score }}%{% endblocktranslate %}</p>
+                </div>
+            </div>
+        </article>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    {% if votes and votes.options %}
+    <section class="card vote-board" id="vote" aria-labelledby="vote-heading">
+        <div class="vote-board__head">
+            <div>
+                <p class="eyebrow">{% translate "Group vote" %}</p>
+                <h2 id="vote-heading">{% translate "Which of the top 3 do you prefer?" %}</h2>
+                <p class="muted small">{% translate "One vote each, and you can change it. Only totals are shown, never who voted for what. The organizer makes the final choice." %}</p>
+            </div>
+            <p class="vote-board__count">{% blocktranslate trimmed with voted=votes.voted total=votes.members %}<strong>{{ voted }} of {{ total }}</strong> voted{% endblocktranslate %}</p>
+        </div>
+        <ol class="vote-list">
+            {% for option in votes.options %}
+            {% with photo=option.destination.photo city=option.destination.city|tr %}
+            <li class="vote{% if option.destination_id == votes.my_destination_id %} vote--mine{% endif %}{% if votes.leader and option.pk == votes.leader.pk %} vote--leader{% endif %}">
+                <span class="vote__rank" aria-hidden="true">#{{ option.rank }}</span>
+                {% if photo %}<img class="vote__img" src="{% static photo.thumb %}" alt="" width="480" height="320" loading="lazy">{% else %}<span></span>{% endif %}
+                <div class="vote__main">
+                    <h3>{{ city }}{% if votes.leader and option.pk == votes.leader.pk %} <span class="badge badge--accent"><span aria-hidden="true">👑</span> {% translate "Leading" %}</span>{% endif %}</h3>
+                    <span class="score-bar" style="--score: {% widthratio option.vote_count votes.members 100 %}" aria-hidden="true"><span></span></span>
+                    <p class="small muted">{% blocktranslate trimmed count counter=option.vote_count %}{{ counter }} vote{% plural %}{{ counter }} votes{% endblocktranslate %} · {% blocktranslate trimmed with score=option.score|floatformat:0 %}{{ score }}% Group Match{% endblocktranslate %}</p>
+                </div>
+                {% if trip.is_planning %}
+                    {% if option.destination_id == votes.my_destination_id %}
+                    <span class="stamp stamp--mint vote__stamp">{% translate "Your vote" %}</span>
+                    {% else %}
+                    <form method="post" action="{% url 'trips:vote' trip.pk option.destination_id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--accent btn--small">{% if votes.my_destination_id %}{% translate "Change vote" %}{% else %}{% translate "Vote" %}{% endif %}<span class="visually-hidden"> {{ city }}</span></button>
+                    </form>
+                    {% endif %}
+                {% endif %}
+            </li>
+            {% endwith %}
+            {% endfor %}
+        </ol>
+    </section>
+    {% endif %}
+
+    <div class="section-heading"><h2>{% translate "Full ranking" %}</h2></div>
+    <ol class="rec-list">
+        {% for card in cards %}
+        {% with rec=card.recommendation photo=card.recommendation.destination.photo %}
+        <li data-reveal style="--d: {% widthratio forloop.counter0 1 60 %}ms">
+            <a class="card card--link rec-card" href="{% url 'trips:recommendation_detail' trip.pk rec.destination_id %}">
+                <span class="rec-card__rank" aria-hidden="true">#{{ rec.rank }}</span>
+                {% if photo %}<img class="rec-card__img" src="{% static photo.thumb %}" alt="" width="480" height="320" loading="lazy">{% else %}<span></span>{% endif %}
+                <div>
+                    <h3 class="rec-card__city">{{ rec.destination.city|tr }} <span class="muted">{{ rec.destination.country|tr }}</span></h3>
+                    {% include "partials/_trip_facts.html" with match=card.match cost=rec.estimated_total_cost %}
+                </div>
                 <div class="rec-card__score">
-                    <p class="rec-card__percent">{{ card.recommendation.score|floatformat:0 }}%</p>
-                    <div class="score-bar" style="--score: {{ card.recommendation.score }}" aria-hidden="true"><span></span></div>
+                    <p class="rec-card__percent">{{ rec.score|floatformat:0 }}%</p>
+                    <span class="score-bar" style="--score: {{ rec.score }}" aria-hidden="true"><span></span></span>
                     <p class="muted small">{{ card.band }}</p>
                 </div>
             </a>
         </li>
+        {% endwith %}
         {% endfor %}
     </ol>
-    {% endif %}
 
 {% elif nothing_fits %}
     <div class="empty-state">
-        <h2 class="empty-state__title">No destination fits everyone</h2>
-        <p>Every destination breaks at least one member's budget, flight limit or direct-flight need. See what is blocking each one below. A member can relax a limit by editing their preferences.</p>
-        <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">Edit your preferences</a>
+        <h2 class="empty-state__title">{% translate "No destination fits everyone" %}</h2>
+        <p>{% translate "Every destination breaks at least one member's budget, flight limit or direct-flight need. See what is blocking each one below. A member can relax a limit by editing their preferences." %}</p>
+        <a class="btn btn--secondary" href="{% url 'trips:preferences' trip.pk %}">{% translate "Edit your preferences" %}</a>
     </div>
 
 {% elif can_generate %}
     <div class="empty-state">
-        <h2 class="empty-state__title">Everyone is ready</h2>
+        <h2 class="empty-state__title">{% translate "Everyone is ready" %}</h2>
         {% if is_organizer %}
-        <p>All members have added their preferences. Generate recommendations to see destinations ranked for the whole group.</p>
+        <p>{% translate "All members have added their preferences. Generate recommendations to see destinations ranked for the whole group." %}</p>
         <form method="post" action="{% url 'trips:generate' trip.pk %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn--primary">Generate recommendations</button>
+            <button type="submit" class="btn btn--primary">{% translate "Generate recommendations" %}</button>
         </form>
         {% else %}
-        <p>All members have added their preferences. Waiting for the organizer to generate recommendations.</p>
+        <p>{% translate "All members have added their preferences. Waiting for the organizer to generate recommendations." %}</p>
         {% endif %}
     </div>
 
 {% else %}
     <div class="empty-state">
-        <h2 class="empty-state__title">Not ready yet</h2>
-        <p>Recommendations unlock when the trip has at least {{ trip.MIN_MEMBERS }} members and everyone has added their preferences.</p>
-        <a class="btn btn--secondary" href="{% url 'trips:detail' trip.pk %}">Back to the trip</a>
+        <h2 class="empty-state__title">{% translate "Not ready yet" %}</h2>
+        <p>{% blocktranslate trimmed with min=trip.MIN_MEMBERS %}Recommendations unlock when the trip has at least {{ min }} members and everyone has added their preferences.{% endblocktranslate %}</p>
+        <a class="btn btn--secondary" href="{% url 'trips:detail' trip.pk %}">{% translate "Back to the trip" %}</a>
     </div>
 {% endif %}
 
 {% if excluded %}
 <details class="excluded">
-    <summary>Didn't fit everyone ({{ excluded|length }})</summary>
-    <p class="muted small">These destinations break at least one member's hard limit. Members are never named.</p>
+    <summary>{% blocktranslate trimmed with count=excluded|length %}Didn't fit everyone ({{ count }}){% endblocktranslate %}</summary>
+    <p class="muted small">{% translate "These destinations break at least one member's hard limit. Members are never named." %}</p>
     <ul class="excluded__list">
         {% for match, reasons in excluded %}
-        <li>
-            <strong>{{ match.option.city }}</strong> <span class="muted">≈ {{ match.estimated_cost|floatformat:"0g" }} SAR</span>
+        <li data-stamp="{% translate 'No fit' %}">
+            <strong>{{ match.option.city|tr }}</strong> <span class="muted small">{% blocktranslate trimmed with cost=match.estimated_cost|floatformat:"0g" %}≈ {{ cost }} SAR{% endblocktranslate %}</span>
             <span class="excluded__reasons">{{ reasons|join:" · " }}</span>
         </li>
         {% endfor %}
@@ -125,6 +187,6 @@
 {% endif %}
 
 {% if cards or excluded %}
-<p class="muted small price-note">Prices are illustrative estimates per person (return flight plus accommodation, food and local transport), not live prices.</p>
+<p class="muted small price-note">{% translate "Prices are illustrative estimates per person (return flight plus accommodation, food and local transport), not live prices." %}</p>
 {% endif %}
 {% endblock %}

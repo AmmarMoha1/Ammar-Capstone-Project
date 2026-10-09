@@ -1,13 +1,19 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.formats import date_format
 from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy, ngettext
 
 from destinations.photos import all_photos
 
-from .forms import JoinTripForm, PreferenceForm, TripForm
-from .models import Preference, Trip, TripMember
+from .forms import AvailabilityForm, JoinTripForm, PreferenceForm, TripForm
+from .models import Availability, Preference, Trip, TripMember
 from .permissions import get_member_trip_or_404, get_organizer_trip_or_403
 from .services.matching import WEIGHTS, match_band
 from .services.recommendations import (
@@ -16,6 +22,7 @@ from .services.recommendations import (
     explain_group_match,
     generate_recommendations,
 )
+from .services.dates import add_availability, apply_dates, date_plan
 from .services.summary import MIN_SUBMISSIONS_FOR_BUDGETS, group_summary
 from .services.trip_actions import (
     TripActionError,
@@ -27,16 +34,30 @@ from .services.trip_actions import (
     save_preferences,
     update_trip,
 )
+from .services.voting import cast_vote, vote_summary
 
 
 def credits(request):
     return render(request, "credits.html", {"photos": all_photos()})
 
 
+# Example postcards on the landing page: (city, photo slug, Group Match, flight hours, SAR per person).
+EXAMPLE_CARDS = [
+    ("Tbilisi", "tbilisi", 83, "3.5", "3,200"),
+    ("Sarajevo", "sarajevo", 77, "5", "3,800"),
+    ("Cairo", "cairo", 74, "2.5", "2,500"),
+    ("Baku", "baku", 71, "3.5", "3,300"),
+    ("Trabzon", "trabzon", 68, "4", "3,500"),
+]
+
+
 def home(request):
     if request.user.is_authenticated:
         return redirect("trips:my_trips")
-    return render(request, "trips/home.html")
+    return render(request, "trips/home.html", {
+        "example_cards": EXAMPLE_CARDS,
+        "marquee_cities": [photo["city"] for photo in all_photos()],
+    })
 
 
 STATUS_FILTERS = {
@@ -83,7 +104,7 @@ def my_trips(request):
 
     filters = [
         {"key": key, "label": label, "count": status_counts[key]}
-        for key, label in [("all", "All"), ("planning", "Planning"), ("decided", "Decided"), ("cancelled", "Cancelled")]
+        for key, label in [("all", _("All")), ("planning", _("Planning")), ("decided", _("Decided")), ("cancelled", _("Cancelled"))]
     ]
     return render(request, "trips/my_trips.html", {
         "trips": trips,
@@ -101,7 +122,7 @@ def trip_create(request):
             trip = create_trip(request.user, **form.cleaned_data)
             messages.success(
                 request,
-                f"Trip created. Share the code {trip.invite_code} with your friends.",
+                _("Trip created. Share the code %(code)s with your friends.") % {"code": trip.invite_code},
             )
             return redirect("trips:detail", pk=trip.pk)
     else:
@@ -114,16 +135,16 @@ def trip_create(request):
 def trip_edit(request, pk):
     trip = get_organizer_trip_or_403(request.user, pk)
     if not trip.is_planning:
-        messages.error(request, "Only a trip that is still being planned can be edited.")
+        messages.error(request, _("Only a trip that is still being planned can be edited."))
         return redirect("trips:detail", pk=trip.pk)
 
     if request.method == "POST":
         form = TripForm(request.POST, instance=trip)
         if form.is_valid():
             trip, cleared = update_trip(form)
-            messages.success(request, "Trip details were updated.")
+            messages.success(request, _("Trip details were updated."))
             if cleared:
-                messages.info(request, "Recommendations were cleared because the dates or departure city changed.")
+                messages.info(request, _("Recommendations were cleared because the dates or departure city changed."))
             return redirect("trips:detail", pk=trip.pk)
     else:
         form = TripForm(instance=trip)
@@ -140,27 +161,29 @@ def trip_cancel(request, pk):
         except TripActionError as error:
             messages.error(request, str(error))
         else:
-            messages.success(request, f"{trip.name} was cancelled.")
+            messages.success(request, _("%(trip)s was cancelled.") % {"trip": trip.name})
         return redirect("trips:detail", pk=trip.pk)
 
     if trip.status == Trip.Status.CANCELLED:
-        messages.info(request, "This trip is already cancelled.")
+        messages.info(request, _("This trip is already cancelled."))
         return redirect("trips:detail", pk=trip.pk)
 
     consequences = [
-        "Members can still open the trip, but nothing can be changed afterwards.",
-        "No one can join, edit preferences or generate recommendations.",
-        "This can't be undone.",
+        _("Members can still open the trip, but nothing can be changed afterwards."),
+        _("No one can join, edit preferences or generate recommendations."),
+        _("This can't be undone."),
     ]
     if trip.selected_destination:
-        consequences.insert(0, f"The decision for {trip.selected_destination.city} stays on record as cancelled.")
+        consequences.insert(0, _("The decision for %(city)s stays on record as cancelled.") % {
+            "city": _(trip.selected_destination.city),
+        })
     return render(request, "trips/confirm.html", {
         "trip": trip,
-        "heading": f"Cancel {trip.name}?",
+        "heading": _("Cancel %(trip)s?") % {"trip": trip.name},
         "consequences": consequences,
-        "confirm_label": "Cancel trip",
+        "confirm_label": _("Cancel trip"),
         "confirm_style": "danger",
-        "back_label": "Keep trip",
+        "back_label": _("Keep trip"),
     })
 
 
@@ -175,9 +198,9 @@ def trip_join(request):
                 form.add_error("code", str(error))
             else:
                 if joined:
-                    messages.success(request, f"You joined {trip.name}. Next, add your preferences.")
+                    messages.success(request, _("You joined %(trip)s. Next, add your preferences.") % {"trip": trip.name})
                 else:
-                    messages.info(request, f"You're already a member of {trip.name}.")
+                    messages.info(request, _("You're already a member of %(trip)s.") % {"trip": trip.name})
                 return redirect("trips:detail", pk=trip.pk)
     else:
         form = JoinTripForm()
@@ -207,6 +230,8 @@ def trip_detail(request, pk):
             "decision": _decision(trip),
             "summary": group_summary(trip),
             "budget_threshold": MIN_SUBMISSIONS_FOR_BUDGETS,
+            "votes": vote_summary(trip, my_membership) if trip.is_planning else None,
+            "plan": date_plan(trip) if trip.is_planning else None,
         },
     )
 
@@ -215,7 +240,7 @@ def trip_detail(request, pk):
 def preferences(request, pk):
     trip = get_member_trip_or_404(request.user, pk)
     if not trip.is_planning:
-        messages.error(request, "Preferences can only be changed while the trip is being planned.")
+        messages.error(request, _("Preferences can only be changed while the trip is being planned."))
         return redirect("trips:detail", pk=trip.pk)
 
     # Always the current user's own membership: there is no way to address someone else's.
@@ -226,9 +251,9 @@ def preferences(request, pk):
         form = PreferenceForm(request.POST, instance=existing)
         if form.is_valid():
             cleared = save_preferences(form, membership)
-            messages.success(request, "Your preferences were saved.")
+            messages.success(request, _("Your preferences were saved."))
             if cleared:
-                messages.info(request, "Recommendations were cleared because the group's preferences changed.")
+                messages.info(request, _("Recommendations were cleared because the group's preferences changed."))
             return redirect("trips:detail", pk=trip.pk)
     else:
         form = PreferenceForm(instance=existing)
@@ -241,11 +266,11 @@ def preferences(request, pk):
 
 
 FACTOR_LABELS = {
-    "interests": "Interests",
-    "budget": "Budget comfort",
-    "weather": "Weather",
-    "flight": "Flight comfort",
-    "direct": "Direct flight",
+    "interests": gettext_lazy("Interests"),
+    "budget": gettext_lazy("Budget comfort"),
+    "weather": gettext_lazy("Weather"),
+    "flight": gettext_lazy("Flight comfort"),
+    "direct": gettext_lazy("Direct flight"),
 }
 
 
@@ -253,7 +278,7 @@ def _shared_interests(match):
     """Interests the destination offers that at least one member wants."""
     if match is None:
         return []
-    return sorted(set().union(*(m.shared_interests for m in match.member_matches)))
+    return sorted(_(name) for name in set().union(*(m.shared_interests for m in match.member_matches)))
 
 
 def _factor_rows(match):
@@ -282,11 +307,13 @@ def recommendations_generate(request, pk):
         return redirect("trips:detail", pk=trip.pk)
 
     if count:
-        messages.success(
-            request, f"Recommendations are ready: {count} destination{'s' if count != 1 else ''} fit everyone."
-        )
+        messages.success(request, ngettext(
+            "Recommendations are ready: %(count)d destination fits everyone.",
+            "Recommendations are ready: %(count)d destinations fit everyone.",
+            count,
+        ) % {"count": count})
     else:
-        messages.warning(request, "No destination fits everyone yet. See what is blocking each one below.")
+        messages.warning(request, _("No destination fits everyone yet. See what is blocking each one below."))
     return redirect("trips:recommendations", pk=trip.pk)
 
 
@@ -308,7 +335,7 @@ def recommendations(request, pk):
         cards.append({
             "recommendation": rec,
             "match": match,
-            "band": match_band(rec.score),
+            "band": _(match_band(rec.score)),
             "interests": _shared_interests(match),
         })
     return render(
@@ -321,6 +348,7 @@ def recommendations(request, pk):
             "can_generate": can_generate,
             "nothing_fits": can_generate and not ranked,
             "excluded": [(match, describe_exclusion(match)) for match in excluded],
+            "votes": vote_summary(trip, trip.members.get(user=request.user)) if saved else None,
         },
     )
 
@@ -331,7 +359,7 @@ def recommendation_detail(request, pk, destination_id):
     recommendation = get_object_or_404(
         trip.recommendations.select_related("destination"), destination_id=destination_id
     )
-    ranked, _ = evaluate_trip(trip)
+    ranked, _excluded = evaluate_trip(trip)
     match = next((m for m in ranked if m.option.destination_id == destination_id), None)
 
     member_rows, factor_rows = [], []
@@ -346,7 +374,7 @@ def recommendation_detail(request, pk, destination_id):
             "trip": trip,
             "is_organizer": trip.is_organizer(request.user),
             "recommendation": recommendation,
-            "band": match_band(recommendation.score),
+            "band": _(match_band(recommendation.score)),
             "match": match,
             "reasons": explain_group_match(match, trip) if match else [],
             "member_rows": member_rows,
@@ -375,25 +403,27 @@ def trip_finalize(request, pk, destination_id):
         except TripActionError as error:
             messages.error(request, str(error))
         else:
-            messages.success(request, f"Decision saved: {recommendation.destination.city} it is!")
+            messages.success(request, _("Decision saved: %(city)s it is!") % {"city": _(recommendation.destination.city)})
         return redirect("trips:detail", pk=trip.pk)
 
     if not trip.is_planning:
-        messages.error(request, "Only a trip that is still being planned can be decided.")
+        messages.error(request, _("Only a trip that is still being planned can be decided."))
         return redirect("trips:detail", pk=trip.pk)
 
-    city = recommendation.destination.city
+    city = _(recommendation.destination.city)
     return render(request, "trips/confirm.html", {
         "trip": trip,
-        "heading": f"Choose {city} for {trip.name}?",
+        "heading": _("Choose %(city)s for %(trip)s?") % {"city": city, "trip": trip.name},
         "consequences": [
-            f"{city} becomes the group's destination, with a {recommendation.score:.0f}% Group Match.",
-            "The trip becomes Decided and is locked: no more joining, preference changes or new recommendations.",
-            "All members will see the decision in the Trip Room.",
+            _("%(city)s becomes the group's destination, with a %(score)s%% Group Match.") % {
+                "city": city, "score": f"{recommendation.score:.0f}",
+            },
+            _("The trip becomes Decided and is locked: no more joining, preference changes or new recommendations."),
+            _("All members will see the decision in the Trip Room."),
         ],
-        "confirm_label": f"Choose {city}",
+        "confirm_label": _("Choose %(city)s") % {"city": city},
         "confirm_style": "primary",
-        "back_label": "Not yet",
+        "back_label": _("Not yet"),
         "back_url": reverse("trips:recommendation_detail", args=[trip.pk, destination_id]),
     })
 
@@ -411,25 +441,136 @@ def member_remove(request, pk, member_id):
         except TripActionError as error:
             messages.error(request, str(error))
         else:
-            messages.success(request, f"{name} was removed from the trip.")
+            messages.success(request, _("%(name)s was removed from the trip.") % {"name": name})
             if cleared:
-                messages.info(request, "Recommendations were cleared because the group changed.")
+                messages.info(request, _("Recommendations were cleared because the group changed."))
         return redirect("trips:detail", pk=trip.pk)
 
     if not trip.is_planning or member.user_id == trip.owner_id:
-        messages.error(request, "This member can't be removed.")
+        messages.error(request, _("This member can't be removed."))
         return redirect("trips:detail", pk=trip.pk)
 
     return render(request, "trips/confirm.html", {
         "trip": trip,
-        "heading": f"Remove {name} from {trip.name}?",
+        "heading": _("Remove %(name)s from %(trip)s?") % {"name": name, "trip": trip.name},
         "consequences": [
-            f"{name} will lose access to this trip.",
-            "Their preferences for this trip will be deleted.",
-            "Current recommendations will be cleared.",
-            f"{name} can rejoin with the invite code while the trip is still being planned.",
+            _("%(name)s will lose access to this trip.") % {"name": name},
+            _("Their preferences for this trip will be deleted."),
+            _("Current recommendations will be cleared."),
+            _("%(name)s can rejoin with the invite code while the trip is still being planned.") % {"name": name},
         ],
-        "confirm_label": f"Remove {name}",
+        "confirm_label": _("Remove %(name)s") % {"name": name},
         "confirm_style": "danger",
-        "back_label": "Keep member",
+        "back_label": _("Keep member"),
+    })
+
+
+# --- Group vote ------------------------------------------------------------------
+
+@login_required
+def vote(request, pk, destination_id):
+    trip = get_member_trip_or_404(request.user, pk)
+    if request.method != "POST":
+        return redirect("trips:recommendations", pk=trip.pk)
+
+    membership = trip.members.get(user=request.user)
+    try:
+        saved = cast_vote(membership, destination_id)
+    except TripActionError as error:
+        messages.error(request, str(error))
+    else:
+        messages.success(request, _("Your vote for %(city)s was saved.") % {
+            "city": _(saved.recommendation.destination.city),
+        })
+    return redirect(reverse("trips:recommendations", args=[trip.pk]) + "#vote")
+
+
+# --- Shared dates ------------------------------------------------------------------
+
+@login_required
+def dates(request, pk):
+    trip = get_member_trip_or_404(request.user, pk)
+    membership = trip.members.get(user=request.user)
+
+    form = AvailabilityForm()
+    if request.method == "POST":
+        form = AvailabilityForm(request.POST)
+        if form.is_valid():
+            try:
+                add_availability(form, membership)
+            except TripActionError as error:
+                messages.error(request, str(error))
+            else:
+                messages.success(request, _("Your free dates were added."))
+                return redirect("trips:dates", pk=trip.pk)
+
+    # Annotation: how many ranges each member has shared (only whether they shared is shown).
+    members = trip.members.select_related("user").annotate(range_count=Count("availabilities"))
+    return render(request, "trips/dates.html", {
+        "trip": trip,
+        "is_organizer": trip.is_organizer(request.user),
+        "form": form,
+        "my_ranges": membership.availabilities.all(),
+        "max_ranges": Availability.MAX_PER_MEMBER,
+        "members": members,
+        "plan": date_plan(trip),
+    })
+
+
+@login_required
+def availability_delete(request, pk, availability_id):
+    trip = get_member_trip_or_404(request.user, pk)
+    # Scoped to the current user's own ranges in this trip: anyone else's is a 404.
+    availability = get_object_or_404(
+        Availability, pk=availability_id, trip_member__trip=trip, trip_member__user=request.user
+    )
+    if request.method == "POST":
+        if trip.is_planning:
+            availability.delete()
+            messages.success(request, _("The date range was removed."))
+        else:
+            messages.error(request, _("Dates can only be shared while the trip is being planned."))
+    return redirect("trips:dates", pk=trip.pk)
+
+
+@login_required
+def dates_apply(request, pk, start):
+    trip = get_organizer_trip_or_403(request.user, pk)
+    try:
+        new_start = date.fromisoformat(start)
+    except ValueError:
+        raise Http404("Invalid date")
+
+    if request.method == "POST":
+        try:
+            trip, cleared = apply_dates(trip, new_start)
+        except TripActionError as error:
+            messages.error(request, str(error))
+            return redirect("trips:dates", pk=trip.pk)
+        messages.success(request, _("The trip dates were updated."))
+        if cleared:
+            messages.info(request, _("Recommendations were cleared because the dates or departure city changed."))
+        return redirect("trips:detail", pk=trip.pk)
+
+    if not trip.is_planning:
+        messages.error(request, _("Only a trip that is still being planned can change its dates."))
+        return redirect("trips:detail", pk=trip.pk)
+
+    new_end = date.fromordinal(new_start.toordinal() + trip.nights)
+    period = _("%(start)s – %(end)s") % {
+        "start": date_format(new_start, "j M"), "end": date_format(new_end, "j M Y"),
+    }
+    consequences = [
+        _("The trip will run %(period)s, keeping its %(nights)s nights.") % {"period": period, "nights": trip.nights},
+        _("Costs and weather depend on the dates, so current recommendations and votes will be cleared."),
+        _("The organizer can generate new recommendations once everyone is ready."),
+    ]
+    return render(request, "trips/confirm.html", {
+        "trip": trip,
+        "heading": _("Move %(trip)s to %(period)s?") % {"trip": trip.name, "period": period},
+        "consequences": consequences,
+        "confirm_label": _("Use these dates"),
+        "confirm_style": "primary",
+        "back_label": _("Not yet"),
+        "back_url": reverse("trips:dates", args=[trip.pk]),
     })

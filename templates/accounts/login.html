@@ -1,21 +1,30 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Log in{% endblock %}
+{% block title %}{% translate "Log in" %}{% endblock %}
 
 {% block content %}
-<section class="auth card">
-    <h1>Welcome back</h1>
-    <p class="muted">Log in to see your trips.</p>
+<section class="auth">
+    <div class="auth__art" aria-hidden="true">
+        <p class="pass__label">{% translate "Wajha boarding pass" %}</p>
+        <h2>{% translate "Your crew is waiting." %}</h2>
+        <span class="auth__plane">✈</span>
+        <p>{% translate "Pick up where your group left off." %}</p>
+    </div>
+    <div class="auth__card">
+        <h1>{% translate "Welcome back" %}</h1>
+        <p class="muted">{% translate "Log in to see your trips." %}</p>
 
-    <form method="post" class="form" novalidate>
-        {% csrf_token %}
-        {% include "partials/_form_errors.html" %}
-        {% for field in form %}
-            {% include "partials/_form_field.html" %}
-        {% endfor %}
-        <button type="submit" class="btn btn--primary btn--block">Log in</button>
-    </form>
+        <form method="post" class="form" novalidate>
+            {% csrf_token %}
+            {% include "partials/_form_errors.html" %}
+            {% for field in form %}
+                {% include "partials/_form_field.html" %}
+            {% endfor %}
+            <button type="submit" class="btn btn--primary btn--block btn--large">{% translate "Log in" %}</button>
+        </form>
 
-    <p class="auth__switch">New to Wajha? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+        <p class="auth__switch">{% translate "New to Wajha?" %} <a href="{% url 'accounts:register' %}">{% translate "Create an account" %}</a></p>
+    </div>
 </section>
 {% endblock %}

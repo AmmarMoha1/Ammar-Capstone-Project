@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 
 from .forms import RegisterForm
 
@@ -18,7 +19,7 @@ def register(request):
 
             messages.success(
                 request,
-                "Your account was created successfully."
+                _("Your account was created successfully.")
             )
 
             return redirect("trips:my_trips")
