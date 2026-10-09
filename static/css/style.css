@@ -1091,3 +1091,60 @@ fieldset.field legend {
     .boarding-pass__details { grid-template-columns: repeat(4, 1fr); }
 }
 .btn--danger-solid:hover { background: #8F1C13; color: var(--white); }
+
+/* Group summary and My Trips filters ------------------------------------------ */
+
+.summary h2 { font-size: var(--text-lg); }
+.summary__subheading { margin-top: var(--space-4); font-size: var(--text-base); }
+.summary .chips { margin-bottom: 0; }
+.summary .chip strong { margin-left: var(--space-1); color: var(--teal-700); }
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin: 0 0 var(--space-3);
+}
+.stat {
+    padding: var(--space-3);
+    background: var(--sand-100);
+    border-radius: var(--radius-sm);
+}
+.stat dt { color: var(--ink-600); font-size: var(--text-sm); }
+.stat dd { margin: 0; font-size: var(--text-h3); font-weight: 700; }
+.stat__note { margin: var(--space-1) 0 0; color: var(--ink-600); font-size: 0.8125rem; line-height: 1.4; }
+
+.filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+.filter-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    background: var(--white);
+    border: 1px solid var(--sand-200);
+    border-radius: var(--radius-pill);
+    color: var(--ink-900);
+    font-weight: 500;
+    text-decoration: none;
+}
+.filter-tab:hover { border-color: var(--teal-700); color: var(--teal-800); }
+.filter-tab[aria-current="page"] { background: var(--teal-700); border-color: var(--teal-700); color: var(--white); }
+.filter-tab__count {
+    min-width: 22px;
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--sand-100);
+    color: var(--ink-600);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+.filter-tab[aria-current="page"] .filter-tab__count { background: rgb(255 255 255 / 0.2); color: var(--white); }
+
+.trip-card__ready { margin: var(--space-2) 0 0; color: var(--ink-600); }
+.trip-card__ready strong { color: var(--ink-900); }

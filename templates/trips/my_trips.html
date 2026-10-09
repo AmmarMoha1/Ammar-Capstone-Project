@@ -14,6 +14,16 @@
     </div>
 </div>
 
+{% if has_any_trips %}
+<nav class="filter-tabs" aria-label="Filter trips by status">
+    {% for f in filters %}
+    <a class="filter-tab" href="{% if f.key == 'all' %}{% url 'trips:my_trips' %}{% else %}?status={{ f.key }}{% endif %}"{% if f.key == active_filter %} aria-current="page"{% endif %}>
+        {{ f.label }} <span class="filter-tab__count">{{ f.count }}</span>
+    </a>
+    {% endfor %}
+</nav>
+{% endif %}
+
 {% if trips %}
 <ul class="trip-grid">
     {% for trip in trips %}
@@ -30,10 +40,16 @@
                 <span>{% if trip.selected_destination %}{{ trip.selected_destination.city }}{% else %}To be decided{% endif %}</span>
             </p>
             <p class="muted small">{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</p>
+            {% if trip.status == "PLANNING" %}
+            <p class="trip-card__ready small"><strong>{{ trip.ready_count }} of {{ trip.member_count }}</strong> ready</p>
+            {% endif %}
         </a>
     </li>
     {% endfor %}
 </ul>
+{% elif has_any_trips %}
+    {% url 'trips:my_trips' as all_url %}
+    {% include "partials/_empty_state.html" with title="No trips here" text="None of your trips have this status." action_url=all_url action_label="Show all trips" %}
 {% else %}
     {% url 'trips:create' as create_url %}
     {% include "partials/_empty_state.html" with title="No trips yet" text="Create a trip and invite your friends, or join a friend's trip with their invite code." action_url=create_url action_label="Create your first trip" %}

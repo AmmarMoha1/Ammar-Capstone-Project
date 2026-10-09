@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -14,6 +14,7 @@ from .services.recommendations import (
     explain_group_match,
     generate_recommendations,
 )
+from .services.summary import MIN_SUBMISSIONS_FOR_BUDGETS, group_summary
 from .services.trip_actions import (
     TripActionError,
     cancel_trip,
@@ -32,19 +33,58 @@ def home(request):
     return render(request, "trips/home.html")
 
 
+STATUS_FILTERS = {
+    "planning": Trip.Status.PLANNING,
+    "decided": Trip.Status.DECIDED,
+    "cancelled": Trip.Status.CANCELLED,
+}
+
+
 @login_required
 def my_trips(request):
     # Relationship query: trips where the current user is a member (organizer included).
     # A subquery is used instead of filter(members__user=...) because that filter would
     # reuse the members join and make Count("members") count only the user's own row.
     my_trip_ids = TripMember.objects.filter(user=request.user).values("trip_id")
+    my_trips_qs = Trip.objects.filter(pk__in=my_trip_ids)
+
+    # Aggregation: how many of my trips are in each status (for the filter tabs).
+    status_counts = my_trips_qs.aggregate(
+        all=Count("id"),
+        planning=Count("id", filter=Q(status=Trip.Status.PLANNING)),
+        decided=Count("id", filter=Q(status=Trip.Status.DECIDED)),
+        cancelled=Count("id", filter=Q(status=Trip.Status.CANCELLED)),
+    )
+
+    # Filtering: an unknown ?status= value simply shows all trips.
+    active_filter = request.GET.get("status", "").lower()
+    if active_filter not in STATUS_FILTERS:
+        active_filter = "all"
+    else:
+        my_trips_qs = my_trips_qs.filter(status=STATUS_FILTERS[active_filter])
+
+    # Annotation: per-trip member and ready counts. Preference is one-to-one with TripMember,
+    # so both counts use the same join today; distinct=True keeps them correct if another
+    # one-to-many count (e.g. recommendations) is added, which would otherwise multiply rows.
     trips = (
-        Trip.objects.filter(pk__in=my_trip_ids)
-        .select_related("departure_city", "selected_destination")
-        .annotate(member_count=Count("members", distinct=True))
+        my_trips_qs.select_related("departure_city", "selected_destination")
+        .annotate(
+            member_count=Count("members", distinct=True),
+            ready_count=Count("members__preference", distinct=True),
+        )
         .order_by("-created_at")
     )
-    return render(request, "trips/my_trips.html", {"trips": trips})
+
+    filters = [
+        {"key": key, "label": label, "count": status_counts[key]}
+        for key, label in [("all", "All"), ("planning", "Planning"), ("decided", "Decided"), ("cancelled", "Cancelled")]
+    ]
+    return render(request, "trips/my_trips.html", {
+        "trips": trips,
+        "filters": filters,
+        "active_filter": active_filter,
+        "has_any_trips": status_counts["all"] > 0,
+    })
 
 
 @login_required
@@ -159,6 +199,8 @@ def trip_detail(request, pk):
             "can_generate": trip.can_generate_recommendations(readiness),
             "top_recommendation": trip.recommendations.select_related("destination").first(),
             "decision": _decision(trip),
+            "summary": group_summary(trip),
+            "budget_threshold": MIN_SUBMISSIONS_FOR_BUDGETS,
         },
     )
 

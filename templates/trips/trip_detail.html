@@ -65,7 +65,7 @@
         <section class="card next-step{% if not my_membership.has_preferences %} next-step--action{% endif %}" aria-labelledby="next-step-heading">
             {% if not my_membership.has_preferences %}
                 <h2 id="next-step-heading">{% if readiness.waiting == 1 and readiness.has_enough_members %}Everyone's waiting on you{% else %}Add your preferences{% endif %}</h2>
-                <p>Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your individual budget.</p>
+                <p>Tell Wajha your budget, flight limits, weather and interests for this trip. Other members never see your budget next to your name, only group figures.</p>
                 <a class="btn btn--primary" href="{% url 'trips:preferences' trip.pk %}">Add your preferences</a>
             {% else %}
                 {% if top_recommendation %}
@@ -143,6 +143,53 @@
         <button type="button" class="btn btn--secondary btn--small" data-copy-target="invite-code" hidden>Copy code</button>
     </section>
     {% endif %}
+
+    <section class="card summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Group summary</h2>
+        {% if summary.has_data %}
+        <dl class="stats">
+            <div class="stat">
+                <dt>Preferences in</dt>
+                <dd>{{ summary.submitted }} / {{ readiness.total }}</dd>
+            </div>
+            <div class="stat">
+                <dt>Shortest max flight</dt>
+                <dd>{{ summary.shortest_flight_hours|floatformat:"-1" }} h</dd>
+                <p class="stat__note">The longest flight everyone accepts</p>
+            </div>
+            {% if summary.shows_budgets %}
+            <div class="stat">
+                <dt>Group budget limit</dt>
+                <dd>{{ summary.lowest_budget|floatformat:"0g" }} SAR</dd>
+                <p class="stat__note">The lowest budget: no destination can cost more for everyone to go</p>
+            </div>
+            <div class="stat">
+                <dt>Average budget</dt>
+                <dd>{{ summary.average_budget|floatformat:"0g" }} SAR</dd>
+            </div>
+            {% endif %}
+            <div class="stat">
+                <dt>Need direct flights</dt>
+                <dd>{{ summary.direct_only_count }}</dd>
+            </div>
+            <div class="stat">
+                <dt>Average max flight</dt>
+                <dd>{{ summary.average_flight_hours|floatformat:"-1" }} h</dd>
+            </div>
+        </dl>
+        {% if not summary.shows_budgets %}
+        <p class="stat__note">Budget figures appear once {{ budget_threshold }} members have added preferences, so no one's budget can be worked out.</p>
+        {% endif %}
+        <h3 class="summary__subheading">Top interests</h3>
+        <ul class="chips">
+            {% for interest in summary.top_interests %}
+            <li class="chip">{{ interest.name }} <strong>{{ interest.votes }}</strong><span class="visually-hidden"> member{{ interest.votes|pluralize }}</span></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="muted">No preferences yet. The summary fills in as members add theirs.</p>
+        {% endif %}
+    </section>
 
     {% if is_organizer and trip.status != "CANCELLED" %}
     <section class="card organizer-actions" aria-labelledby="organizer-heading">
