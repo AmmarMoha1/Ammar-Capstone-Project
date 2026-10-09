@@ -18,7 +18,12 @@ python manage.py runserver
 
 - **Users:** groups of 2–8 friends in Saudi Arabia planning an international leisure trip.
 - **Problem:** everyone has a different budget, maximum flight time, weather preference and interests, so "where should we go?" becomes a long WhatsApp thread that often ends without a decision.
-- **Evidence:** present your survey and interview results from `docs/market.md`. Say clearly which points are evidence and which are still assumptions.
+- **Evidence (survey of 58 people, `docs/market.md`):**
+  - Of the 38 who travelled abroad with friends, **45% took a week or more** to agree and **37% had someone drop out or end up unhappy**.
+  - **Budget is the #1 reason** to rule out a destination (83%). 29% would rather not share their exact budget.
+  - Likelihood of using Wajha: **4.32 / 5 among 18–35 year olds** (3.71 overall).
+  - Respondents asked for **a vote** and **"a time that suits everyone"**, and both are now in the product.
+  - **Say honestly:** the sample is mostly over 35 and from Jeddah/Makkah, flight length mattered less than expected (12%), no interviews yet, and booking intent (47% yes) is still an assumption.
 
 ## 2. Value and the main workflow (about 4 minutes)
 
