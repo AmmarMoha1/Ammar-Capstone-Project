@@ -81,3 +81,14 @@ class DestinationConstraintTests(TestCase):
             origin_city=self.origin, destination=self.baku,
             flight_duration_hours=0, direct_available=True, estimated_flight_cost=1500,
         ))
+
+
+class ClimatePeriodTests(TestCase):
+    def test_for_date(self):
+        from datetime import date
+
+        self.assertEqual(ClimatePeriod.for_date(date(2026, 1, 1)), ClimatePeriod.JAN_MAR)
+        self.assertEqual(ClimatePeriod.for_date(date(2026, 3, 31)), ClimatePeriod.JAN_MAR)
+        self.assertEqual(ClimatePeriod.for_date(date(2026, 4, 1)), ClimatePeriod.APR_JUN)
+        self.assertEqual(ClimatePeriod.for_date(date(2026, 9, 30)), ClimatePeriod.JUL_SEP)
+        self.assertEqual(ClimatePeriod.for_date(date(2026, 11, 20)), ClimatePeriod.OCT_DEC)

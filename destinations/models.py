@@ -17,6 +17,11 @@ class ClimatePeriod(models.IntegerChoices):
     JUL_SEP = 3, "Jul – Sep"
     OCT_DEC = 4, "Oct – Dec"
 
+    @classmethod
+    def for_date(cls, day):
+        """The period a date falls in: months 1-3 -> 1, 4-6 -> 2, 7-9 -> 3, 10-12 -> 4."""
+        return cls((day.month - 1) // 3 + 1)
+
 
 class OriginCity(models.Model):
     """A Saudi city that trips can depart from."""
