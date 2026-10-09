@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from .forms import JoinTripForm, PreferenceForm, TripForm
 from .models import Preference, Trip, TripMember
@@ -13,7 +14,16 @@ from .services.recommendations import (
     explain_group_match,
     generate_recommendations,
 )
-from .services.trip_actions import TripActionError, create_trip, join_trip, save_preferences
+from .services.trip_actions import (
+    TripActionError,
+    cancel_trip,
+    create_trip,
+    finalize_trip,
+    join_trip,
+    remove_member,
+    save_preferences,
+    update_trip,
+)
 
 
 def home(request):
@@ -52,6 +62,60 @@ def trip_create(request):
         form = TripForm()
 
     return render(request, "trips/trip_form.html", {"form": form})
+
+
+@login_required
+def trip_edit(request, pk):
+    trip = get_organizer_trip_or_403(request.user, pk)
+    if not trip.is_planning:
+        messages.error(request, "Only a trip that is still being planned can be edited.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    if request.method == "POST":
+        form = TripForm(request.POST, instance=trip)
+        if form.is_valid():
+            trip, cleared = update_trip(form)
+            messages.success(request, "Trip details were updated.")
+            if cleared:
+                messages.info(request, "Recommendations were cleared because the dates or departure city changed.")
+            return redirect("trips:detail", pk=trip.pk)
+    else:
+        form = TripForm(instance=trip)
+
+    return render(request, "trips/trip_form.html", {"form": form, "trip": trip})
+
+
+@login_required
+def trip_cancel(request, pk):
+    trip = get_organizer_trip_or_403(request.user, pk)
+    if request.method == "POST":
+        try:
+            cancel_trip(trip)
+        except TripActionError as error:
+            messages.error(request, str(error))
+        else:
+            messages.success(request, f"{trip.name} was cancelled.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    if trip.status == Trip.Status.CANCELLED:
+        messages.info(request, "This trip is already cancelled.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    consequences = [
+        "Members can still open the trip, but nothing can be changed afterwards.",
+        "No one can join, edit preferences or generate recommendations.",
+        "This can't be undone.",
+    ]
+    if trip.selected_destination:
+        consequences.insert(0, f"The decision for {trip.selected_destination.city} stays on record as cancelled.")
+    return render(request, "trips/confirm.html", {
+        "trip": trip,
+        "heading": f"Cancel {trip.name}?",
+        "consequences": consequences,
+        "confirm_label": "Cancel trip",
+        "confirm_style": "danger",
+        "back_label": "Keep trip",
+    })
 
 
 @login_required
@@ -94,6 +158,7 @@ def trip_detail(request, pk):
             "readiness": readiness,
             "can_generate": trip.can_generate_recommendations(readiness),
             "top_recommendation": trip.recommendations.select_related("destination").first(),
+            "decision": _decision(trip),
         },
     )
 
@@ -241,3 +306,82 @@ def recommendation_detail(request, pk, destination_id):
             "interests": _shared_interests(match),
         },
     )
+
+
+def _decision(trip):
+    """The saved recommendation for the chosen destination (for the decision card)."""
+    if trip.selected_destination_id is None:
+        return None
+    return trip.recommendations.filter(destination_id=trip.selected_destination_id).first()
+
+
+@login_required
+def trip_finalize(request, pk, destination_id):
+    trip = get_organizer_trip_or_403(request.user, pk)
+    recommendation = get_object_or_404(
+        trip.recommendations.select_related("destination"), destination_id=destination_id
+    )
+    if request.method == "POST":
+        try:
+            finalize_trip(trip, destination_id)
+        except TripActionError as error:
+            messages.error(request, str(error))
+        else:
+            messages.success(request, f"Decision saved: {recommendation.destination.city} it is!")
+        return redirect("trips:detail", pk=trip.pk)
+
+    if not trip.is_planning:
+        messages.error(request, "Only a trip that is still being planned can be decided.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    city = recommendation.destination.city
+    return render(request, "trips/confirm.html", {
+        "trip": trip,
+        "heading": f"Choose {city} for {trip.name}?",
+        "consequences": [
+            f"{city} becomes the group's destination, with a {recommendation.score:.0f}% Group Match.",
+            "The trip becomes Decided and is locked: no more joining, preference changes or new recommendations.",
+            "All members will see the decision in the Trip Room.",
+        ],
+        "confirm_label": f"Choose {city}",
+        "confirm_style": "primary",
+        "back_label": "Not yet",
+        "back_url": reverse("trips:recommendation_detail", args=[trip.pk, destination_id]),
+    })
+
+
+@login_required
+def member_remove(request, pk, member_id):
+    trip = get_organizer_trip_or_403(request.user, pk)
+    # Scoped to this trip: a member id from another trip is a 404.
+    member = get_object_or_404(trip.members.select_related("user"), pk=member_id)
+    name = member.user.username
+
+    if request.method == "POST":
+        try:
+            cleared = remove_member(trip, member)
+        except TripActionError as error:
+            messages.error(request, str(error))
+        else:
+            messages.success(request, f"{name} was removed from the trip.")
+            if cleared:
+                messages.info(request, "Recommendations were cleared because the group changed.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    if not trip.is_planning or member.user_id == trip.owner_id:
+        messages.error(request, "This member can't be removed.")
+        return redirect("trips:detail", pk=trip.pk)
+
+    return render(request, "trips/confirm.html", {
+        "trip": trip,
+        "heading": f"Remove {name} from {trip.name}?",
+        "consequences": [
+            f"{name} will lose access to this trip.",
+            "Their preferences for this trip will be deleted.",
+            "Current recommendations will be cleared.",
+            f"{name} can rejoin with the invite code while the trip is still being planned.",
+        ],
+        "confirm_label": f"Remove {name}",
+        "confirm_style": "danger",
+        "back_label": "Keep member",
+    })

@@ -18,6 +18,19 @@
     </div>
 </header>
 
+{% if trip.selected_destination_id == recommendation.destination_id %}
+<p class="message message--success"><span class="message__icon" aria-hidden="true">✓</span> This is the group's final destination.</p>
+{% elif trip.is_planning %}
+<div class="decide-bar card">
+    {% if is_organizer %}
+    <p><strong>Happy with {{ recommendation.destination.city }}?</strong> As organizer, you make the final choice for the group.</p>
+    <a class="btn btn--primary" href="{% url 'trips:finalize' trip.pk recommendation.destination_id %}">Choose {{ recommendation.destination.city }}</a>
+    {% else %}
+    <p class="muted">Only the organizer can choose the final destination.</p>
+    {% endif %}
+</div>
+{% endif %}
+
 {% if match %}
 <div class="detail-layout">
     <div class="detail-main">

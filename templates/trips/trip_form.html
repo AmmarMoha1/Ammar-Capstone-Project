@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}New trip{% endblock %}
+{% block title %}{% if trip %}Edit trip{% else %}New trip{% endif %}{% endblock %}
 
 {% block content %}
 <section class="form-page card">
+    {% if trip %}
+    <h1>Edit trip</h1>
+    <p class="muted">Changing the dates or departure city clears any recommendations, because costs, flights and weather change.</p>
+    {% else %}
     <h1>Create a trip</h1>
     <p class="muted">You'll get an invite code to share with your friends.</p>
+    {% endif %}
 
     <form method="post" class="form" novalidate>
         {% csrf_token %}
@@ -17,8 +22,8 @@
             {% include "partials/_form_field.html" with field=form.end_date %}
         </div>
         <div class="actions">
-            <button type="submit" class="btn btn--primary">Create trip</button>
-            <a class="btn btn--ghost" href="{% url 'trips:my_trips' %}">Cancel</a>
+            <button type="submit" class="btn btn--primary">{% if trip %}Save changes{% else %}Create trip{% endif %}</button>
+            <a class="btn btn--ghost" href="{% if trip %}{% url 'trips:detail' trip.pk %}{% else %}{% url 'trips:my_trips' %}{% endif %}">Cancel</a>
         </div>
     </form>
 </section>

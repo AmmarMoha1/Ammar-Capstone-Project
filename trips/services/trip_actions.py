@@ -88,3 +88,58 @@ def join_trip(user, invite_code):
         return trip, False
     clear_recommendations(trip)
     return trip, True
+
+
+@transaction.atomic
+def update_trip(form):
+    """Save the organizer's trip edits.
+
+    Dates and departure city change costs, routes and weather, so they clear the
+    recommendations; a name change does not. Returns (trip, recommendations_cleared).
+    """
+    trip = form.save()
+    affects_matching = {"departure_city", "start_date", "end_date"} & set(form.changed_data)
+    cleared = clear_recommendations(trip) if affects_matching else 0
+    return trip, cleared
+
+
+@transaction.atomic
+def finalize_trip(trip, destination_id):
+    """Save the organizer's final choice. Only a currently recommended destination can be chosen."""
+    trip = Trip.objects.select_for_update().get(pk=trip.pk)
+    if not trip.is_planning:
+        raise TripActionError("Only a trip that is still being planned can be decided.")
+
+    recommendation = trip.recommendations.filter(destination_id=destination_id).first()
+    if recommendation is None:
+        raise TripActionError("You can only choose one of this trip's current recommendations.")
+
+    trip.status = Trip.Status.DECIDED
+    trip.selected_destination_id = destination_id
+    trip.save(update_fields=["status", "selected_destination", "updated_at"])
+    return trip
+
+
+@transaction.atomic
+def cancel_trip(trip):
+    """Retire the trip instead of deleting it. A decided trip keeps its chosen destination."""
+    if trip.status == Trip.Status.CANCELLED:
+        raise TripActionError("This trip is already cancelled.")
+    trip.status = Trip.Status.CANCELLED
+    trip.save(update_fields=["status", "updated_at"])
+    return trip
+
+
+@transaction.atomic
+def remove_member(trip, member):
+    """Remove a member while planning. Their preference is deleted with them (CASCADE).
+
+    The group changed, so recommendations are cleared. The organizer can't be removed,
+    which keeps the rule that every trip has its organizer as a member.
+    """
+    if not trip.is_planning:
+        raise TripActionError("Members can only be changed while the trip is being planned.")
+    if member.user_id == trip.owner_id:
+        raise TripActionError("The organizer can't be removed from their own trip.")
+    member.delete()
+    return clear_recommendations(trip)

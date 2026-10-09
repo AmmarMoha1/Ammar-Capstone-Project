@@ -21,6 +21,44 @@
     </p>
 </header>
 
+{% if trip.status == "DECIDED" %}
+<section class="boarding-pass" aria-labelledby="decision-heading">
+    <div class="boarding-pass__top">
+        <h2 id="decision-heading" class="boarding-pass__label">Final destination</h2>
+        <span class="badge badge--success"><span aria-hidden="true">✓</span> Decided</span>
+    </div>
+    <div class="boarding-pass__route">
+        <div>
+            <p class="boarding-pass__small">From</p>
+            <p class="boarding-pass__place">{{ trip.departure_city.airport_code }}</p>
+            <p class="boarding-pass__small">{{ trip.departure_city.name }}</p>
+        </div>
+        <span class="boarding-pass__plane" aria-hidden="true">──✈──</span>
+        <div class="boarding-pass__to">
+            <p class="boarding-pass__small">To</p>
+            <p class="boarding-pass__place">{{ trip.selected_destination.city }}</p>
+            <p class="boarding-pass__small">{{ trip.selected_destination.country }}</p>
+        </div>
+    </div>
+    <dl class="boarding-pass__details">
+        <div><dt>Dates</dt><dd>{{ trip.start_date|date:"j M" }} – {{ trip.end_date|date:"j M Y" }}</dd></div>
+        <div><dt>Travelers</dt><dd>{{ readiness.total }}</dd></div>
+        {% if decision %}
+        <div><dt>Group Match</dt><dd>{{ decision.score|floatformat:0 }}%</dd></div>
+        <div><dt>Est. per person</dt><dd>{{ decision.estimated_total_cost|floatformat:"0g" }} SAR</dd></div>
+        {% endif %}
+    </dl>
+    {% if decision %}
+    <a class="btn btn--secondary btn--small boarding-pass__link" href="{% url 'trips:recommendation_detail' trip.pk trip.selected_destination_id %}">See why it fits</a>
+    {% endif %}
+</section>
+{% elif trip.status == "CANCELLED" %}
+<section class="card cancelled-note" aria-labelledby="cancelled-heading">
+    <h2 id="cancelled-heading">This trip was cancelled</h2>
+    <p class="muted">{% if trip.selected_destination %}It was cancelled after the group chose {{ trip.selected_destination.city }}. {% endif %}It stays here for your records, but nothing can be changed.</p>
+</section>
+{% endif %}
+
 <div class="trip-layout">
     <div class="trip-main">
         {% if trip.is_planning %}
@@ -87,17 +125,34 @@
                     {% else %}
                     <span class="badge badge--warning"><span aria-hidden="true">◷</span> Waiting</span>
                     {% endif %}
+                    {% if is_organizer and trip.is_planning and member.user_id != trip.owner_id %}
+                    <a class="btn btn--danger btn--small" href="{% url 'trips:remove_member' trip.pk member.pk %}">Remove<span class="visually-hidden"> {{ member.user.username }}</span></a>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
         </section>
     </div>
 
-    <aside class="ticket" aria-labelledby="invite-heading">
+    <aside class="trip-side">
+    {% if trip.is_planning %}
+    <section class="ticket" aria-labelledby="invite-heading">
         <h2 id="invite-heading" class="ticket__label">Invite code</h2>
         <p class="ticket__code" id="invite-code">{{ trip.invite_code }}</p>
         <p class="ticket__help">Friends sign in to Wajha, choose <strong>Join trip</strong> and enter this code.</p>
         <button type="button" class="btn btn--secondary btn--small" data-copy-target="invite-code" hidden>Copy code</button>
+    </section>
+    {% endif %}
+
+    {% if is_organizer and trip.status != "CANCELLED" %}
+    <section class="card organizer-actions" aria-labelledby="organizer-heading">
+        <h2 id="organizer-heading">Organizer actions</h2>
+        <div class="actions">
+            {% if trip.is_planning %}<a class="btn btn--secondary btn--small" href="{% url 'trips:edit' trip.pk %}">Edit trip</a>{% endif %}
+            <a class="btn btn--danger btn--small" href="{% url 'trips:cancel' trip.pk %}">Cancel trip</a>
+        </div>
+    </section>
+    {% endif %}
     </aside>
 </div>
 {% endblock %}

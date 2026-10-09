@@ -39,8 +39,9 @@ class TripForm(forms.ModelForm):
 
     def clean_start_date(self):
         start_date = self.cleaned_data["start_date"]
-        # Only new trips are checked: an existing trip may legitimately have started.
-        if self.instance.pk is None and start_date < timezone.localdate():
+        # New trips and changed dates are checked; an unchanged date on an existing trip is left alone.
+        is_new_or_changed = self.instance.pk is None or "start_date" in self.changed_data
+        if is_new_or_changed and start_date < timezone.localdate():
             raise forms.ValidationError("The start date can't be in the past.")
         return start_date
 

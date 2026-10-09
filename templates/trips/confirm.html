@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+<section class="form-page card confirm">
+    <p class="eyebrow">{{ trip.name }}</p>
+    <h1>{{ heading }}</h1>
+    <p class="muted">Please check what this will do:</p>
+    <ul class="confirm__list">
+        {% for line in consequences %}<li>{{ line }}</li>{% endfor %}
+    </ul>
+    <form method="post" class="actions">
+        {% csrf_token %}
+        <button type="submit" class="btn {% if confirm_style == 'danger' %}btn--danger-solid{% else %}btn--primary{% endif %}">{{ confirm_label }}</button>
+        <a class="btn btn--secondary" href="{% if back_url %}{{ back_url }}{% else %}{% url 'trips:detail' trip.pk %}{% endif %}">{{ back_label }}</a>
+    </form>
+</section>
+{% endblock %}
