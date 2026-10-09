@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wajha{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <nav>
+        <a href="{% url 'trips:home' %}">
+            Wajha
+        </a>
+    
+        <div>
+            {% if user.is_authenticated %}
+    
+            <span>
+                Hi, {{ user.username }}
+            </span>
+    
+            <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                {% csrf_token %}
+    
+                <button type="submit">
+                    Logout
+                </button>
+            </form>
+    
+            {% else %}
+    
+            <a href="{% url 'accounts:login' %}">
+                Login
+            </a>
+    
+            <a href="{% url 'accounts:register' %}">
+                Sign Up
+            </a>
+    
+            {% endif %}
+        </div>
+    </nav>
+    
+    {% if messages %}
+        {% for message in messages %}
+        <div>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+
+</html>

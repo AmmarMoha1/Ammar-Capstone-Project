@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+
+# Local configuration and secrets
+.env
+
+# Local database (rebuilt with migrate + demo data command)
+db.sqlite3
+db.sqlite3-journal
+
+# Collected static files
+staticfiles/
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
