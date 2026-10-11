@@ -18,12 +18,12 @@ python manage.py runserver
 
 - **Users:** groups of 2–8 friends in Saudi Arabia planning an international leisure trip.
 - **Problem:** everyone has a different budget, maximum flight time, weather preference and interests, so "where should we go?" becomes a long WhatsApp thread that often ends without a decision.
-- **Evidence (survey of 58 people, `docs/market.md`):**
-  - Of the 38 who travelled abroad with friends, **45% took a week or more** to agree and **37% had someone drop out or end up unhappy**.
-  - **Budget is the #1 reason** to rule out a destination (83%). 29% would rather not share their exact budget.
-  - Likelihood of using Wajha: **4.32 / 5 among 18–35 year olds** (3.71 overall).
-  - Respondents asked for **a vote** and **"a time that suits everyone"**, and both are now in the product.
-  - **Say honestly:** the sample is mostly over 35 and from Jeddah/Makkah, flight length mattered less than expected (12%), no interviews yet, and booking intent (47% yes) is still an assumption.
+- **Evidence (survey of 108 people and 3 interviews, `docs/market.md`):**
+  - Of the 68 who travelled abroad with friends, **78% took several days or more** to agree (40% a week or more) and **32% had someone drop out or end up unhappy**.
+  - **Budget is the #1 reason** to rule out a destination (70%). 31% would rather not share their exact budget.
+  - Likelihood of using Wajha: **4.03 / 5 among 18–35 year olds** (3.54 overall).
+  - Respondents asked for **a vote**, and the interviews named **choosing when to travel** as the hardest part (salaries, leave, ticket prices). Both are now in the product: group vote and shared dates.
+  - **Say honestly:** the sample is mostly over 35 and from Jeddah/Makkah, flight length mattered less than expected (13%), only three interviews, and booking intent (53% yes) is still an assumption.
 
 ## 2. Value and the main workflow (about 4 minutes)
 

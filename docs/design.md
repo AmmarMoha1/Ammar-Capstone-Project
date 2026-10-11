@@ -181,7 +181,7 @@ Priority: **P1** is the core workflow that must work end to end, **P2** makes th
 | 17 | P3 | Group vote on the top 3 | One vote per member, totals only; cleared with recommendations | Done |
 | 18 | P3 | Shared dates and suggested windows | Pure suggestion function, organizer applies with confirmation | Done |
 | 19 | P2 | My Trips search and pagination | Search by name or destination; 9 per page | Done |
-| 20 | P1 | Market evidence: survey and interviews | Results filled in `market.md`, evidence separated from assumptions | Survey done (58 responses); interviews not conducted (listed as a limitation) |
+| 20 | P1 | Market evidence: survey and interviews | Results filled in `market.md`, evidence separated from assumptions | Done: survey (108 responses) and 3 interviews |
 | 21 | P1 | Manual browser re-check of the verification record | Last column of `verification.md` completed | Done |
 
 **Blockers:** none. **Next tasks the evidence points to:** visa requirements and a safety indicator per destination, activities with reviews, and 3–5 interviews with 18–30 year old organizers in Riyadh (see [market.md](market.md)).

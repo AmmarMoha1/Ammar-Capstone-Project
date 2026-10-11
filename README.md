@@ -16,7 +16,7 @@ Wajha is a Django web application that helps a group of friends in Saudi Arabia 
 
 **Problem:** every friend has different constraints: a different budget, a maximum acceptable flight, a need for direct flights, a preferred climate, different interests. The decision usually happens in a long group chat where budgets stay unspoken and one person's limits get overlooked.
 
-**Why Wajha instead of a group chat or poll:** constraints are collected privately; destinations that break any member's limit are excluded; the ranking uses a fairness rule so one unhappy member isn't averaged away; and every result explains itself. **Evidence:** in a survey of 58 people, 45% of those who had travelled with friends took a week or more to agree on a destination, 37% had someone drop out or end up unhappy, and budget was the top reason to rule a destination out (83%). The survey results, what they support or contradict, and the remaining assumptions are in [docs/market.md](docs/market.md).
+**Why Wajha instead of a group chat or poll:** constraints are collected privately; destinations that break any member's limit are excluded; the ranking uses a fairness rule so one unhappy member isn't averaged away; and every result explains itself. **Evidence:** in a survey of 108 people, 78% of those who had travelled with friends took several days or more to agree on a destination (40% a week or more), 32% had someone drop out or end up unhappy, and budget was the top reason to rule a destination out (70%). Three interviews named choosing *when* to travel as the hardest part. The survey results, what they support or contradict, and the remaining assumptions are in [docs/market.md](docs/market.md).
 
 ## Core features
 
