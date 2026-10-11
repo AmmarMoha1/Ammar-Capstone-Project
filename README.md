@@ -214,7 +214,7 @@ The full list is in [docs/verification.md](docs/verification.md#known-limitation
 
 ## Credits and acknowledgements
 
-- **AI assistance:** this project was built with significant help from **Claude (Anthropic)**, an AI assistant used for planning, writing and reviewing code, tests and documentation, including the "Boarding Pass" redesign, the Arabic translation, the group vote, shared dates and search. All work was reviewed, run and verified, and I can explain every part of the implementation.
+- **AI assistance:** I used Claude (Anthropic), an AI assistant, as a tool while planning, coding, testing and writing the documentation. I reviewed, ran and tested everything it suggested, adapted it to this project, and can explain every part of the implementation.
 - **Destination photos:** 12 freely licensed photos from Wikimedia Commons (CC BY, CC BY-SA or public domain), resized and converted to WebP. Each author and licence is listed on the in-app **Credits** page (`/credits/`, linked in the footer) and in [destinations/photos.py](destinations/photos.py).
 - **Fonts:** [Baloo Bhaijaan 2](https://github.com/EkType/Baloo2) by The Baloo 2 Project Authors and [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by The JetBrains Mono Project Authors, both under the SIL Open Font License 1.1 ([static/fonts/OFL-BalooBhaijaan2.txt](static/fonts/OFL-BalooBhaijaan2.txt), [static/fonts/OFL-JetBrainsMono.txt](static/fonts/OFL-JetBrainsMono.txt)).
 - **Framework:** [Django](https://www.djangoproject.com/) and its documentation.
