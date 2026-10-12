@@ -90,14 +90,16 @@ Show `docs/erd.md`.
 
 **Trace a request: My Trips**
 1. URL `/trips/` → `trips/urls.py` (`name="my_trips"`, namespace `trips`)
-2. View `trips/views.py` → `my_trips()` (line 65)
+2. View `trips/views/trips.py` → `my_trips()` (line 53), protected by `@login_required`. Views are split by area in `trips/views/`, and `trips/views/__init__.py` re-exports them for `trips/urls.py`.
 3. ORM, in this order:
-   - a subquery of the user's memberships (relationship query)
-   - `aggregate()` per-status counts
+   - a subquery of the user's memberships (relationship query), then `exists()` to tell "no trips yet" from "no matches"
+   - optional search: `filter(_search_filter(q))`, a `Q` on the trip name or the chosen destination (relationship through `selected_destination`)
+   - `aggregate()` per-status counts for the filter tabs
    - `filter(status=...)`
    - `annotate(member_count, ready_count)` with `distinct=True`
    - `order_by("-created_at")`
-4. Template `templates/trips/my_trips.html`, which uses the shared partials (`_status_badge.html`, `_empty_state.html`)
+   - `Paginator(..., 9).get_page(page)`
+4. Template `templates/trips/my_trips.html`, which uses the shared partials (`_status_badge.html`, `_empty_state.html`, `_pagination.html`)
 
 **Explain a constraint**
 - `trip_status_matches_selected_destination` in `trips/models.py` (line 91): PLANNING → no destination, DECIDED → destination required, CANCELLED → either. Finalizing sets both together in `finalize_trip()` (`trips/services/trip_actions.py`, line 110).
