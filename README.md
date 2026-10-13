@@ -214,7 +214,16 @@ The full list is in [docs/verification.md](docs/verification.md#known-limitation
 
 ## Credits and acknowledgements
 
-- **AI assistance:** I used Claude (Anthropic), an AI assistant, as a tool while planning, coding, testing and writing the documentation. I reviewed, ran and tested everything it suggested, adapted it to this project, and can explain every part of the implementation.
+- **AI assistance:** I used Claude (Anthropic), an AI assistant, as a tool while planning, coding, testing and writing the documentation. These parts were written with Claude:
+  - the CSS design system ([static/css/style.css](static/css/style.css))
+  - the JavaScript enhancements ([static/js/app.js](static/js/app.js))
+  - the Arabic version: the translations in [locale/ar/LC_MESSAGES/django.po](locale/ar/LC_MESSAGES/django.po), the right-to-left layout and the `compile_translations` command
+
+  I reviewed, ran and tested everything it suggested, adapted it to this project, and can explain every part of the implementation.
+- **References for the interface and translation:**
+  - [Django translation](https://docs.djangoproject.com/en/6.1/topics/i18n/translation/) and [format localization](https://docs.djangoproject.com/en/6.1/topics/i18n/formatting/) documentation
+  - MDN Web Docs on [CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values) (used for right-to-left), [CSS transforms](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transforms) (3D effects) and [prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion)
+  - the [GNU gettext MO file format](https://www.gnu.org/software/gettext/manual/html_node/MO-Files.html) (for `compile_translations`)
 - **Destination photos:** 12 freely licensed photos from Wikimedia Commons (CC BY, CC BY-SA or public domain), resized and converted to WebP. Each author and licence is listed on the in-app **Credits** page (`/credits/`, linked in the footer) and in [destinations/photos.py](destinations/photos.py).
 - **Fonts:** [Baloo Bhaijaan 2](https://github.com/EkType/Baloo2) by The Baloo 2 Project Authors and [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono) by The JetBrains Mono Project Authors, both under the SIL Open Font License 1.1 ([static/fonts/OFL-BalooBhaijaan2.txt](static/fonts/OFL-BalooBhaijaan2.txt), [static/fonts/OFL-JetBrainsMono.txt](static/fonts/OFL-JetBrainsMono.txt)).
 - **Framework:** [Django](https://www.djangoproject.com/) and its documentation.
